@@ -1,0 +1,62 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31515.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{D292E0CD-BE92-4EC4-8783-69FB1E111902}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus", "src\Common\EventBus\EventBus.csproj", "{95D11832-F9B8-4CA8-A479-34D4C128B975}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{74AA0EED-D41D-4D74-9959-D0BD9F5D1E0D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBusRabbitMQ", "src\Common\EventBusRabbitMQ\EventBusRabbitMQ.csproj", "{4963F31E-A8A5-4BF6-88CD-F38BAF11054D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SaleService", "src\Services\SaleService\SaleService.csproj", "{A75FE666-8029-42D0-859E-E7407B01D80F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InventoryService", "src\Services\InventoryService\InventoryService.csproj", "{2E522DBC-0342-4D01-9B39-B7D5A7AFE33B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{80A20AB1-A4E8-441F-ABF0-F5B34418D6DB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SagaPattern.Tests", "tests\InventoryService.Test\SagaPattern.Tests.csproj", "{1AA5DCEE-433D-488A-9205-41261C4CE8A6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{95D11832-F9B8-4CA8-A479-34D4C128B975}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95D11832-F9B8-4CA8-A479-34D4C128B975}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95D11832-F9B8-4CA8-A479-34D4C128B975}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95D11832-F9B8-4CA8-A479-34D4C128B975}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4963F31E-A8A5-4BF6-88CD-F38BAF11054D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4963F31E-A8A5-4BF6-88CD-F38BAF11054D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4963F31E-A8A5-4BF6-88CD-F38BAF11054D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4963F31E-A8A5-4BF6-88CD-F38BAF11054D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A75FE666-8029-42D0-859E-E7407B01D80F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A75FE666-8029-42D0-859E-E7407B01D80F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A75FE666-8029-42D0-859E-E7407B01D80F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A75FE666-8029-42D0-859E-E7407B01D80F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E522DBC-0342-4D01-9B39-B7D5A7AFE33B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E522DBC-0342-4D01-9B39-B7D5A7AFE33B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E522DBC-0342-4D01-9B39-B7D5A7AFE33B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E522DBC-0342-4D01-9B39-B7D5A7AFE33B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AA5DCEE-433D-488A-9205-41261C4CE8A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AA5DCEE-433D-488A-9205-41261C4CE8A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AA5DCEE-433D-488A-9205-41261C4CE8A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AA5DCEE-433D-488A-9205-41261C4CE8A6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{95D11832-F9B8-4CA8-A479-34D4C128B975} = {D292E0CD-BE92-4EC4-8783-69FB1E111902}
+		{4963F31E-A8A5-4BF6-88CD-F38BAF11054D} = {D292E0CD-BE92-4EC4-8783-69FB1E111902}
+		{A75FE666-8029-42D0-859E-E7407B01D80F} = {74AA0EED-D41D-4D74-9959-D0BD9F5D1E0D}
+		{2E522DBC-0342-4D01-9B39-B7D5A7AFE33B} = {74AA0EED-D41D-4D74-9959-D0BD9F5D1E0D}
+		{1AA5DCEE-433D-488A-9205-41261C4CE8A6} = {80A20AB1-A4E8-441F-ABF0-F5B34418D6DB}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {337B30FC-8FA5-4561-BCD1-C2B22C13739F}
+	EndGlobalSection
+EndGlobal
