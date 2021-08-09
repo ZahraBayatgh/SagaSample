@@ -1,12 +1,8 @@
 ﻿using EventBus.Events;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace SaleService.IntegrationEvents.Events
+namespace InventoryService.IntegrationEvents.Events
 {
-    public class CancelProductIntegrationEvent :IntegrationEvent
+    public class CancelProductIntegrationEvent : IntegrationEvent
     {
         public CancelProductIntegrationEvent(string name, int count)
         {

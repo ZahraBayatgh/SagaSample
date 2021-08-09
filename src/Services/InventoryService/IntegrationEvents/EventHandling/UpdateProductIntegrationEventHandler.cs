@@ -1,10 +1,10 @@
 ﻿using EventBus.Abstractions;
 using InventoryService.Data;
+using InventoryService.IntegrationEvents.Events;
 using InventoryService.Models;
 using InventoryService.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SaleService.IntegrationEvents.Events;
 using System.Linq;
 using System.Threading.Tasks;
 

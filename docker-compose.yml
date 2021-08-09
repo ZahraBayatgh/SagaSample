@@ -1,0 +1,28 @@
+version: '3.4'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+
+  InventoryData:
+    image: mcr.microsoft.com/mssql/server:2017-latest 
+  
+  SaleData:
+    image: mcr.microsoft.com/mssql/server:2017-latest
+
+  inventoryservice:
+    image: ${DOCKER_REGISTRY-}inventoryservice
+    build:
+      context: .
+      dockerfile: src/Services/InventoryService/Dockerfile
+    depends_on:
+      - InventoryData
+
+  saleservice:
+    image: ${DOCKER_REGISTRY-}saleservice
+    build:
+      context: .
+      dockerfile: src/Services/SaleService/Dockerfile
+    depends_on:
+      - SaleData
+

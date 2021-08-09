@@ -1,6 +1,6 @@
 ﻿using EventBus.Events;
 
-namespace SaleService.IntegrationEvents.Events
+namespace InventoryService.IntegrationEvents.Events
 {
     public class UpdateProductIntegrationEvent : IntegrationEvent
     {

@@ -1,11 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using InventoryService.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SaleService.Models;
 using System;
 using System.Threading.Tasks;
 
-namespace SaleService.Data
+namespace InventoryService.Data
 {
     public class SeedData
     {
@@ -23,7 +23,7 @@ namespace SaleService.Data
             serviceCollection.AddSingleton<IConfiguration>(config);
 
             // DbContext
-            serviceCollection.AddDbContext<SaleDbContext>(option =>
+            serviceCollection.AddDbContext<InventoryDbContext>(option =>
             {
                 var connectionString = config.GetConnectionString("DefaultConnection");
                 if (string.IsNullOrEmpty(connectionString))
@@ -42,7 +42,7 @@ namespace SaleService.Data
             using (var serviceScope = GenerateServiceScope())
             {
                 var serviceProvider = serviceScope.ServiceProvider;
-                var context = serviceProvider.GetService<SaleDbContext>();
+                var context = serviceProvider.GetService<InventoryDbContext>();
                 context.Database.EnsureCreated();
 
                 Console.WriteLine("Database Created");
@@ -66,7 +66,7 @@ namespace SaleService.Data
                 }
             };
 
-        Console.WriteLine("Database seeded...");
+            Console.WriteLine("Database seeded...");
         }
-}
+    }
 }

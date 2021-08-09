@@ -1,15 +1,19 @@
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using SaleService.Data;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace SaleService
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            await SeedData.Seed();
+            CreateHostBuilder(args)
+               .Build().Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

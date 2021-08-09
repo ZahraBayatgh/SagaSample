@@ -15,6 +15,7 @@ using SaleService.Data;
 using SaleService.IntegrationEvents.Events;
 using SaleService.Services;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace SaleService
 {
@@ -69,6 +70,11 @@ namespace SaleService
             IEventBus eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
 
             eventBus.Subscribe<CancelProductIntegrationEvent, IIntegrationEventHandler<CancelProductIntegrationEvent>>();
+        }
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterAssemblyTypes(typeof(CancelProductIntegrationEvent).GetTypeInfo().Assembly)
+                .AsClosedTypesOf(typeof(IIntegrationEventHandler<>));
         }
     }
 

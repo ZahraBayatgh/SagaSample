@@ -3,6 +3,7 @@ using EventBus;
 using EventBus.Abstractions;
 using EventBus.RabbitMQ;
 using InventoryService.Data;
+using InventoryService.IntegrationEvents.Events;
 using InventoryService.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -13,7 +14,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using RabbitMQ.Client;
-using SaleService.IntegrationEvents.Events;
 using System.Reflection;
 
 namespace Service2

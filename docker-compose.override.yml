@@ -1,0 +1,61 @@
+version: '3.4'
+
+services:
+  rabbitmq:
+    container_name: rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+
+  InventoryData:
+    container_name: InventoryDB
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+
+    ports:
+      - "5435:1433"
+    volumes:
+      - x-inventorydata:/var/opt/mssql
+
+  SaleData:
+    container_name: SaleDB
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+
+    ports:
+      - "5433:1433"
+    volumes:
+      - x-saledata:/var/opt/mssql
+
+  inventoryservice:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=server=InventoryData;database=InventoryDB;uid=sa;password=Pass@word;
+      - EventBusConnection=rabbitmq
+      - SubscriptionClientName=InventoryService
+      - EventBusRetryCount= 5
+
+    ports:
+      - "5001:80"
+
+  saleservice:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ConnectionStrings__DefaultConnection=server=SaleData;database=SaleDB;uid=sa;password=Pass@word;
+      - EventBusConnection=rabbitmq
+      - SubscriptionClientName=SaleService
+      - EventBusRetryCount= 5
+
+    ports:
+      - "5002:80"
+    volumes:
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+volumes:
+  x-saledata:
+    external: false
+  x-inventorydata:
+    external: false
