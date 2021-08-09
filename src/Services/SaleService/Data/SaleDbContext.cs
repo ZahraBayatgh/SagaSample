@@ -9,7 +9,6 @@ namespace SaleService.Data
         {
 
         }
-
         public DbSet<Product> Products { get; set; }
     }
 }

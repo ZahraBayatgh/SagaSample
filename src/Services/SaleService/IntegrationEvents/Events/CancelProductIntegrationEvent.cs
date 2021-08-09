@@ -9,7 +9,6 @@ namespace SaleService.IntegrationEvents.Events
             Name = name;
             Count = count;
         }
-
         public string Name { get; set; }
         public int Count { get; set; }
     }

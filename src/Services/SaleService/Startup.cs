@@ -30,10 +30,14 @@ namespace SaleService
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<SaleDbContext>(options => 
+            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddEventBus(Configuration);
             services.AddCustomIntegrations(Configuration);
-            services.AddDbContext<SaleDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddScoped<IProductService, ProductService>();
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -62,8 +66,8 @@ namespace SaleService
             {
                 endpoints.MapControllers();
             });
-            ConfigureEventBus(app);
 
+            ConfigureEventBus(app);
         }
         private void ConfigureEventBus(IApplicationBuilder app)
         {

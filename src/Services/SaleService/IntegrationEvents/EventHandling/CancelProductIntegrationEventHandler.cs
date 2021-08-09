@@ -4,6 +4,7 @@ using SaleService.Dtos;
 using SaleService.IntegrationEvents.Events;
 using SaleService.Models;
 using SaleService.Services;
+using System;
 using System.Threading.Tasks;
 
 namespace SaleService.IntegrationEvents.EventHandling
@@ -24,12 +25,17 @@ namespace SaleService.IntegrationEvents.EventHandling
         {
             try
             {
-                await  _productService.CancelProductAsync(new ProductDto { Name = @event.Name, Count = @event.Count });
+                var productDto = new ProductDto 
+                { 
+                    Name = @event.Name, 
+                    Count = @event.Count
+                };
+                await  _productService.CancelProductAsync(productDto);
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
-
-                _logger.LogInformation($"Product {@event.Name} has been Canceled");
+                _logger.LogInformation($"Product {@event.Name} has been Canceled. Exception detail:{ex.Message}");
+                throw;
             }
         }
     }

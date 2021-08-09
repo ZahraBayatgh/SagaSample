@@ -5,6 +5,6 @@ namespace InventoryService.Services
 {
     public interface IInventoryService
     {
-        Task<bool> AddInventoryAsync(Inventory inventory);
+        Task<int> AddInventoryAsync(Inventory inventory);
     }
 }

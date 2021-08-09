@@ -23,8 +23,7 @@ namespace SaleService
             {
                 webBuilder.UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
-                .UseStartup<Startup>()
-               ;
+                .UseStartup<Startup>();
             });
     }
 }

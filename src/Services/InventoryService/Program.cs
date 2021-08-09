@@ -22,9 +22,9 @@ namespace Service2
                 .ConfigureWebHostDefaults(webHostBuilder =>
                 {
                     webHostBuilder
-              .UseContentRoot(Directory.GetCurrentDirectory())
-              .UseIISIntegration()
-              .UseStartup<Startup>();
+                    .UseContentRoot(Directory.GetCurrentDirectory())
+                    .UseIISIntegration()
+                    .UseStartup<Startup>();
                 });
     }
 }

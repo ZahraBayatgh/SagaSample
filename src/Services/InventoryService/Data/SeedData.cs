@@ -47,7 +47,6 @@ namespace InventoryService.Data
 
                 Console.WriteLine("Database Created");
 
-
                 var product = await context.Products.FirstOrDefaultAsync(x => x.Name == "Mouse");
                 if (product == null)
                 {

@@ -2,9 +2,9 @@
 
 namespace SaleService.IntegrationEvents.Events
 {
-    public class UpdateProductIntegrationEvent : IntegrationEvent
+    public class UpdateProductAndAddInventory : IntegrationEvent
     {
-        public UpdateProductIntegrationEvent(string name, int decreaseCount, int currentCount)
+        public UpdateProductAndAddInventory(string name, int decreaseCount, int currentCount)
         {
             Name = name;
             DecreaseCount = decreaseCount;

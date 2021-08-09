@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InventoryService", "src\Ser
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{80A20AB1-A4E8-441F-ABF0-F5B34418D6DB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SagaPattern.Tests", "tests\InventoryService.Test\SagaPattern.Tests.csproj", "{1AA5DCEE-433D-488A-9205-41261C4CE8A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SagaPattern.UnitTests", "tests\InventoryService.Test\SagaPattern.UnitTests.csproj", "{1AA5DCEE-433D-488A-9205-41261C4CE8A6}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{95E2D8FC-3CE8-4E30-9027-50D8BDF6CA2D}"
 EndProject

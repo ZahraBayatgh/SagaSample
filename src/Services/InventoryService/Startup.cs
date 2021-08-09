@@ -29,9 +29,13 @@ namespace Service2
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<InventoryDbContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+            );
+
             services.AddEventBus(Configuration);
             services.AddCustomIntegrations(Configuration);
-            services.AddDbContext<InventoryDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IInventoryService, InventoryService.Services.InventoryService>();
 
@@ -55,7 +59,7 @@ namespace Service2
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Inventory api");
             });
 
             app.UseEndpoints(endpoints =>
@@ -71,12 +75,12 @@ namespace Service2
         {
             IEventBus eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
 
-            eventBus.Subscribe<UpdateProductIntegrationEvent, IIntegrationEventHandler<UpdateProductIntegrationEvent>>();
+            eventBus.Subscribe<UpdateProductAndAddInventory, IIntegrationEventHandler<UpdateProductAndAddInventory>>();
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            builder.RegisterAssemblyTypes(typeof(UpdateProductIntegrationEvent).GetTypeInfo().Assembly)
+            builder.RegisterAssemblyTypes(typeof(UpdateProductAndAddInventory).GetTypeInfo().Assembly)
                 .AsClosedTypesOf(typeof(IIntegrationEventHandler<>));
         }
     }

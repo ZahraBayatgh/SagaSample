@@ -19,13 +19,13 @@ namespace InventoryService.Test.Config
                   new Inventory
                   {
                        ProductId=1,
-                       Type=Models.Type.Out,
+                       Type=Models.InventoryType.Out,
                        Count=2
                   },
                    new Inventory
                   {
                        ProductId=1,
-                       Type=Models.Type.Out,
+                       Type=Models.InventoryType.Out,
                        Count=3
                   },
                 };
