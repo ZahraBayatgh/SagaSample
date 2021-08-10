@@ -1,9 +1,6 @@
 ﻿using EventBus.Abstractions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using SaleService.Dtos;
-using SaleService.IntegrationEvents.Events;
-using SaleService.Models;
 using SaleService.Services;
 using System.Threading.Tasks;
 
@@ -23,61 +20,32 @@ namespace SaleService.Controllers
         {
             _eventBus = eventBus;
             _productService = productService;
-
-        }
-
-
-        [HttpPost]
-        public async Task<IActionResult> CreateProduct(ProductDto productDto)
-        {
-            try
-            {
-                var product = new Product
-                {
-                    Name = productDto.Name,
-                    Count = productDto.Count
-                };
-                var productId = await _productService.AddProductAsync(product);
-
-                return CreatedAtRoute("ProductById", productId);
-            }
-            catch (System.Exception)
-            {
-                return BadRequest();
-            }
         }
 
         [HttpGet("{id}", Name = "ProductById")]
-        public async Task<IActionResult> GetProductById(int id)
+        public async Task<IActionResult> GetProductByIdAsync(int id)
         {
-            try
+            var product = await _productService.GetProductByIdAsync(id);
+            if (product.IsSuccess)
             {
-                var product = await _productService.GetProductAsync(id);
-
                 return Ok(product);
             }
-            catch (System.Exception)
-            {
-                return BadRequest();
-            }
+
+            return BadRequest(product.Error);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateProduct(ProductDto productDto)
+        [HttpPost]
+        public async Task<IActionResult> CreateProductAsync(CreateProductDto createProductDto)
         {
-            try
-            {
-                var product = await _productService.UpdateProductAsync(productDto);
+           
+            var productId = await _productService.CreateProductAsync(createProductDto);
 
-                UpdateProductAndAddInventory updateProductIntegrationEvent = new UpdateProductAndAddInventory(product.Name, product.Count, productDto.Count);
-                _eventBus.Publish(updateProductIntegrationEvent);
-
-                return NoContent();
-            }
-            catch (System.Exception)
+            if (productId.IsSuccess)
             {
-                return BadRequest();
+                return CreatedAtAction("ProductById", productId);
             }
+
+            return BadRequest(productId.Error);
         }
 
     }

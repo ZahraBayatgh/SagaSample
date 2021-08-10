@@ -2,6 +2,7 @@ using Autofac;
 using EventBus;
 using EventBus.Abstractions;
 using EventBus.RabbitMQ;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using RabbitMQ.Client;
 using SaleService.Data;
+using SaleService.DomainEvents.EventHandling;
 using SaleService.IntegrationEvents.Events;
 using SaleService.Services;
 using System.Collections.Generic;
@@ -35,9 +37,11 @@ namespace SaleService
 
             services.AddEventBus(Configuration);
             services.AddCustomIntegrations(Configuration);
+            services.AddMediatR(Assembly.GetExecutingAssembly());
 
             services.AddScoped<IProductService, ProductService>();
-
+            services.AddScoped<IOrderService, OrderService>();
+            
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -73,12 +77,15 @@ namespace SaleService
         {
             IEventBus eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
 
-            eventBus.Subscribe<CancelProductIntegrationEvent, IIntegrationEventHandler<CancelProductIntegrationEvent>>();
+            eventBus.Subscribe<CancelChangeProductCountIntegrationEvent, IIntegrationEventHandler<CancelChangeProductCountIntegrationEvent>>();
         }
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            builder.RegisterAssemblyTypes(typeof(CancelProductIntegrationEvent).GetTypeInfo().Assembly)
+            builder.RegisterAssemblyTypes(typeof(CancelChangeProductCountIntegrationEvent).GetTypeInfo().Assembly)
                 .AsClosedTypesOf(typeof(IIntegrationEventHandler<>));
+
+            builder.RegisterAssemblyTypes(typeof(UpdateProductDomainEventHandler).GetTypeInfo().Assembly)
+             .AsClosedTypesOf(typeof(INotificationHandler<>));
         }
     }
 

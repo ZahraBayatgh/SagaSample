@@ -1,8 +1,8 @@
 ﻿namespace SaleService.Dtos
 {
-    public class ProductDto
+    public class OrderDto
     {
-        public string Name { get; set; }
+        public int ProductId { get; set; }
         public int Count { get; set; }
     }
 }

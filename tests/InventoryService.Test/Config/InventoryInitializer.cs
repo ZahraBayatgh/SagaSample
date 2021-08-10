@@ -1,10 +1,7 @@
 ﻿using InventoryService.Data;
 using InventoryService.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InventoryService.Test.Config
 {
@@ -12,25 +9,27 @@ namespace InventoryService.Test.Config
     {
         public void InitializeData(InventoryDbContext dbContext)
         {
-            if (!dbContext.Inventories.Any())
+            if (!dbContext.InventoryTransactions.Any())
             {
-                var inventories = new List<Inventory>
+                var inventories = new List<InventoryTransaction>
                 {
-                  new Inventory
+                  new InventoryTransaction
                   {
                        ProductId=1,
-                       Type=Models.InventoryType.Out,
-                       Count=2
+                       Type=InventoryType.Out,
+                       ChangeCount=2,
+                       CurrentCount=18
                   },
-                   new Inventory
+                   new InventoryTransaction
                   {
                        ProductId=1,
-                       Type=Models.InventoryType.Out,
-                       Count=3
+                       Type=InventoryType.Out,
+                       ChangeCount=3,
+                       CurrentCount=15
                   },
                 };
 
-                dbContext.Inventories.AddRange(inventories);
+                dbContext.InventoryTransactions.AddRange(inventories);
                 dbContext.SaveChanges();
             }
         }

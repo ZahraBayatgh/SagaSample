@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CSharpFunctionalExtensions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SaleService.Data;
 using SaleService.Dtos;
@@ -19,72 +20,196 @@ namespace SaleService.Services
             _context = context;
             _logger = logger;
         }
-        public async Task<Product> GetProductAsync(int id)
+
+        /// <summary>
+        /// This metode get product by product id.
+        /// If the input id is not valid or an expiration occurs, a Failure will be returned.
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        public async Task<Result<Product>> GetProductByIdAsync(int productId)
         {
             try
             {
-                var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
+                // Check product id
+                if (productId <= 0)
+                    return Result.Failure<Product>($"Product id is invalid.");
 
-                return product;
+                // Get product by product id
+                var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == productId);
+
+                return Result.Success(product);
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Get {id} product id failed. Exception detail:{ex.Message}");
+                _logger.LogInformation($"Get {productId} product id failed. Exception detail:{ex.Message}");
 
-                throw;
+                return Result.Failure<Product>($"Get {productId} product id failed.");
             }
         }
-        public async Task<int> AddProductAsync(Product product)
+
+        /// <summary>
+        /// This method adds a Product to the table.
+        /// If the input createProductDto is not valid or an expiration occurs, a Failure will be returned.
+        /// </summary>
+        /// <param name="createProductDto"></param>
+        /// <returns></returns>
+        public async Task<Result<int>> CreateProductAsync(CreateProductDto createProductDto)
         {
             try
             {
+                // Check product instance
+                var productValidation = CheckProductInstance(createProductDto);
+                if (productValidation.IsFailure)
+                    return Result.Failure<int>(productValidation.Error);
+
+                // Intialize product
+                var product = new Product
+                {
+                    Name = createProductDto.Name,
+                    Count = createProductDto.Count
+                };
+
+                // Add product in database
                 await _context.Products.AddAsync(product);
-
                 await _context.SaveChangesAsync();
 
-                return product.Id;
+                return Result.Success(product.Id);
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Add {product.Name} product failed. Exception detail:{ex.Message}");
-                throw;
+                _logger.LogInformation($"Add {createProductDto.Name} product failed. Exception detail:{ex.Message}");
+
+                return Result.Failure<int>($"Add {createProductDto.Name} product failed.");
             }
         }
-        public async Task<Product> UpdateProductAsync(ProductDto productDto)
+
+        /// <summary>
+        /// This method updates the product count.
+        /// If the input updateProductDto is not valid or an expiration occurs, a Failure will be returned.
+        /// If product count be lesser than DecreaseCount, a Failure will be returned.
+        /// </summary>
+        /// <param name="updateProductDto"></param>
+        /// <returns></returns>
+        public async Task<Result> UpdateProductCountAsync(UpdateProductCountDto updateProductDto)
         {
             try
             {
-                var product = await _context.Products.FirstOrDefaultAsync(x => x.Name == productDto.Name);
+                // Check updateProductDto instance
+                var updateProductDtoValidation = CheckUpdateProductDtoInstance(updateProductDto);
+                if (updateProductDtoValidation.IsFailure)
+                    return Result.Failure<int>(updateProductDtoValidation.Error);
 
-                product.Count -= productDto.Count;
+                // Get product
+                var product = await _context.Products.FirstOrDefaultAsync(x => x.Name == updateProductDto.Name);
+
+                // Check that the product count value is not less than the DecreaseCount.
+                if (product.Count < updateProductDto.DecreaseCount)
+                    return Result.Failure<int>($"{product.Name} product count lesser than DecreaseCount.");
+
+                // Decrease product count
+                product.Count -= updateProductDto.DecreaseCount;
                 await _context.SaveChangesAsync();
 
-                return product;
+                return Result.Success();
+
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Update {productDto.Name} product failed. Exception detail:{ex.Message}");
-                throw;
+                _logger.LogInformation($"Update {updateProductDto.Name} product failed. Exception detail:{ex.Message}");
+
+                return Result.Failure($"Update {updateProductDto.Name} product failed.");
             }
         }
-  
-        public async Task<bool> CancelProductAsync(ProductDto product)
+
+        /// <summary>
+        /// This method roll back product count.
+        /// If the input cancelChangeProductCount is not valid or an expiration occurs, a Failure will be returned.
+        /// </summary>
+        /// <param name="cancelChangeProductCount"></param>
+        /// <returns></returns>
+        public async Task<Result> CancelChangeProductCountAsync(CancelChangeProductCountDto cancelChangeProductCount)
         {
             try
             {
-                var result = await _context.Products.FirstOrDefaultAsync(x => x.Name == product.Name);
+                // Check cancelChangeProductCount instance
+                var cancelChangeProductCountValidation = CheckUpdateProductDtoInstance(cancelChangeProductCount);
+                if (cancelChangeProductCountValidation.IsFailure)
+                    return Result.Failure<int>(cancelChangeProductCountValidation.Error);
 
-                result.Count = product.Count;
+                // Get product
+                var result = await _context.Products.FirstOrDefaultAsync(x => x.Name == cancelChangeProductCount.Name);
+
+                //Roll back product count
+                result.Count += cancelChangeProductCount.DecreaseCount;
                 await _context.SaveChangesAsync();
 
-                return true;
+                return Result.Success();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogInformation($"Cancel {cancelChangeProductCount.Name} product failed. Exception detail:{ex.Message}");
 
-                throw;
+                return Result.Failure($"Cancel {cancelChangeProductCount.Name} product failed.");
             }
         }
-      
+
+        /// <summary>
+        /// This methode check a createProductDto instance
+        /// </summary>
+        /// <param name="createProductDto"></param>
+        /// <returns></returns>
+        private static Result CheckProductInstance(CreateProductDto createProductDto)
+        {
+            if (createProductDto == null)
+                return Result.Failure($"CreateProductDto instance is invalid.");
+
+            if (string.IsNullOrEmpty(createProductDto.Name))
+                return Result.Failure($"Product name is empty.");
+
+            if (createProductDto.Count <= 0)
+                return Result.Failure($"Product count is invaild.");
+
+            return Result.Success();
+        }
+
+        /// <summary>
+        /// This methode check a updateProductDto instance
+        /// </summary>
+        /// <param name="updateProductDto"></param>
+        /// <returns></returns>
+        private static Result CheckUpdateProductDtoInstance(UpdateProductCountDto updateProductDto)
+        {
+            if (updateProductDto == null)
+                return Result.Failure($"UpdateProductDto instance is invalid.");
+
+            if (string.IsNullOrEmpty(updateProductDto.Name))
+                return Result.Failure($"UpdateProductDto name is empty.");
+
+            if (updateProductDto.DecreaseCount <= 0)
+                return Result.Failure($"UpdateProductDto DecreaseCount is invaild.");
+
+            return Result.Success();
+        }
+
+        /// <summary>
+        /// This methode check a cancelChangeProductCountDto instance
+        /// </summary>
+        /// <param name="cancelChangeProductCountDto"></param>
+        /// <returns></returns>
+        private static Result CheckUpdateProductDtoInstance(CancelChangeProductCountDto cancelChangeProductCountDto)
+        {
+            if (cancelChangeProductCountDto == null)
+                return Result.Failure($"CancelChangeProductCountDto instance is invalid.");
+
+            if (string.IsNullOrEmpty(cancelChangeProductCountDto.Name))
+                return Result.Failure($"CancelChangeProductCountDto name is empty.");
+
+            if (cancelChangeProductCountDto.DecreaseCount <= 0)
+                return Result.Failure($"CancelChangeProductCountDto DecreaseCount is invaild.");
+
+            return Result.Success();
+        }
+
     }
 }

@@ -10,7 +10,7 @@ namespace InventoryService.Data
 
         }
 
-        public DbSet<Inventory> Inventories  { get; set; }
+        public DbSet<InventoryTransaction> InventoryTransactions  { get; set; }
         public DbSet<Product>  Products { get; set; }
     }
 }

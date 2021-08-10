@@ -1,4 +1,5 @@
-﻿using InventoryService.Dtos;
+﻿using CSharpFunctionalExtensions;
+using InventoryService.Dtos;
 using InventoryService.Models;
 using System.Threading.Tasks;
 
@@ -6,8 +7,9 @@ namespace InventoryService.Services
 {
     public interface IProductService
     {
-        Task<Product> GetProductAsync(int id);
-        Task<int> AddProductAsync(Product product);
-        Task<Product> UpdateProductAsync(ProductDto product);
+        Task<Result<Product>> GetProductByIdAsync(int productId);
+        Task<Result<int>> GetProductIdAsync(string name);
+        Task<Result<int>> CreateProductAsync(ProductDto productDto);
+        Task<Result<Product>> UpdateProductAsync(ProductDto product);
     }
 }

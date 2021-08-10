@@ -2,16 +2,14 @@
 
 namespace InventoryService.IntegrationEvents.Events
 {
-    public class UpdateProductAndAddInventory : IntegrationEvent
+    public class UpdateProductCountAndAddInventoryTransaction : IntegrationEvent
     {
-        public UpdateProductAndAddInventory(string name, int decreaseCount, int currentCount)
+        public UpdateProductCountAndAddInventoryTransaction(string name, int decreaseCount)
         {
             Name = name;
             DecreaseCount = decreaseCount;
-            CurrentCount = currentCount;
         }
         public string Name { get; set; }
-        public int CurrentCount { get; set; }
         public int DecreaseCount { get; set; }
     }
 }

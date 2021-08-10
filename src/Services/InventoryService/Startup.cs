@@ -37,7 +37,7 @@ namespace Service2
             services.AddCustomIntegrations(Configuration);
 
             services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<IInventoryService, InventoryService.Services.InventoryService>();
+            services.AddScoped<IInventoryTransactionService, InventoryService.Services.InventoryTransactionService>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -75,12 +75,12 @@ namespace Service2
         {
             IEventBus eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
 
-            eventBus.Subscribe<UpdateProductAndAddInventory, IIntegrationEventHandler<UpdateProductAndAddInventory>>();
+            eventBus.Subscribe<UpdateProductCountAndAddInventoryTransaction, IIntegrationEventHandler<UpdateProductCountAndAddInventoryTransaction>>();
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            builder.RegisterAssemblyTypes(typeof(UpdateProductAndAddInventory).GetTypeInfo().Assembly)
+            builder.RegisterAssemblyTypes(typeof(UpdateProductCountAndAddInventoryTransaction).GetTypeInfo().Assembly)
                 .AsClosedTypesOf(typeof(IIntegrationEventHandler<>));
         }
     }

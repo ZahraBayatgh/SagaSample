@@ -4,7 +4,6 @@ using InventoryService.Services;
 using InventoryService.Test.Config;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -20,40 +19,227 @@ namespace InventoryService.Test
 
             productService = new ProductService(Context, logger.Object);
         }
+
+        #region GetProductById
+
         [Fact]
-        public async Task AddProductAsync()
+        public async Task GetProductById_When_ProducId_Is_Invalid_Return_Failure()
         {
             //Arrange
-            var product = new Product
+            var id = 0;
+
+            //Act
+            var product = await productService.GetProductByIdAsync(id);
+
+            //Assert
+            Assert.True(product.IsFailure);
+        }
+
+        [Fact]
+        public async Task GetProductById_When_ProducId_Is_Valid_Return_Product()
+        {
+            //Arrange
+            var id = 1;
+
+            //Act
+            var product = await productService.GetProductByIdAsync(id);
+
+            //Assert
+            Assert.Equal(id, product.Value.Id);
+        }
+
+        #endregion
+
+        #region GetProductId
+
+        [Fact]
+        public async Task GetProductId_When_Name_Is_Invalid_Return_Failure()
+        {
+            //Arrange
+            var name = "";
+
+            //Act
+            var product = await productService.GetProductIdAsync(name);
+
+            //Assert
+            Assert.True(product.IsFailure);
+        }
+
+        [Fact]
+        public async Task GetProductId_When_Name_Is_Valid_Return_Product()
+        {
+            //Arrange
+            var name = "Mouse";
+
+            //Act
+            var product = await productService.GetProductIdAsync(name);
+
+            //Assert
+            Assert.Equal(1, product.Value);
+        }
+
+        #endregion
+
+        #region CreateProduct
+
+        [Fact]
+        public async Task CreateProduct_When_Product_Is_null_Return_Failure()
+        {
+            //Act
+            var productId = await productService.CreateProductAsync(null);
+
+            //Assert
+            Assert.True(productId.IsFailure);
+        }
+
+        [Fact]
+        public async Task CreateProduct_When_Product_Name_Is_Null_Return_Failure()
+        {
+            //Arrange
+            var createProductDto = new ProductDto
             {
-                Id=5,
-                Name = "Clock", 
                 Count = 10
             };
 
             //Act
-           var productId= await productService.AddProductAsync(product);
+            var productId = await productService.CreateProductAsync(createProductDto);
 
             //Assert
-            Assert.Equal(5,productId);
-
+            Assert.True(productId.IsFailure);
         }
+
         [Fact]
-        public async Task UpdateProductAsync()
+        public async Task CreateProduct_When_Product_Name_Is_Empty_Return_Failure()
         {
             //Arrange
-            var productDto = new ProductDto
+            var createProductDto = new ProductDto
             {
-                Name = "Mouse",
-                Count = 5 
+                Name = "",
+                Count = 10
             };
 
             //Act
-            var product = await productService.UpdateProductAsync(productDto);
+            var productId = await productService.CreateProductAsync(createProductDto);
 
             //Assert
-            Assert.Equal(5, product.Count);
-
+            Assert.True(productId.IsFailure);
         }
+
+        [Fact]
+        public async Task CreateProduct_When_Product_Count_Is_Zero_Return_Failure()
+        {
+            //Arrange
+            var createProductDto = new ProductDto
+            {
+                Name = "Pen",
+                Count = 0
+            };
+
+            //Act
+            var productId = await productService.CreateProductAsync(createProductDto);
+
+            //Assert
+            Assert.True(productId.IsFailure);
+        }
+
+        [Fact]
+        public async Task CreateProduct_When_Product_Is_Valid_Return_ProductId()
+        {
+            //Arrange
+            var createProductDto = new ProductDto
+            {
+                Name = "Pen",
+                Count = 10
+            };
+
+            //Act
+            var productId = await productService.CreateProductAsync(createProductDto);
+
+            //Assert
+            Assert.Equal(3, productId.Value);
+        }
+
+        #endregion
+
+        #region UpdateProduct
+
+        [Fact]
+        public async Task UpdateProduct_When_Product_Is_null_Return_Failure()
+        {
+            //Act
+            var product = await productService.UpdateProductAsync(null);
+
+            //Assert
+            Assert.True(product.IsFailure);
+        }
+
+        [Fact]
+        public async Task UpdateProduct_When_Product_Name_Is_Null_Return_Failure()
+        {
+            //Arrange
+            var createProductDto = new ProductDto
+            {
+                Count = 10
+            };
+
+            //Act
+            var product = await productService.UpdateProductAsync(createProductDto);
+
+            //Assert
+            Assert.True(product.IsFailure);
+        }
+
+        [Fact]
+        public async Task UpdateProduct_When_Product_Name_Is_Empty_Return_Failure()
+        {
+            //Arrange
+            var createProductDto = new ProductDto
+            {
+                Name = "",
+                Count = 10
+            };
+
+            //Act
+            var product = await productService.UpdateProductAsync(createProductDto);
+
+            //Assert
+            Assert.True(product.IsFailure);
+        }
+
+        [Fact]
+        public async Task UpdateProduct_When_Product_Count_Is_Lesser_than_Zero_Return_Failure()
+        {
+            //Arrange
+            var createProductDto = new ProductDto
+            {
+                Name = "Mouse",
+                Count = -2
+            };
+
+            //Act
+            var product = await productService.UpdateProductAsync(createProductDto);
+
+            //Assert
+            Assert.True(product.IsFailure);
+        }
+
+        [Fact]
+        public async Task UpdateProduct_When_Product_Is_Valid_Return_Product()
+        {
+            //Arrange
+            var createProductDto = new ProductDto
+            {
+                Name = "Mouse",
+                Count = 10
+            };
+
+            //Act
+            var product = await productService.UpdateProductAsync(createProductDto);
+
+            //Assert
+            Assert.Equal(10, product.Value.Count);
+        }
+
+        #endregion
     }
 }

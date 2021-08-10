@@ -9,28 +9,29 @@ using System.Threading.Tasks;
 
 namespace SaleService.IntegrationEvents.EventHandling
 {
-    public class CancelProductIntegrationEventHandler : IIntegrationEventHandler<CancelProductIntegrationEvent>
+    public class CancelChangeProductCountIntegrationEventHandler : IIntegrationEventHandler<CancelChangeProductCountIntegrationEvent>
     {
-        private readonly ILogger<CancelProductIntegrationEventHandler> _logger;
+        private readonly ILogger<CancelChangeProductCountIntegrationEventHandler> _logger;
         private readonly IProductService _productService;
 
-        public CancelProductIntegrationEventHandler(ILogger<CancelProductIntegrationEventHandler> logger,
+        public CancelChangeProductCountIntegrationEventHandler(ILogger<CancelChangeProductCountIntegrationEventHandler> logger,
             IProductService productService)
         {
             _logger = logger;
             _productService = productService;
         }
 
-        public async Task Handle(CancelProductIntegrationEvent @event)
+        public async Task Handle(CancelChangeProductCountIntegrationEvent @event)
         {
             try
             {
-                var productDto = new ProductDto 
+                var productDto = new CancelChangeProductCountDto 
                 { 
                     Name = @event.Name, 
-                    Count = @event.Count
+                    DecreaseCount = @event.DecreaseCount
                 };
-                await  _productService.CancelProductAsync(productDto);
+
+                await  _productService.CancelChangeProductCountAsync(productDto);
             }
             catch (Exception ex)
             {

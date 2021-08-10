@@ -17,39 +17,30 @@ namespace InventoryService.Controllers
             _productService = productService;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateProduct(ProductDto productDto)
-        {
-            try
-            {
-                var product = new Product 
-                { 
-                    Name = productDto.Name, 
-                    Count = productDto.Count
-                };
-                var productId = await _productService.AddProductAsync(product);
-
-                return CreatedAtRoute("ProductById", productId);
-            }
-            catch (System.Exception)
-            {
-                return BadRequest();
-            }
-        }
-
         [HttpGet("{id}", Name = "ProductById")]
-        public async Task<IActionResult> GetProductById(int id)
+        public async Task<IActionResult> GetProductByIdAsync(int id)
         {
-            try
+            var product = await _productService.GetProductByIdAsync(id);
+            if (product.IsSuccess)
             {
-                var product = await _productService.GetProductAsync(id);
-
                 return Ok(product);
             }
-            catch (System.Exception)
+
+            return BadRequest(product.Error);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateProductAsync(ProductDto productDto)
+        {
+
+            var productId = await _productService.CreateProductAsync(productDto);
+
+            if (productId.IsSuccess)
             {
-                return BadRequest();
+                return CreatedAtRoute("ProductById", productId);
             }
+
+            return BadRequest(productId.Error);
         }
     }
 }

@@ -2,9 +2,9 @@
 
 namespace InventoryService.IntegrationEvents.Events
 {
-    public class CancelProductIntegrationEvent : IntegrationEvent
+    public class CancelChangeProductCountIntegrationEvent : IntegrationEvent
     {
-        public CancelProductIntegrationEvent(string name, int count)
+        public CancelChangeProductCountIntegrationEvent(string name, int count)
         {
             Name = name;
             Count = count;
