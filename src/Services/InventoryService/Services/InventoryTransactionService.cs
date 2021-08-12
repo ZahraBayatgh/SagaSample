@@ -38,6 +38,9 @@ namespace InventoryService.Services
 
                 var inventoryTransaction = await _context.InventoryTransactions.OrderByDescending(x => x.Id).FirstOrDefaultAsync(x => x.ProductId == productId);
 
+                if (inventoryTransaction==null)
+                    return Result.Failure<int>($"et latest inventory transaction by product id {productId} was not found.");
+
                 return Result.Success(inventoryTransaction.CurrentCount);
             }
             catch (Exception ex)
@@ -82,6 +85,39 @@ namespace InventoryService.Services
             {
                 _logger.LogInformation($"Add inventory transaction failed. Exception detail:{ex.Message}");
                 return Result.Failure<InventoryTransaction>("Add inventory transaction failed. Exception detail");
+            }
+        }
+
+        /// <summary>
+        /// This method delete a InventoryTransaction to the table.
+        /// If the input inventoryTransactionId is not valid or an expiration occurs, a Failure will be returned.
+        /// </summary>
+        /// <param name="inventoryTransactionId"></param>
+        /// <returns></returns>
+        public async Task<Result> DeleteInventoryTransactionAsync(int inventoryTransactionId)
+        {
+            try
+            {
+                // Check inventoryTransaction id
+                if (inventoryTransactionId <= 0)
+                    return Result.Failure($"InventoryTransaction id is zero.");
+
+                // Get inventoryTransaction by inventoryTransaction id
+                var inventoryTransaction = await _context.InventoryTransactions.FirstOrDefaultAsync(x => x.Id == inventoryTransactionId);
+                if (inventoryTransaction == null)
+                    return Result.Failure($"InventoryTransaction id is invalid.");
+
+                // Remove inventoryTransaction
+                _context.InventoryTransactions.Remove(inventoryTransaction);
+                await _context.SaveChangesAsync();
+
+                return Result.Success();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"Delete inventoryTransaction with {inventoryTransactionId} id failed. Exception detail:{ex.Message}");
+
+                return Result.Failure($"Delete inventoryTransaction with {inventoryTransactionId} id failed.");
             }
         }
 

@@ -23,7 +23,7 @@ namespace SagaPattern.Tests.Sale
         #region GetProductById
 
         [Fact]
-        public async Task GetProductById_When_ProducId_Is_Invalid_Return_Failure()
+        public async Task GetProductById_When_ProductId_Is_Invalid_Return_Failure()
         {
             //Arrange
             var id = 0;
@@ -36,7 +36,7 @@ namespace SagaPattern.Tests.Sale
         }
 
         [Fact]
-        public async Task GetProductById_When_ProducId_Is_Valid_Return_Product()
+        public async Task GetProductById_When_ProductId_Is_Valid_Return_Product()
         {
             //Arrange
             var id = 1;

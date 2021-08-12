@@ -1,6 +1,6 @@
 ﻿using InventoryService.Dtos;
-using InventoryService.Models;
 using InventoryService.Services;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -11,19 +11,23 @@ namespace InventoryService.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
+        private readonly IInventoryOrcasrator _inventoryOrcasrator;
+        private readonly IMediator _mediator;
 
-        public ProductController(IProductService productService)
+        public ProductController(IProductService productService,
+            IInventoryOrcasrator inventoryOrcasrator )
         {
             _productService = productService;
+            _inventoryOrcasrator = inventoryOrcasrator;
         }
 
-        [HttpGet("{id}", Name = "ProductById")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetProductByIdAsync(int id)
         {
             var product = await _productService.GetProductByIdAsync(id);
             if (product.IsSuccess)
             {
-                return Ok(product);
+                return Ok(product.Value);
             }
 
             return BadRequest(product.Error);
@@ -32,15 +36,14 @@ namespace InventoryService.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProductAsync(ProductDto productDto)
         {
+            var createProductResponse = await _inventoryOrcasrator.CreateProductInventoryTransactionAsync(productDto);
 
-            var productId = await _productService.CreateProductAsync(productDto);
-
-            if (productId.IsSuccess)
+            if (createProductResponse.IsSuccess)
             {
-                return CreatedAtRoute("ProductById", productId);
+                return CreatedAtAction(nameof(GetProductByIdAsync), new { id = createProductResponse.Value }, null);
             }
 
-            return BadRequest(productId.Error);
+            return BadRequest(createProductResponse.Error);
         }
     }
 }

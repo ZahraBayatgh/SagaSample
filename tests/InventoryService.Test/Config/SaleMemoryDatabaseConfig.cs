@@ -1,16 +1,11 @@
-﻿using InventoryService.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using SaleService.Data;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InventoryService.Test.Config
 {
-   public class SaleMemoryDatabaseConfig
+    public class SaleMemoryDatabaseConfig
     {
         protected SaleMemoryDatabaseConfig()
         {
@@ -18,7 +13,8 @@ namespace InventoryService.Test.Config
 
             Context = CreateContext();
 
-            new SaleInitializer().InitializeData(Context);
+            new OrderInitializer().InitializeData(Context);
+            new ProductSaleInitializer().InitializeData(Context);
         }
 
         protected SaleDbContext Context { get; set; }

@@ -2,8 +2,7 @@
 {
     public class CreateOrderDto
     {
-        public int OrderId { get; set; }
-        public string Name { get; set; }
-        public int DecreaseCount { get; set; }
+        public int ProductId { get; set; }
+        public int Count { get; set; }
     }
 }

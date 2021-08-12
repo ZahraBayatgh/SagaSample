@@ -41,6 +41,10 @@ namespace InventoryService.IntegrationEvents.EventHandling
                 // Get latest InventoryTransaction by product id
                 var latestInventoryTransactionCount = await _inventoryService.GetLatestInventoryTransactionByProductIdAsync(productId.Value);
 
+                // Check latest InventoryTransaction
+                if (latestInventoryTransactionCount.IsFailure)
+                    throw new Exception(latestInventoryTransactionCount.Error);
+
                 // Intialize InventoryTransactionDto
                 var inventoryTransaction = new InventoryTransactionDto
                 {

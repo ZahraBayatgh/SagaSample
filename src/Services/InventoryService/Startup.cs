@@ -37,9 +37,13 @@ namespace Service2
             services.AddCustomIntegrations(Configuration);
 
             services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<IInventoryTransactionService, InventoryService.Services.InventoryTransactionService>();
+            services.AddScoped<IInventoryTransactionService, InventoryTransactionService>();
+            services.AddScoped<IInventoryOrcasrator, InventoryOrcasrator>();
 
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.SuppressAsyncSuffixInActionNames = false;
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Inventory api", Version = "v1" });
@@ -76,6 +80,8 @@ namespace Service2
             IEventBus eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
 
             eventBus.Subscribe<UpdateProductCountAndAddInventoryTransaction, IIntegrationEventHandler<UpdateProductCountAndAddInventoryTransaction>>();
+            eventBus.Subscribe<DeleteProductIntegrationEvent, IIntegrationEventHandler<DeleteProductIntegrationEvent>>();
+            
         }
 
         public void ConfigureContainer(ContainerBuilder builder)

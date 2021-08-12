@@ -27,47 +27,78 @@ namespace SaleService.Services
         }
 
         /// <summary>
+        /// This metode get order by order id.
+        /// If the input id is not valid or an expiration occurs, a Failure will be returned.
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public async Task<Result<Order>> GetOrderByIdAsync(int orderId)
+        {
+            try
+            {
+                // Check order id
+                if (orderId <= 0)
+                    return Result.Failure<Order>($"Order id is invalid.");
+
+                // Get order by order id
+                var order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == orderId);
+
+                return Result.Success(order);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"Get {orderId} order id failed. Exception detail:{ex.Message}");
+
+                return Result.Failure<Order>($"Get {orderId} order id failed.");
+            }
+        }
+
+        /// <summary>
         /// This method adds a Order to the table.
         /// If the input createProductDto is not valid or an expiration occurs, a Failure will be returned.
         /// </summary>
-        /// <param name="orderDto"></param>
-        public async Task<Result<CreateOrderDto>> CreateOrderAsync(OrderDto orderDto)
+        /// <param name="createOrderDto"></param>
+        public async Task<Result<CreateOrderResponseDto>> CreateOrderAsync(CreateOrderDto createOrderDto)
         {
             try
             {
                 // Check product instance
-                var orderValidation = CheckProductInstance(orderDto);
+                var orderValidation = CheckProductInstance(createOrderDto);
                 if (orderValidation.IsFailure)
-                    return Result.Failure<CreateOrderDto>(orderValidation.Error);
+                    return Result.Failure<CreateOrderResponseDto>(orderValidation.Error);
 
                 // Check product id in database
-                var product = await _productService.GetProductByIdAsync(orderDto.ProductId);
+                var product = await _productService.GetProductByIdAsync(createOrderDto.ProductId);
                 if (product.Value == null) 
-                return Result.Failure<CreateOrderDto>($"Product Id {orderDto.ProductId} is invalid.");
+                return Result.Failure<CreateOrderResponseDto>($"Product Id {createOrderDto.ProductId} is invalid.");
+
+                // Check produt count
+                if (product.Value.Count<createOrderDto.Count)
+                    return Result.Failure<CreateOrderResponseDto>($"The count of the product {product.Value.Id} id is less than the count of the order");
 
                 // Intialize Order
                 Order order = new Order
                 {
-                    ProductId = orderDto.ProductId,
-                    Count = orderDto.Count
+                    ProductId = createOrderDto.ProductId,
+                    Count = createOrderDto.Count
                 };
 
                 // Add order in database
                 await _context.Orders.AddAsync(order);
                 await _context.SaveChangesAsync();
 
-                CreateOrderDto createOrderDto = new CreateOrderDto
+                CreateOrderResponseDto createOrderResponseDto = new CreateOrderResponseDto
                 {
                     Name = product.Value.Name,
-                    DecreaseCount = orderDto.Count
+                    DecreaseCount = createOrderDto.Count
                 };
-                return Result.Success(createOrderDto);
+                return Result.Success(createOrderResponseDto);
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Add order with {orderDto.ProductId} product failed. Exception detail:{ex.Message}");
+                _logger.LogInformation($"Add order with {createOrderDto.ProductId} product failed. Exception detail:{ex.Message}");
 
-                return Result.Failure<CreateOrderDto>($"Add order with {orderDto.ProductId} product failed.");
+                return Result.Failure<CreateOrderResponseDto>($"Add order with {createOrderDto.ProductId} product failed.");
             }
         }
 
@@ -103,17 +134,21 @@ namespace SaleService.Services
                 return Result.Failure($"Delete order with {orderId} id failed.");
             }
         }
+      
         /// <summary>
         /// This methode check a orderDto instance
         /// </summary>
-        /// <param name="orderDto"></param>
+        /// <param name="createOrderDto"></param>
         /// <returns></returns>
-        private Result CheckProductInstance(OrderDto orderDto)
+        private Result CheckProductInstance(CreateOrderDto createOrderDto)
         {
-            if (orderDto.ProductId <= 0)
+            if (createOrderDto==null)
+                return Result.Failure($"CreateOrderDto is null.");
+
+            if (createOrderDto.ProductId <= 0)
                 return Result.Failure($"ProductId is invalid.");
 
-            if (orderDto.Count <= 0)
+            if (createOrderDto.Count <= 0)
                 return Result.Failure($"Count is invalid.");
 
             return Result.Success();

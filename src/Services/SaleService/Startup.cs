@@ -42,7 +42,10 @@ namespace SaleService
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IOrderService, OrderService>();
             
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.SuppressAsyncSuffixInActionNames = false;
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Sale api", Version = "v1" });
@@ -78,6 +81,8 @@ namespace SaleService
             IEventBus eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
 
             eventBus.Subscribe<CancelChangeProductCountIntegrationEvent, IIntegrationEventHandler<CancelChangeProductCountIntegrationEvent>>();
+            eventBus.Subscribe<CreateProductIntegrationEvent, IIntegrationEventHandler<CreateProductIntegrationEvent>>();
+            
         }
         public void ConfigureContainer(ContainerBuilder builder)
         {

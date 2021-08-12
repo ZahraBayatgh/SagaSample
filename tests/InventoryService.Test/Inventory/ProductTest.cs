@@ -86,10 +86,10 @@ namespace InventoryService.Test
         public async Task CreateProduct_When_Product_Is_null_Return_Failure()
         {
             //Act
-            var productId = await productService.CreateProductAsync(null);
+            var createProductResponseDto = await productService.CreateProductAsync(null);
 
             //Assert
-            Assert.True(productId.IsFailure);
+            Assert.True(createProductResponseDto.IsFailure);
         }
 
         [Fact]
@@ -102,10 +102,10 @@ namespace InventoryService.Test
             };
 
             //Act
-            var productId = await productService.CreateProductAsync(createProductDto);
+            var createProductResponseDto = await productService.CreateProductAsync(createProductDto);
 
             //Assert
-            Assert.True(productId.IsFailure);
+            Assert.True(createProductResponseDto.IsFailure);
         }
 
         [Fact]
@@ -119,10 +119,10 @@ namespace InventoryService.Test
             };
 
             //Act
-            var productId = await productService.CreateProductAsync(createProductDto);
+            var createProductResponseDto = await productService.CreateProductAsync(createProductDto);
 
             //Assert
-            Assert.True(productId.IsFailure);
+            Assert.True(createProductResponseDto.IsFailure);
         }
 
         [Fact]
@@ -136,10 +136,10 @@ namespace InventoryService.Test
             };
 
             //Act
-            var productId = await productService.CreateProductAsync(createProductDto);
+            var createProductResponseDto = await productService.CreateProductAsync(createProductDto);
 
             //Assert
-            Assert.True(productId.IsFailure);
+            Assert.True(createProductResponseDto.IsFailure);
         }
 
         [Fact]
@@ -153,12 +153,55 @@ namespace InventoryService.Test
             };
 
             //Act
-            var productId = await productService.CreateProductAsync(createProductDto);
+            var createProductResponseDto = await productService.CreateProductAsync(createProductDto);
 
             //Assert
-            Assert.Equal(3, productId.Value);
+            Assert.Equal(3, createProductResponseDto.Value.ProductId);
         }
 
+        #endregion
+
+        #region DeleteProduct
+
+        [Fact]
+        public async Task DeleteProduct_When_Product_Is_Zero_Return_Failure()
+        {
+            //Arrange
+            int productId = 0;
+
+            //Act
+            var result = await productService.DeleteProductAsync(productId);
+
+            //Assert
+            Assert.True(result.IsFailure);
+        }
+
+        [Fact]
+        public async Task DeleteProduct_When_Product_Is_Not_In_Db_Return_Failure()
+        {
+            //Arrange
+            int productId = 30;
+
+            //Act
+            var createProductResponseDto = await productService.DeleteProductAsync(productId);
+
+            //Assert
+            Assert.True(createProductResponseDto.IsFailure);
+        }
+
+
+        [Fact]
+        public async Task DeleteProduct_When_Product_Is_Valid_Return_Success()
+        {
+            //Arrange
+            int productId = 1;
+
+            //Act
+            var UpdateProductCount = await productService.DeleteProductAsync(productId);
+
+            //Assert
+            Assert.True(UpdateProductCount.IsSuccess);
+        }
         #endregion
 
         #region UpdateProduct
