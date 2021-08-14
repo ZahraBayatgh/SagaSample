@@ -9,7 +9,7 @@ namespace InventoryService.IntegrationEvents.Events
             ProductId = productId;
             InventoryTransactionId = inventoryTransactionId;
         }
-        public int ProductId { get; set; }
+        public int ProductId { get; }
         public int InventoryTransactionId { get; }
     }
 }

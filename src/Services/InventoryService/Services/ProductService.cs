@@ -57,7 +57,7 @@ namespace InventoryService.Services
 
                 // Get product by product name
                 var product = await _context.Products.FirstOrDefaultAsync(x => x.Name == productName);
-                
+
                 return Result.Success(product.Id);
             }
             catch (Exception ex)
@@ -68,7 +68,7 @@ namespace InventoryService.Services
             }
         }
 
-      
+
         /// <summary>
         /// This method adds a ProductDto to the table.
         /// If the input createProductDto is not valid or an expiration occurs, a Failure will be returned.
@@ -87,7 +87,7 @@ namespace InventoryService.Services
                 // Intialize product
                 var product = new Product
                 {
-                    Name = productDto.Name,
+                    Name = productDto.ProductName,
                     Count = productDto.Count
                 };
 
@@ -107,9 +107,9 @@ namespace InventoryService.Services
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Add {productDto.Name} product failed. Exception detail:{ex.Message}");
+                _logger.LogInformation($"Add {productDto.ProductName} product failed. Exception detail:{ex.Message}");
 
-                return Result.Failure<CreateProductResponseDto>($"Add {productDto.Name} product failed.");
+                return Result.Failure<CreateProductResponseDto>($"Add {productDto.ProductName} product failed.");
             }
         }
 
@@ -162,9 +162,9 @@ namespace InventoryService.Services
                     return Result.Failure<Product>(productValidation.Error);
 
                 // Get product by name
-                var product = await _context.Products.FirstOrDefaultAsync(x => x.Name == productDto.Name);
+                var product = await _context.Products.FirstOrDefaultAsync(x => x.Name == productDto.ProductName);
 
-               // Update product
+                // Update product
                 product.Count = productDto.Count;
                 await _context.SaveChangesAsync();
 
@@ -172,8 +172,8 @@ namespace InventoryService.Services
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Update {productDto.Name} product failed. Exception detail:{ex.Message}");
-                return Result.Failure<Product>($"Update {productDto.Name} product failed.");
+                _logger.LogInformation($"Update {productDto.ProductName} product failed. Exception detail:{ex.Message}");
+                return Result.Failure<Product>($"Update {productDto.ProductName} product failed.");
 
             }
         }
@@ -188,7 +188,7 @@ namespace InventoryService.Services
             if (createProductDto == null)
                 return Result.Failure($"ProductDto instance is invalid.");
 
-            if (string.IsNullOrEmpty(createProductDto.Name))
+            if (string.IsNullOrEmpty(createProductDto.ProductName))
                 return Result.Failure($"Product name is empty.");
 
             if (createProductDto.Count <= 0)
@@ -207,7 +207,7 @@ namespace InventoryService.Services
             if (createProductDto == null)
                 return Result.Failure($"ProductDto instance is invalid.");
 
-            if (string.IsNullOrEmpty(createProductDto.Name))
+            if (string.IsNullOrEmpty(createProductDto.ProductName))
                 return Result.Failure($"Product name is empty.");
 
             if (createProductDto.Count < 0)

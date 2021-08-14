@@ -9,16 +9,16 @@ using System.Threading.Tasks;
 
 namespace InventoryService.IntegrationEvents.EventHandling
 {
-    public class UpdateProductCountAndAddInventoryTransactionEventHandler : IIntegrationEventHandler<UpdateProductCountAndAddInventoryTransaction>
+    public class UpdateProductCountAndAddInventoryTransactionEventHandler : IIntegrationEventHandler<UpdateProductCountAndAddInventoryTransactionEvent>
     {
         private readonly InventoryDbContext _context;
-        private readonly ILogger<UpdateProductCountAndAddInventoryTransaction> _logger;
+        private readonly ILogger<UpdateProductCountAndAddInventoryTransactionEvent> _logger;
         private readonly IProductService _productService;
-        private readonly IInventoryTransactionService _inventoryService;
+        private readonly IInventoryTransactionService _inventoryTransactionService;
         private readonly IEventBus _eventBus;
 
         public UpdateProductCountAndAddInventoryTransactionEventHandler(InventoryDbContext context,
-            ILogger<UpdateProductCountAndAddInventoryTransaction> logger,
+            ILogger<UpdateProductCountAndAddInventoryTransactionEvent> logger,
             IProductService productService,
             IInventoryTransactionService inventoryService,
             IEventBus eventBus)
@@ -26,20 +26,26 @@ namespace InventoryService.IntegrationEvents.EventHandling
             _context = context;
             _logger = logger;
             _productService = productService;
-            _inventoryService = inventoryService;
+            _inventoryTransactionService = inventoryService;
             _eventBus = eventBus;
         }
 
-        public async Task Handle(UpdateProductCountAndAddInventoryTransaction @event)
+        public async Task Handle(UpdateProductCountAndAddInventoryTransactionEvent @event)
         {
             using var transaction = _context.Database.BeginTransaction();
             try
             {
+                // Check event is null
+                if (@event == null)
+                    throw new ArgumentNullException("UpdateProductCountAndAddInventoryTransactionEvent is null.");
+
+                bool isCommit = false;
+
                 // Get product id
                 var productId = await _productService.GetProductIdAsync(@event.Name);
 
                 // Get latest InventoryTransaction by product id
-                var latestInventoryTransactionCount = await _inventoryService.GetLatestInventoryTransactionByProductIdAsync(productId.Value);
+                var latestInventoryTransactionCount = await _inventoryTransactionService.GetLatestInventoryTransactionByProductIdAsync(productId.Value);
 
                 // Check latest InventoryTransaction
                 if (latestInventoryTransactionCount.IsFailure)
@@ -50,23 +56,40 @@ namespace InventoryService.IntegrationEvents.EventHandling
                 {
                     ProductId = productId.Value,
                     ChangeCount = @event.DecreaseCount,
-                    CurrentCount= latestInventoryTransactionCount.Value - @event.DecreaseCount
+                    CurrentCount = latestInventoryTransactionCount.Value - @event.DecreaseCount
                 };
 
                 // Create InventoryTransaction
-                var inventoryTransactionResult = await _inventoryService.CreateInventoryTransactionAsync(inventoryTransaction);
+                var inventoryTransactionResult = await _inventoryTransactionService.CreateInventoryTransactionAsync(inventoryTransaction);
 
-                // Intialize ProductDto
-                var productDto = new ProductDto
+                if (inventoryTransactionResult.IsSuccess)
                 {
-                    Name = @event.Name,
-                    Count = inventoryTransactionResult.Value.CurrentCount
-                };
+                    // Intialize ProductDto
+                    var productDto = new ProductDto
+                    {
+                        ProductName = @event.Name,
+                        Count = inventoryTransactionResult.Value.CurrentCount
+                    };
 
-                // Update product
-                var product = await _productService.UpdateProductAsync(productDto);
+                    // Update product
+                    var product = await _productService.UpdateProductAsync(productDto);
+                    if (product.IsSuccess)
+                        isCommit = true;
+                }
 
-                transaction.Commit();
+                if (isCommit)
+                {
+                    transaction.Commit();
+                }
+                else
+                {
+                    transaction.Rollback();
+                }
+            }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogInformation($"UpdateProductCountAndAddInventoryTransactionEvent is null. Exception detail:{ex.Message}");
+                throw;
             }
             catch (Exception ex)
             {

@@ -47,6 +47,7 @@ namespace InventoryService.Data
 
                 Console.WriteLine("Database Created");
 
+                // Check product exist
                 var product = await context.Products.FirstOrDefaultAsync(x => x.Name == "Mouse");
                 if (product == null)
                 {
@@ -55,8 +56,17 @@ namespace InventoryService.Data
                         Name = "Mouse",
                         Count = 300,
                     };
-
                     await context.Products.AddAsync(product);
+
+                    var inventoryTransaction = new InventoryTransaction
+                    {
+                        ProductId = product.Id,
+                        Type = InventoryType.In,
+                        ChangeCount = product.Count,
+                        CurrentCount = product.Count
+                    };
+                    await context.AddAsync(inventoryTransaction);
+
                     await context.SaveChangesAsync();
                 }
                 else

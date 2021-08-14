@@ -7,5 +7,6 @@ namespace InventoryService.Dtos
         public int ProductId { get; set; }
         public int ChangeCount { get; set; }
         public int CurrentCount { get; set; }
+        public InventoryType Type { get; set; }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using InventoryService.Dtos;
 using InventoryService.Services;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -12,10 +11,9 @@ namespace InventoryService.Controllers
     {
         private readonly IProductService _productService;
         private readonly IInventoryOrcasrator _inventoryOrcasrator;
-        private readonly IMediator _mediator;
 
         public ProductController(IProductService productService,
-            IInventoryOrcasrator inventoryOrcasrator )
+                                 IInventoryOrcasrator inventoryOrcasrator)
         {
             _productService = productService;
             _inventoryOrcasrator = inventoryOrcasrator;
@@ -24,6 +22,7 @@ namespace InventoryService.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductByIdAsync(int id)
         {
+            // Get product by product id
             var product = await _productService.GetProductByIdAsync(id);
             if (product.IsSuccess)
             {
@@ -36,7 +35,8 @@ namespace InventoryService.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProductAsync(ProductDto productDto)
         {
-            var createProductResponse = await _inventoryOrcasrator.CreateProductInventoryTransactionAsync(productDto);
+            // Create product and inventory transaction
+            var createProductResponse = await _inventoryOrcasrator.CreateProductAndInventoryTransactionAsync(productDto);
 
             if (createProductResponse.IsSuccess)
             {

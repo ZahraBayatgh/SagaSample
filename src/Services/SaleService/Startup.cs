@@ -16,7 +16,6 @@ using SaleService.Data;
 using SaleService.DomainEvents.EventHandling;
 using SaleService.IntegrationEvents.Events;
 using SaleService.Services;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace SaleService
@@ -32,7 +31,7 @@ namespace SaleService
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<SaleDbContext>(options => 
+            services.AddDbContext<SaleDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddEventBus(Configuration);
@@ -41,7 +40,7 @@ namespace SaleService
 
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IOrderService, OrderService>();
-            
+
             services.AddControllers(options =>
             {
                 options.SuppressAsyncSuffixInActionNames = false;
@@ -82,7 +81,7 @@ namespace SaleService
 
             eventBus.Subscribe<CancelChangeProductCountIntegrationEvent, IIntegrationEventHandler<CancelChangeProductCountIntegrationEvent>>();
             eventBus.Subscribe<CreateProductIntegrationEvent, IIntegrationEventHandler<CreateProductIntegrationEvent>>();
-            
+
         }
         public void ConfigureContainer(ContainerBuilder builder)
         {

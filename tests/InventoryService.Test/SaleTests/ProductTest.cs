@@ -3,7 +3,6 @@ using InventoryService.Test.Config;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SaleService.Dtos;
-using SaleService.Models;
 using SaleService.Services;
 using System.Threading.Tasks;
 using Xunit;
@@ -84,7 +83,7 @@ namespace SagaPattern.Tests.Sale
             //Arrange
             var createProductDto = new CreateProductDto
             {
-                Name="",
+                Name = "",
                 Count = 10
             };
 
@@ -126,7 +125,7 @@ namespace SagaPattern.Tests.Sale
             var productId = await productService.CreateProductAsync(createProductDto);
 
             //Assert
-            Assert.Equal(3,productId.Value);
+            Assert.Equal(3, productId.Value);
         }
 
         #endregion
@@ -175,7 +174,7 @@ namespace SagaPattern.Tests.Sale
             //Assert
             Assert.True(productId.IsFailure);
         }
-      
+
         [Fact]
         public async Task UpdateProductCount_When_UpdateProductCountDto_DecreaseCount_Is_Zero_Return_Failure()
         {
@@ -295,9 +294,9 @@ namespace SagaPattern.Tests.Sale
         {
             //Arrange
             var cancelChangeProductCountDto = new CancelChangeProductCountDto
-            { 
+            {
                 Name = "Mouse",
-                DecreaseCount = 20 
+                DecreaseCount = 20
             };
 
             //Act

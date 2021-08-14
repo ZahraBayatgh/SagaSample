@@ -2,7 +2,7 @@
 
 namespace SaleService.IntegrationEvents.Events
 {
-    public class CancelChangeProductCountIntegrationEvent:IntegrationEvent
+    public class CancelChangeProductCountIntegrationEvent : IntegrationEvent
     {
         public CancelChangeProductCountIntegrationEvent(string name, int count)
         {

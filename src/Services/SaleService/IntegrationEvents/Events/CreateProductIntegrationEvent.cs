@@ -4,7 +4,7 @@ namespace SaleService.IntegrationEvents.Events
 {
     public class CreateProductIntegrationEvent : IntegrationEvent
     {
-        public CreateProductIntegrationEvent(int productId,int inventoryTransactionId,string productName, int currentCount)
+        public CreateProductIntegrationEvent(int productId, int inventoryTransactionId, string productName, int currentCount)
         {
             ProductId = productId;
             InventoryTransactionId = inventoryTransactionId;

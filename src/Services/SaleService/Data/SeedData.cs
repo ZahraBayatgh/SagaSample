@@ -66,7 +66,7 @@ namespace SaleService.Data
                 }
             };
 
-        Console.WriteLine("Database seeded...");
+            Console.WriteLine("Database seeded...");
         }
-}
+    }
 }

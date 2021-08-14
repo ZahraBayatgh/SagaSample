@@ -5,8 +5,6 @@ using SaleService.Data;
 using SaleService.Dtos;
 using SaleService.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SaleService.Services
@@ -69,11 +67,11 @@ namespace SaleService.Services
 
                 // Check product id in database
                 var product = await _productService.GetProductByIdAsync(createOrderDto.ProductId);
-                if (product.Value == null) 
-                return Result.Failure<CreateOrderResponseDto>($"Product Id {createOrderDto.ProductId} is invalid.");
+                if (product.Value == null)
+                    return Result.Failure<CreateOrderResponseDto>($"Product Id {createOrderDto.ProductId} is invalid.");
 
                 // Check produt count
-                if (product.Value.Count<createOrderDto.Count)
+                if (product.Value.Count < createOrderDto.Count)
                     return Result.Failure<CreateOrderResponseDto>($"The count of the product {product.Value.Id} id is less than the count of the order");
 
                 // Intialize Order
@@ -134,7 +132,7 @@ namespace SaleService.Services
                 return Result.Failure($"Delete order with {orderId} id failed.");
             }
         }
-      
+
         /// <summary>
         /// This methode check a orderDto instance
         /// </summary>
@@ -142,7 +140,7 @@ namespace SaleService.Services
         /// <returns></returns>
         private Result CheckProductInstance(CreateOrderDto createOrderDto)
         {
-            if (createOrderDto==null)
+            if (createOrderDto == null)
                 return Result.Failure($"CreateOrderDto is null.");
 
             if (createOrderDto.ProductId <= 0)

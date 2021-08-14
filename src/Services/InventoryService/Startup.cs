@@ -79,14 +79,14 @@ namespace Service2
         {
             IEventBus eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
 
-            eventBus.Subscribe<UpdateProductCountAndAddInventoryTransaction, IIntegrationEventHandler<UpdateProductCountAndAddInventoryTransaction>>();
+            eventBus.Subscribe<UpdateProductCountAndAddInventoryTransactionEvent, IIntegrationEventHandler<UpdateProductCountAndAddInventoryTransactionEvent>>();
             eventBus.Subscribe<DeleteProductIntegrationEvent, IIntegrationEventHandler<DeleteProductIntegrationEvent>>();
-            
+
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            builder.RegisterAssemblyTypes(typeof(UpdateProductCountAndAddInventoryTransaction).GetTypeInfo().Assembly)
+            builder.RegisterAssemblyTypes(typeof(UpdateProductCountAndAddInventoryTransactionEvent).GetTypeInfo().Assembly)
                 .AsClosedTypesOf(typeof(IIntegrationEventHandler<>));
         }
     }

@@ -15,18 +15,12 @@ namespace InventoryService.Test.Config
                 {
                   new InventoryTransaction
                   {
+                       Id=1,
                        ProductId=1,
-                       Type=InventoryType.Out,
+                       Type=InventoryType.In,
                        ChangeCount=2,
                        CurrentCount=18
-                  },
-                   new InventoryTransaction
-                  {
-                       ProductId=1,
-                       Type=InventoryType.Out,
-                       ChangeCount=3,
-                       CurrentCount=15
-                  },
+                  }
                 };
 
                 dbContext.InventoryTransactions.AddRange(inventories);

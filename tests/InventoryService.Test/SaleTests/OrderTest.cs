@@ -16,10 +16,10 @@ namespace SagaPattern.Tests.Sale
         public OrderTest()
         {
             var productLogger = new Mock<ILogger<ProductService>>();
-           var productService = new ProductService(Context, productLogger.Object);
+            var productService = new ProductService(Context, productLogger.Object);
 
             var orderLogger = new Mock<ILogger<OrderService>>();
-            orderService = new OrderService(Context, orderLogger.Object,productService);
+            orderService = new OrderService(Context, orderLogger.Object, productService);
         }
 
         #region GetOrderById
@@ -70,7 +70,7 @@ namespace SagaPattern.Tests.Sale
             //Arrange
             var createOrderDto = new CreateOrderDto
             {
-                 ProductId = 0
+                ProductId = 0
             };
 
             //Act
@@ -170,7 +170,7 @@ namespace SagaPattern.Tests.Sale
         {
             //Arrange
             int orderId = 30;
-            
+
             //Act
             var createOrderResponseDto = await orderService.DeleteOrderAsync(orderId);
 

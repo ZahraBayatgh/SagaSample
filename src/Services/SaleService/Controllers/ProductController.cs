@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SaleService.Dtos;
 using SaleService.Services;
 using System.Threading.Tasks;
 
@@ -12,8 +11,7 @@ namespace SaleService.Controllers
 
         private readonly IProductService _productService;
 
-        public ProductController(
-            IProductService productService)
+        public ProductController(IProductService productService)
         {
             _productService = productService;
         }
@@ -21,6 +19,7 @@ namespace SaleService.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductByIdAsync(int id)
         {
+            //Get product by Id
             var product = await _productService.GetProductByIdAsync(id);
             if (product.IsSuccess)
             {
@@ -30,7 +29,7 @@ namespace SaleService.Controllers
             return BadRequest(product.Error);
         }
 
-       
+
 
     }
 }

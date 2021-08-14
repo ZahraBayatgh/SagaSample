@@ -6,7 +6,7 @@ using Moq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace SagaPattern.Tests.Inventory
+namespace SagaPattern.UnitTests.InventoryServiceTests
 {
     public class InventoryTransactionTest : InventoryMemoryDatabaseConfig
     {
@@ -43,7 +43,7 @@ namespace SagaPattern.Tests.Inventory
             var inventoryTransactionCurrentCount = await inventoryTransactionService.GetLatestInventoryTransactionByProductIdAsync(id);
 
             //Assert
-            Assert.Equal(15, inventoryTransactionCurrentCount.Value);
+            Assert.Equal(18, inventoryTransactionCurrentCount.Value);
         }
 
         #endregion

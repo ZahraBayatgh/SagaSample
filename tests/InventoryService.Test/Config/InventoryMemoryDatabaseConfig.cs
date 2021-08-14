@@ -2,14 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InventoryService.Test.Config
 {
-   public class InventoryMemoryDatabaseConfig
+    public class InventoryMemoryDatabaseConfig
     {
         protected InventoryMemoryDatabaseConfig()
         {

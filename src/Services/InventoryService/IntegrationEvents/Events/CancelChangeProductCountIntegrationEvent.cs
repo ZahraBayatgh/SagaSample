@@ -9,7 +9,7 @@ namespace InventoryService.IntegrationEvents.Events
             Name = name;
             Count = count;
         }
-        public string Name { get; set; }
-        public int Count { get; set; }
+        public string Name { get; }
+        public int Count { get; }
     }
 }

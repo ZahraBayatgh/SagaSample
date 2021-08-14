@@ -1,5 +1,4 @@
 using InventoryService.Dtos;
-using InventoryService.Models;
 using InventoryService.Services;
 using InventoryService.Test.Config;
 using Microsoft.Extensions.Logging;
@@ -7,7 +6,7 @@ using Moq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace InventoryService.Test
+namespace SagaPattern.UnitTests.InventoryServiceTests
 {
     public class ProductTest : InventoryMemoryDatabaseConfig
     {
@@ -114,7 +113,7 @@ namespace InventoryService.Test
             //Arrange
             var createProductDto = new ProductDto
             {
-                Name = "",
+                ProductName = "",
                 Count = 10
             };
 
@@ -131,7 +130,7 @@ namespace InventoryService.Test
             //Arrange
             var createProductDto = new ProductDto
             {
-                Name = "Pen",
+                ProductName = "Pen",
                 Count = 0
             };
 
@@ -148,7 +147,7 @@ namespace InventoryService.Test
             //Arrange
             var createProductDto = new ProductDto
             {
-                Name = "Pen",
+                ProductName = "Pen",
                 Count = 10
             };
 
@@ -238,7 +237,7 @@ namespace InventoryService.Test
             //Arrange
             var createProductDto = new ProductDto
             {
-                Name = "",
+                ProductName = "",
                 Count = 10
             };
 
@@ -255,7 +254,7 @@ namespace InventoryService.Test
             //Arrange
             var createProductDto = new ProductDto
             {
-                Name = "Mouse",
+                ProductName = "Mouse",
                 Count = -2
             };
 
@@ -272,7 +271,7 @@ namespace InventoryService.Test
             //Arrange
             var createProductDto = new ProductDto
             {
-                Name = "Mouse",
+                ProductName = "Mouse",
                 Count = 10
             };
 

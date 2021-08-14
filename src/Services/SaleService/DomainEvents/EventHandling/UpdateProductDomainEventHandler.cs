@@ -6,8 +6,6 @@ using SaleService.Dtos;
 using SaleService.IntegrationEvents.Events;
 using SaleService.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,7 +19,7 @@ namespace SaleService.DomainEvents.EventHandling
         private readonly ILogger<UpdateProductDomainEventHandler> _logger;
 
         public UpdateProductDomainEventHandler(IProductService productService,
-            IOrderService orderService ,
+            IOrderService orderService,
             IEventBus eventBus,
             ILogger<UpdateProductDomainEventHandler> logger)
         {
@@ -34,12 +32,17 @@ namespace SaleService.DomainEvents.EventHandling
         {
             try
             {
+                // Check event is null
+                if (@event == null)
+                    throw new ArgumentNullException("UpdateProductDomainEvent is null.");
+
                 // Intialize UpdateProductCountDto
                 UpdateProductCountDto updateProductCountDto = new UpdateProductCountDto
                 {
                     Name = @event.Name,
                     DecreaseCount = @event.DecreaseCount
                 };
+
                 // Update product count in product table
                 var product = await _productService.UpdateProductCountAsync(updateProductCountDto);
                 if (product.IsSuccess)
@@ -48,10 +51,15 @@ namespace SaleService.DomainEvents.EventHandling
                     _eventBus.Publish(updateProductIntegrationEvent);
                 }
             }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogInformation($"UpdateProductDomainEvent is null. Exception detail:{ex.Message}");
+                throw;
+            }
             catch (Exception ex)
             {
                 _logger.LogInformation($"Update product {@event.Name} has been Canceled. Exception detail:{ex.Message}");
-               await _orderService.DeleteOrderAsync(@event.OrderId);
+                await _orderService.DeleteOrderAsync(@event.OrderId);
                 throw;
             }
         }

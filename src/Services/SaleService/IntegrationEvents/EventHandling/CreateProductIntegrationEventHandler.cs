@@ -26,6 +26,10 @@ namespace SaleService.IntegrationEvents.EventHandling
         {
             try
             {
+                // Check event is null
+                if (@event == null)
+                    throw new ArgumentNullException("CreateProductIntegrationEvent is null.");
+
                 var productDto = new CreateProductDto
                 {
                     Name = @event.ProductName,
@@ -34,11 +38,16 @@ namespace SaleService.IntegrationEvents.EventHandling
 
                 await _productService.CreateProductAsync(productDto);
             }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogInformation($"CreateProductIntegrationEvent is null. Exception detail:{ex.Message}");
+                throw;
+            }
             catch (Exception ex)
             {
                 _logger.LogInformation($"Product {@event.ProductName} wan not created. Exception detail:{ex.Message}");
 
-                DeleteProductIntegrationEvent deleteProductIntegrationEvent = new DeleteProductIntegrationEvent(@event.ProductId,@event.InventoryTransactionId);
+                DeleteProductIntegrationEvent deleteProductIntegrationEvent = new DeleteProductIntegrationEvent(@event.ProductId, @event.InventoryTransactionId);
                 _eventBus.Publish(deleteProductIntegrationEvent);
             }
         }

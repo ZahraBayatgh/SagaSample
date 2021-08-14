@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using SaleService.Dtos;
 using SaleService.IntegrationEvents.Events;
-using SaleService.Models;
 using SaleService.Services;
 using System;
 using System.Threading.Tasks;
@@ -25,13 +24,22 @@ namespace SaleService.IntegrationEvents.EventHandling
         {
             try
             {
-                var productDto = new CancelChangeProductCountDto 
-                { 
-                    Name = @event.Name, 
+                // Check event is null
+                if (@event == null)
+                    throw new ArgumentNullException("CancelChangeProductCountIntegrationEvent is null.");
+
+                var productDto = new CancelChangeProductCountDto
+                {
+                    Name = @event.Name,
                     DecreaseCount = @event.DecreaseCount
                 };
 
-                await  _productService.CancelChangeProductCountAsync(productDto);
+                await _productService.CancelChangeProductCountAsync(productDto);
+            }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogInformation($"CancelChangeProductCountIntegrationEvent is null. Exception detail:{ex.Message}");
+                throw;
             }
             catch (Exception ex)
             {

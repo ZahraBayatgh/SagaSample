@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using EventBus;
 using EventBus.Abstractions;
 using EventBus.Events;
 using EventBus.Extensions;

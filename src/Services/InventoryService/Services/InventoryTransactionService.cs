@@ -36,10 +36,12 @@ namespace InventoryService.Services
                 if (productId <= 0)
                     return Result.Failure<int>($"Product id is invalid.");
 
+                // Get latast InventoryTransaction by product id
                 var inventoryTransaction = await _context.InventoryTransactions.OrderByDescending(x => x.Id).FirstOrDefaultAsync(x => x.ProductId == productId);
 
-                if (inventoryTransaction==null)
-                    return Result.Failure<int>($"et latest inventory transaction by product id {productId} was not found.");
+                // Check inventoryTransaction
+                if (inventoryTransaction == null)
+                    return Result.Failure<int>($"Get latest inventory transaction by product id {productId} was not found.");
 
                 return Result.Success(inventoryTransaction.CurrentCount);
             }

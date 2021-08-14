@@ -1,5 +1,4 @@
-﻿using EventBus;
-using EventBus.Abstractions;
+﻿using EventBus.Abstractions;
 using EventBus.Events;
 using System;
 using System.Collections.Generic;

@@ -6,6 +6,6 @@ namespace InventoryService.Services
 {
     public interface IInventoryOrcasrator
     {
-        Task<Result<int>> CreateProductInventoryTransactionAsync(ProductDto productDto);
+        Task<Result<int>> CreateProductAndInventoryTransactionAsync(ProductDto productDto);
     }
 }
