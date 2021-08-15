@@ -11,7 +11,7 @@ using Xunit;
 
 namespace SagaPattern.UnitTests.SaleTests
 {
-    public class CreateProductIntegrationEventHandlerTest : SaleMemoryDatabaseConfig
+    public class CreateProductIntegrationEventHandlerTest : SalesMemoryDatabaseConfig
     {
         private CreateProductIntegrationEventHandler createProductIntegrationEventHandler;
 

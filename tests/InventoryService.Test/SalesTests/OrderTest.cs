@@ -9,7 +9,7 @@ using Xunit;
 
 namespace SagaPattern.Tests.Sale
 {
-    public class OrderTest : SaleMemoryDatabaseConfig
+    public class OrderTest : SalesMemoryDatabaseConfig
     {
         private OrderService orderService;
 

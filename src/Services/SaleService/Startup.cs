@@ -1,4 +1,5 @@
 using Autofac;
+using CustomerService.Services;
 using EventBus;
 using EventBus.Abstractions;
 using EventBus.RabbitMQ;
@@ -40,6 +41,7 @@ namespace SaleService
 
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IBuyerService, BuyerService>();
 
             services.AddControllers(options =>
             {

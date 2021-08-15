@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace InventoryService.Test.Config
 {
-    public class ProductSaleInitializer
+    public class ProductSalesInitializer
     {
         public void InitializeData(SaleDbContext dbContext)
         {

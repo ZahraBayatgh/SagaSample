@@ -9,7 +9,7 @@ using Xunit;
 
 namespace SagaPattern.UnitTests.SaleTests
 {
-    public class CancelChangeProductCountIntegrationEventHandlerTests : SaleMemoryDatabaseConfig
+    public class CancelChangeProductCountIntegrationEventHandlerTests : SalesMemoryDatabaseConfig
     {
         private CancelChangeProductCountIntegrationEventHandler cancelChangeProductCountIntegrationEventHandler;
 

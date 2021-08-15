@@ -11,7 +11,7 @@ using Xunit;
 
 namespace SagaPattern.UnitTests.SaleTests
 {
-    public class UpdateProductDomainEventHandlerTests : SaleMemoryDatabaseConfig
+    public class UpdateProductDomainEventHandlerTests : SalesMemoryDatabaseConfig
     {
         private UpdateProductDomainEventHandler updateProductDomainEventHandler;
 

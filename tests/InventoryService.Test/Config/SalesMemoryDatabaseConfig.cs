@@ -5,16 +5,17 @@ using System;
 
 namespace InventoryService.Test.Config
 {
-    public class SaleMemoryDatabaseConfig
+    public class SalesMemoryDatabaseConfig
     {
-        protected SaleMemoryDatabaseConfig()
+        protected SalesMemoryDatabaseConfig()
         {
             if (Context != null) return;
 
             Context = CreateContext();
 
             new OrderInitializer().InitializeData(Context);
-            new ProductSaleInitializer().InitializeData(Context);
+            new ProductSalesInitializer().InitializeData(Context);
+            new BuyerInitializer().InitializeData(Context);
         }
 
         protected SaleDbContext Context { get; set; }
