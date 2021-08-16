@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using ProductCatalog.Data;
+using ProductCatalogService.IntegrationEvents.Events;
 using ProductCatalogService.Services;
 using RabbitMQ.Client;
 using System.Reflection;
@@ -68,6 +69,10 @@ namespace ProductCatalog
         }
         private void ConfigureEventBus(IApplicationBuilder app)
         {
+            IEventBus eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
+
+            eventBus.Subscribe<ResultInventoryIntegrationEvent, IIntegrationEventHandler<ResultInventoryIntegrationEvent>>();
+            eventBus.Subscribe<ResultSalesIntegrationEvent, IIntegrationEventHandler<ResultSalesIntegrationEvent>>();
         }
         public void ConfigureContainer(ContainerBuilder builder)
         {
