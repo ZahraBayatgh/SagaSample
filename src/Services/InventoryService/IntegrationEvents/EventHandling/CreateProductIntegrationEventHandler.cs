@@ -1,12 +1,12 @@
 ﻿using EventBus.Abstractions;
+using InventoryService.Dtos;
+using InventoryService.IntegrationEvents.Events;
+using InventoryService.Services;
 using Microsoft.Extensions.Logging;
-using SaleService.Dtos;
-using SaleService.IntegrationEvents.Events;
-using SaleService.Services;
 using System;
 using System.Threading.Tasks;
 
-namespace SaleService.IntegrationEvents.EventHandling
+namespace InventoryService.IntegrationEvents.EventHandling
 {
     public class CreateProductIntegrationEventHandler : IIntegrationEventHandler<CreateProductIntegrationEvent>
     {
@@ -30,13 +30,13 @@ namespace SaleService.IntegrationEvents.EventHandling
                 CheckCreateProductIntegrationEventInstance(@event);
 
                 // Create product
-                var createProductRequestDto = new CreateProductRequestDto
+                var ProductRequestDto = new ProductRequestDto
                 {
-                    Name = @event.ProductName,
+                    ProductName = @event.ProductName,
                     Count = @event.InitialOnHand
                 };
-                var createProductResponce = await _productService.CreateProductAsync(createProductRequestDto);
-                
+                var createProductResponce = await _productService.CreateProductAsync(ProductRequestDto);
+
                 // Publish ResultSalesIntegrationEvent
                 bool createProductStatus = createProductResponce.IsSuccess ? true : false;
                 PublishResult(@event, createProductStatus);
@@ -49,7 +49,7 @@ namespace SaleService.IntegrationEvents.EventHandling
             catch (Exception ex)
             {
                 _logger.LogInformation($"Product {@event.ProductName} wan not created. Exception detail:{ex.Message}");
-                
+
                 // Publish ResultSalesIntegrationEvent
                 PublishResult(@event, false);
 
@@ -60,8 +60,8 @@ namespace SaleService.IntegrationEvents.EventHandling
         private void PublishResult(CreateProductIntegrationEvent @event, bool createProductStatus)
         {
             // Publish ResultSalesIntegrationEvent
-            ResultSalesIntegrationEvent resultSalesIntegrationEvent = new ResultSalesIntegrationEvent(@event.ProductId, createProductStatus);
-            _eventBus.Publish(resultSalesIntegrationEvent);
+            ResultInventoryIntegrationEvent resultInventoryIntegrationEvent = new ResultInventoryIntegrationEvent(@event.ProductId, createProductStatus);
+            _eventBus.Publish(resultInventoryIntegrationEvent);
         }
 
         private static void CheckCreateProductIntegrationEventInstance(CreateProductIntegrationEvent @event)

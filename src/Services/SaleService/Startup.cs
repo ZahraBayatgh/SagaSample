@@ -83,7 +83,8 @@ namespace SaleService
 
             eventBus.Subscribe<CancelChangeProductCountIntegrationEvent, IIntegrationEventHandler<CancelChangeProductCountIntegrationEvent>>();
             eventBus.Subscribe<CreateProductIntegrationEvent, IIntegrationEventHandler<CreateProductIntegrationEvent>>();
-
+            eventBus.Subscribe<DeleteSalesIntegrationEvent, IIntegrationEventHandler<DeleteSalesIntegrationEvent>>();
+            
         }
         public void ConfigureContainer(ContainerBuilder builder)
         {

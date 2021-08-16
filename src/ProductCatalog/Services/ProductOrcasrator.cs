@@ -1,7 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using EventBus.Abstractions;
-using InventoryService.IntegrationEvents.Events;
 using Microsoft.Extensions.Logging;
+using ProductCatalogService.IntegrationEvents.Events;
 using ProductCatalogService.Services;
 using System;
 

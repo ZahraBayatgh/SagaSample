@@ -51,6 +51,37 @@ namespace InventoryService.Services
                 return Result.Failure<Product>($"Get {productId} product id failed.");
             }
         }
+
+        /// <summary>
+        /// This metode get product by product name.
+        /// If the input name is not valid or an expiration occurs, a Failure will be returned.
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        public async Task<Result<Product>> GetProductByNameAsync(string productName)
+        {
+            try
+            {
+                // Check product name
+                if (string.IsNullOrEmpty(productName))
+                    return Result.Failure<Product>($"Product name is null.");
+
+                // Get product by product name
+                var product = await _context.Products.FirstOrDefaultAsync(x => x.Name == productName);
+
+                // Check product in db
+                if (product == null)
+                    return Result.Failure<Product>($"Product not found.");
+
+                return Result.Success(product);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"Get {productName} product name failed. Exception detail:{ex.Message}");
+
+                return Result.Failure<Product>($"Get {productName} product name failed.");
+            }
+        }
         public async Task<Result<int>> GetProductIdAsync(string productName)
         {
             try
@@ -83,7 +114,7 @@ namespace InventoryService.Services
         /// </summary>
         /// <param name="productDto"></param>
         /// <returns></returns>
-        public async Task<Result<CreateProductResponseDto>> CreateProductAsync(ProductDto productDto)
+        public async Task<Result<CreateProductResponseDto>> CreateProductAsync(ProductRequestDto productDto)
         {
             try
             {
@@ -160,7 +191,7 @@ namespace InventoryService.Services
         /// </summary>
         /// <param name="productDto"></param>
         /// <returns></returns>
-        public async Task<Result<Product>> UpdateProductAsync(ProductDto productDto)
+        public async Task<Result<Product>> UpdateProductAsync(ProductRequestDto productDto)
         {
             try
             {
@@ -191,7 +222,7 @@ namespace InventoryService.Services
         /// </summary>
         /// <param name="createProductDto"></param>
         /// <returns></returns>
-        private static Result CheckCreateProductInstance(ProductDto createProductDto)
+        private static Result CheckCreateProductInstance(ProductRequestDto createProductDto)
         {
             if (createProductDto == null)
                 return Result.Failure($"ProductDto instance is invalid.");
@@ -210,7 +241,7 @@ namespace InventoryService.Services
         /// </summary>
         /// <param name="createProductDto"></param>
         /// <returns></returns>
-        private static Result CheckUpdateProductInstance(ProductDto createProductDto)
+        private static Result CheckUpdateProductInstance(ProductRequestDto createProductDto)
         {
             if (createProductDto == null)
                 return Result.Failure($"ProductDto instance is invalid.");

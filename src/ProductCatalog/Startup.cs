@@ -2,7 +2,6 @@ using Autofac;
 using EventBus;
 using EventBus.Abstractions;
 using EventBus.RabbitMQ;
-using InventoryService.IntegrationEvents.Events;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;

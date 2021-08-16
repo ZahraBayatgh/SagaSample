@@ -38,7 +38,6 @@ namespace Service2
 
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IInventoryTransactionService, InventoryTransactionService>();
-            services.AddScoped<IInventoryOrcasrator, InventoryOrcasrator>();
 
             services.AddControllers(options =>
             {
@@ -78,7 +77,9 @@ namespace Service2
         private void ConfigureEventBus(IApplicationBuilder app)
         {
             IEventBus eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
-
+            eventBus.Subscribe<CreateProductIntegrationEvent, IIntegrationEventHandler<CreateProductIntegrationEvent>>();
+            eventBus.Subscribe<DeleteInventoryIntegrationEvent, IIntegrationEventHandler<DeleteInventoryIntegrationEvent>>();
+            
             eventBus.Subscribe<UpdateProductCountAndAddInventoryTransactionEvent, IIntegrationEventHandler<UpdateProductCountAndAddInventoryTransactionEvent>>();
             eventBus.Subscribe<DeleteProductIntegrationEvent, IIntegrationEventHandler<DeleteProductIntegrationEvent>>();
 

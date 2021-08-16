@@ -103,6 +103,48 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
 
         #endregion
 
+        #region GetProductByName
+
+        [Fact]
+        public async Task GetProductByName_When_ProductName_Is_Null_Return_Failure()
+        {
+            //Act
+            var product = await productService.GetProductByNameAsync(null);
+
+            //Assert
+            Assert.True(product.IsFailure);
+        }
+        [Fact]
+        public async Task GetProductByName_When_ProductName_Is_Empty_Return_Failure()
+        {
+            //Act
+            var product = await productService.GetProductByNameAsync("");
+
+            //Assert
+            Assert.True(product.IsFailure);
+        }
+        [Fact]
+        public async Task GetProductByName_When_Product_Is_Not_Found_Return_Failure()
+        {
+            //Act
+            var product = await productService.GetProductByNameAsync("Clock");
+
+            //Assert
+            Assert.True(product.IsFailure);
+        }
+
+        [Fact]
+        public async Task GetProductByName_When_ProductId_Is_Valid_Return_Product()
+        {
+            //Act
+            var product = await productService.GetProductByNameAsync("Mouse");
+
+            //Assert
+            Assert.Equal(1, product.Value.Id);
+        }
+
+        #endregion
+
         #region CreateProduct
 
         [Fact]
@@ -119,13 +161,13 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
         public async Task CreateProduct_When_Product_Name_Is_Null_Return_Failure()
         {
             //Arrange
-            var createProductDto = new ProductDto
+            var productRequestDto = new ProductRequestDto
             {
                 Count = 10
             };
 
             //Act
-            var createProductResponseDto = await productService.CreateProductAsync(createProductDto);
+            var createProductResponseDto = await productService.CreateProductAsync(productRequestDto);
 
             //Assert
             Assert.True(createProductResponseDto.IsFailure);
@@ -135,14 +177,14 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
         public async Task CreateProduct_When_Product_Name_Is_Empty_Return_Failure()
         {
             //Arrange
-            var createProductDto = new ProductDto
+            var productRequestDto = new ProductRequestDto
             {
                 ProductName = "",
                 Count = 10
             };
 
             //Act
-            var createProductResponseDto = await productService.CreateProductAsync(createProductDto);
+            var createProductResponseDto = await productService.CreateProductAsync(productRequestDto);
 
             //Assert
             Assert.True(createProductResponseDto.IsFailure);
@@ -152,14 +194,14 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
         public async Task CreateProduct_When_Product_Count_Is_Zero_Return_Failure()
         {
             //Arrange
-            var createProductDto = new ProductDto
+            var productRequestDto = new ProductRequestDto
             {
                 ProductName = "Pen",
                 Count = 0
             };
 
             //Act
-            var createProductResponseDto = await productService.CreateProductAsync(createProductDto);
+            var createProductResponseDto = await productService.CreateProductAsync(productRequestDto);
 
             //Assert
             Assert.True(createProductResponseDto.IsFailure);
@@ -169,14 +211,14 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
         public async Task CreateProduct_When_Product_Is_Valid_Return_ProductId()
         {
             //Arrange
-            var createProductDto = new ProductDto
+            var productRequestDto = new ProductRequestDto
             {
                 ProductName = "Pen",
                 Count = 10
             };
 
             //Act
-            var createProductResponseDto = await productService.CreateProductAsync(createProductDto);
+            var createProductResponseDto = await productService.CreateProductAsync(productRequestDto);
 
             //Assert
             Assert.Equal(3, createProductResponseDto.Value.ProductId);
@@ -201,13 +243,13 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
         public async Task UpdateProduct_When_Product_Name_Is_Null_Return_Failure()
         {
             //Arrange
-            var createProductDto = new ProductDto
+            var productRequestDto = new ProductRequestDto
             {
                 Count = 10
             };
 
             //Act
-            var product = await productService.UpdateProductAsync(createProductDto);
+            var product = await productService.UpdateProductAsync(productRequestDto);
 
             //Assert
             Assert.True(product.IsFailure);
@@ -217,14 +259,14 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
         public async Task UpdateProduct_When_Product_Name_Is_Empty_Return_Failure()
         {
             //Arrange
-            var createProductDto = new ProductDto
+            var productRequestDto = new ProductRequestDto
             {
                 ProductName = "",
                 Count = 10
             };
 
             //Act
-            var product = await productService.UpdateProductAsync(createProductDto);
+            var product = await productService.UpdateProductAsync(productRequestDto);
 
             //Assert
             Assert.True(product.IsFailure);
@@ -234,14 +276,14 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
         public async Task UpdateProduct_When_Product_Count_Is_Lesser_than_Zero_Return_Failure()
         {
             //Arrange
-            var createProductDto = new ProductDto
+            var productRequestDto = new ProductRequestDto
             {
                 ProductName = "Mouse",
                 Count = -2
             };
 
             //Act
-            var product = await productService.UpdateProductAsync(createProductDto);
+            var product = await productService.UpdateProductAsync(productRequestDto);
 
             //Assert
             Assert.True(product.IsFailure);
@@ -251,14 +293,14 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
         public async Task UpdateProduct_When_Product_Is_Valid_Return_Product()
         {
             //Arrange
-            var createProductDto = new ProductDto
+            var productRequestDto = new ProductRequestDto
             {
                 ProductName = "Mouse",
                 Count = 10
             };
 
             //Act
-            var product = await productService.UpdateProductAsync(createProductDto);
+            var product = await productService.UpdateProductAsync(productRequestDto);
 
             //Assert
             Assert.Equal(10, product.Value.Count);

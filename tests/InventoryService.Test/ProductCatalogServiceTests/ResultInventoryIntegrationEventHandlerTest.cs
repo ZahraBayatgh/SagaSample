@@ -8,7 +8,6 @@ using ProductCatalogService.Models;
 using ProductCatalogService.Services;
 using SagaPattern.UnitTests.Config;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 

@@ -53,25 +53,56 @@ namespace SaleService.Services
         }
 
         /// <summary>
-        /// This method adds a Product to the table.
-        /// If the input createProductDto is not valid or an expiration occurs, a Failure will be returned.
+        /// This metode get product by product name.
+        /// If the input name is not valid or an expiration occurs, a Failure will be returned.
         /// </summary>
-        /// <param name="createProductDto"></param>
+        /// <param name="productId"></param>
         /// <returns></returns>
-        public async Task<Result<int>> CreateProductAsync(CreateProductDto createProductDto)
+        public async Task<Result<Product>> GetProductByNameAsync(string productName)
+        {
+            try
+            {
+                // Check product name
+                if (string.IsNullOrEmpty(productName))
+                    return Result.Failure<Product>($"Product name is null.");
+
+                // Get product by product name
+                var product = await _context.Products.FirstOrDefaultAsync(x => x.Name == productName);
+
+                // Check product in db
+                if (product == null)
+                    return Result.Failure<Product>($"Product not found.");
+
+                return Result.Success(product);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"Get {productName} product name failed. Exception detail:{ex.Message}");
+
+                return Result.Failure<Product>($"Get {productName} product name failed.");
+            }
+        }
+
+        /// <summary>
+        /// This method adds a Product to the table.
+        /// If the input createProductRequestDto is not valid or an expiration occurs, a Failure will be returned.
+        /// </summary>
+        /// <param name="createProductRequestDto"></param>
+        /// <returns></returns>
+        public async Task<Result<int>> CreateProductAsync(CreateProductRequestDto createProductRequestDto)
         {
             try
             {
                 // Check product instance
-                var productValidation = CheckProductInstance(createProductDto);
+                var productValidation = CheckProductInstance(createProductRequestDto);
                 if (productValidation.IsFailure)
                     return Result.Failure<int>(productValidation.Error);
 
                 // Intialize product
                 var product = new Product
                 {
-                    Name = createProductDto.Name,
-                    Count = createProductDto.Count
+                    Name = createProductRequestDto.Name,
+                    Count = createProductRequestDto.Count
                 };
 
                 // Add product in database
@@ -82,9 +113,9 @@ namespace SaleService.Services
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Add {createProductDto.Name} product failed. Exception detail:{ex.Message}");
+                _logger.LogInformation($"Add {createProductRequestDto.Name} product failed. Exception detail:{ex.Message}");
 
-                return Result.Failure<int>($"Add {createProductDto.Name} product failed.");
+                return Result.Failure<int>($"Add {createProductRequestDto.Name} product failed.");
             }
         }
 
@@ -127,6 +158,38 @@ namespace SaleService.Services
         }
 
         /// <summary>
+        /// This method delete a Product to the table.
+        /// If the input productId is not valid or an expiration occurs, a Failure will be returned.
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        public async Task<Result> DeleteProductAsync(int productId)
+        {
+            try
+            {
+                // Check product id
+                if (productId <= 0)
+                    return Result.Failure($"Product id is zero.");
+
+                // Get product by product id
+                var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == productId);
+                if (product == null)
+                    return Result.Failure($"Product id is invalid.");
+
+                // Remove product
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
+
+                return Result.Success();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"Delete product with {productId} id failed. Exception detail:{ex.Message}");
+
+                return Result.Failure($"Delete product with {productId} id failed.");
+            }
+        }
+        /// <summary>
         /// This method roll back product count.
         /// If the input cancelChangeProductCount is not valid or an expiration occurs, a Failure will be returned.
         /// </summary>
@@ -163,7 +226,7 @@ namespace SaleService.Services
         /// </summary>
         /// <param name="createProductDto"></param>
         /// <returns></returns>
-        private static Result CheckProductInstance(CreateProductDto createProductDto)
+        private static Result CheckProductInstance(CreateProductRequestDto createProductDto)
         {
             if (createProductDto == null)
                 return Result.Failure($"CreateProductDto instance is invalid.");

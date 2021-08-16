@@ -10,13 +10,10 @@ namespace InventoryService.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
-        private readonly IInventoryOrcasrator _inventoryOrcasrator;
 
-        public ProductController(IProductService productService,
-                                 IInventoryOrcasrator inventoryOrcasrator)
+        public ProductController(IProductService productService)
         {
             _productService = productService;
-            _inventoryOrcasrator = inventoryOrcasrator;
         }
 
         [HttpGet("{id}")]
@@ -32,18 +29,5 @@ namespace InventoryService.Controllers
             return BadRequest(product.Error);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateProductAsync(ProductDto productDto)
-        {
-            // Create product and inventory transaction
-            var createProductResponse = await _inventoryOrcasrator.CreateProductAndInventoryTransactionAsync(productDto);
-
-            if (createProductResponse.IsSuccess)
-            {
-                return CreatedAtAction(nameof(GetProductByIdAsync), new { id = createProductResponse.Value }, null);
-            }
-
-            return BadRequest(createProductResponse.Error);
-        }
     }
 }

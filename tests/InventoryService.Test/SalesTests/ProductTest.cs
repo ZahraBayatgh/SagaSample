@@ -61,6 +61,48 @@ namespace SagaPattern.Tests.Sale
 
         #endregion
 
+        #region GetProductByName
+
+        [Fact]
+        public async Task GetProductByName_When_ProductName_Is_Null_Return_Failure()
+        {
+            //Act
+            var product = await productService.GetProductByNameAsync(null);
+
+            //Assert
+            Assert.True(product.IsFailure);
+        }
+        [Fact]
+        public async Task GetProductByName_When_ProductName_Is_Empty_Return_Failure()
+        {
+            //Act
+            var product = await productService.GetProductByNameAsync("");
+
+            //Assert
+            Assert.True(product.IsFailure);
+        }
+        [Fact]
+        public async Task GetProductByName_When_Product_Is_Not_Found_Return_Failure()
+        {
+            //Act
+            var product = await productService.GetProductByNameAsync("Clock");
+
+            //Assert
+            Assert.True(product.IsFailure);
+        }
+
+        [Fact]
+        public async Task GetProductByName_When_ProductId_Is_Valid_Return_Product()
+        {
+            //Act
+            var product = await productService.GetProductByNameAsync("Mouse");
+
+            //Assert
+            Assert.Equal(1, product.Value.Id);
+        }
+
+        #endregion
+
         #region CreateProduct
 
         [Fact]
@@ -77,13 +119,13 @@ namespace SagaPattern.Tests.Sale
         public async Task CreateProduct_When_Product_Name_Is_Null_Return_Failure()
         {
             //Arrange
-            var createProductDto = new CreateProductDto
+            var createProductRequestDto = new CreateProductRequestDto
             {
                 Count = 10
             };
 
             //Act
-            var productId = await productService.CreateProductAsync(createProductDto);
+            var productId = await productService.CreateProductAsync(createProductRequestDto);
 
             //Assert
             Assert.True(productId.IsFailure);
@@ -93,14 +135,14 @@ namespace SagaPattern.Tests.Sale
         public async Task CreateProduct_When_Product_Name_Is_Empty_Return_Failure()
         {
             //Arrange
-            var createProductDto = new CreateProductDto
+            var createProductRequestDto = new CreateProductRequestDto
             {
                 Name = "",
                 Count = 10
             };
 
             //Act
-            var productId = await productService.CreateProductAsync(createProductDto);
+            var productId = await productService.CreateProductAsync(createProductRequestDto);
 
             //Assert
             Assert.True(productId.IsFailure);
@@ -110,14 +152,14 @@ namespace SagaPattern.Tests.Sale
         public async Task CreateProduct_When_Product_Count_Is_Zero_Return_Failure()
         {
             //Arrange
-            var createProductDto = new CreateProductDto
+            var createProductRequestDto = new CreateProductRequestDto
             {
                 Name = "Pen",
                 Count = 0
             };
 
             //Act
-            var productId = await productService.CreateProductAsync(createProductDto);
+            var productId = await productService.CreateProductAsync(createProductRequestDto);
 
             //Assert
             Assert.True(productId.IsFailure);
@@ -127,14 +169,14 @@ namespace SagaPattern.Tests.Sale
         public async Task CreateProduct_When_Product_Is_Valid_Return_ProductId()
         {
             //Arrange
-            var createProductDto = new CreateProductDto
+            var createProductRequestDto = new CreateProductRequestDto
             {
                 Name = "Pen",
                 Count = 10
             };
 
             //Act
-            var productId = await productService.CreateProductAsync(createProductDto);
+            var productId = await productService.CreateProductAsync(createProductRequestDto);
 
             //Assert
             Assert.Equal(3, productId.Value);
@@ -238,6 +280,49 @@ namespace SagaPattern.Tests.Sale
             Assert.True(product.IsSuccess);
         }
 
+        #endregion
+
+        #region DeleteProduct
+
+        [Fact]
+        public async Task DeleteProduct_When_Product_Is_Zero_Return_Failure()
+        {
+            //Arrange
+            int productId = 0;
+
+            //Act
+            var result = await productService.DeleteProductAsync(productId);
+
+            //Assert
+            Assert.True(result.IsFailure);
+        }
+
+        [Fact]
+        public async Task DeleteProduct_When_Product_Is_Not_In_Db_Return_Failure()
+        {
+            //Arrange
+            int productId = 30;
+
+            //Act
+            var createProductResponseDto = await productService.DeleteProductAsync(productId);
+
+            //Assert
+            Assert.True(createProductResponseDto.IsFailure);
+        }
+
+
+        [Fact]
+        public async Task DeleteProduct_When_Product_Is_Valid_Return_Success()
+        {
+            //Arrange
+            int productId = 1;
+
+            //Act
+            var UpdateProductCount = await productService.DeleteProductAsync(productId);
+
+            //Assert
+            Assert.True(UpdateProductCount.IsSuccess);
+        }
         #endregion
 
         #region CancelChangeProductCount

@@ -78,7 +78,7 @@ namespace SagaPattern.UnitTests.ProductCatalogServiceTests
         public async Task CreateProduct_When_Product_Name_Is_Null_Return_Failure()
         {
             //Arrange
-            var createProductRequestDto = new CreateProductRequestDto(null, null, 10);
+            var createProductRequestDto = new ProductCatalog.Dtos.CreateProductRequestDto(null, null, 10);
 
             //Act
             var createProductResponseDto = await productService.CreateProductAsync(createProductRequestDto);
@@ -91,7 +91,7 @@ namespace SagaPattern.UnitTests.ProductCatalogServiceTests
         public async Task CreateProduct_When_Product_Name_Is_Empty_Return_Failure()
         {
             //Arrange
-            var createProductRequestDto = new CreateProductRequestDto(null, null, 10);
+            var createProductRequestDto = new ProductCatalog.Dtos.CreateProductRequestDto(null, null, 10);
 
             //Act
             var createProductResponseDto = await productService.CreateProductAsync(createProductRequestDto);
@@ -105,7 +105,7 @@ namespace SagaPattern.UnitTests.ProductCatalogServiceTests
         public async Task CreateProduct_When_Product_Is_Valid_Return_ProductId()
         {
             //Arrange
-            var createProductRequestDto = new CreateProductRequestDto("Pen", null, 10);
+            var createProductRequestDto = new ProductCatalog.Dtos.CreateProductRequestDto("Pen", null, 10);
 
             //Act
             var createProductResponseDto = await productService.CreateProductAsync(createProductRequestDto);

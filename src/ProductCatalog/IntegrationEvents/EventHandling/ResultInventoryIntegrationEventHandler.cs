@@ -80,7 +80,7 @@ namespace ProductCatalogService.IntegrationEvents.EventHandling
                 throw new ArgumentNullException("ResultSalesIntegrationEvent is null.");
 
             if (@event.ProductId <= 0)
-                throw new ArgumentNullException("ResultSalesIntegrationEvent is null.");
+                throw new ArgumentNullException("ResultSalesIntegrationEvent ProductId is invalid.");
         }
     }
 }

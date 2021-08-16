@@ -4,17 +4,15 @@ namespace InventoryService.IntegrationEvents.Events
 {
     public class CreateProductIntegrationEvent : IntegrationEvent
     {
-        public CreateProductIntegrationEvent(int productId, int inventoryTransactionId, string productName, int currentCount)
+        public CreateProductIntegrationEvent(int productId, string productName, int initialOnHand)
         {
             ProductId = productId;
-            InventoryTransactionId = inventoryTransactionId;
             ProductName = productName;
-            CurrentCount = currentCount;
+            InitialOnHand = initialOnHand;
         }
 
-        public int ProductId { get; }
-        public int InventoryTransactionId { get; }
-        public string ProductName { get; }
-        public int CurrentCount { get; }
+        public int ProductId { get; private set; }
+        public string ProductName { get; private set; }
+        public int InitialOnHand { get; private set; }
     }
 }

@@ -65,14 +65,14 @@ namespace InventoryService.IntegrationEvents.EventHandling
                 if (inventoryTransactionResult.IsSuccess)
                 {
                     // Intialize ProductDto
-                    var productDto = new ProductDto
+                    var productRequestDto = new ProductRequestDto
                     {
                         ProductName = @event.Name,
                         Count = inventoryTransactionResult.Value.CurrentCount
                     };
 
                     // Update product
-                    var product = await _productService.UpdateProductAsync(productDto);
+                    var product = await _productService.UpdateProductAsync(productRequestDto);
                     if (product.IsSuccess)
                         isCommit = true;
                 }

@@ -1,6 +1,6 @@
 ﻿using EventBus.Events;
 
-namespace InventoryService.IntegrationEvents.Events
+namespace ProductCatalogService.IntegrationEvents.Events
 {
     public class CreateProductIntegrationEvent : IntegrationEvent
     {
@@ -11,8 +11,8 @@ namespace InventoryService.IntegrationEvents.Events
             InitialOnHand = initialOnHand;
         }
 
-        public int ProductId { get; }
-        public string ProductName { get; }
-        public int InitialOnHand { get; }
+        public int ProductId { get; private set; }
+        public string ProductName { get; private set; }
+        public int InitialOnHand { get; private set; }
     }
 }

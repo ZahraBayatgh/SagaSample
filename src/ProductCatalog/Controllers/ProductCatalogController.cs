@@ -1,7 +1,7 @@
 ﻿using EventBus.Abstractions;
-using InventoryService.IntegrationEvents.Events;
 using Microsoft.AspNetCore.Mvc;
 using ProductCatalog.Dtos;
+using ProductCatalogService.IntegrationEvents.Events;
 using ProductCatalogService.Services;
 using System.Threading.Tasks;
 
