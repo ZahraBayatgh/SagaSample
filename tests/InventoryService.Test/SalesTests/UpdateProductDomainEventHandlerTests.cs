@@ -1,8 +1,8 @@
 ﻿
 using EventBus.Abstractions;
-using InventoryService.Test.Config;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SagaPattern.UnitTests.Config;
 using SaleService.DomainEvents.EventHandling;
 using SaleService.Services;
 using System;

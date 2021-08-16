@@ -1,9 +1,9 @@
 ﻿using EventBus.Abstractions;
 using InventoryService.Dtos;
 using InventoryService.Services;
-using InventoryService.Test.Config;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SagaPattern.UnitTests.Config;
 using System.Threading.Tasks;
 using Xunit;
 

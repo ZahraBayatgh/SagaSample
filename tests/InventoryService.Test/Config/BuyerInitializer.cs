@@ -1,9 +1,8 @@
 ﻿using SaleService.Data;
 using SaleService.Models;
-using System.Collections.Generic;
 using System.Linq;
 
-namespace InventoryService.Test.Config
+namespace SagaPattern.UnitTests.Config
 {
     public class BuyerInitializer
     {

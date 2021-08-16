@@ -1,8 +1,8 @@
 using InventoryService.Dtos;
 using InventoryService.Services;
-using InventoryService.Test.Config;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SagaPattern.UnitTests.Config;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -26,6 +26,19 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
         {
             //Arrange
             var id = 0;
+
+            //Act
+            var product = await productService.GetProductByIdAsync(id);
+
+            //Assert
+            Assert.True(product.IsFailure);
+        }
+
+        [Fact]
+        public async Task GetProductById_When_Product_Is_Not_Found_Return_Failure()
+        {
+            //Arrange
+            var id = 1000;
 
             //Act
             var product = await productService.GetProductByIdAsync(id);
@@ -63,7 +76,18 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
             //Assert
             Assert.True(product.IsFailure);
         }
+        [Fact]
+        public async Task GetProductId_When_Product_Is_Not_Found_Return_Failure()
+        {
+            //Arrange
+            var id = 1000;
 
+            //Act
+            var product = await productService.GetProductByIdAsync(id);
+
+            //Assert
+            Assert.True(product.IsFailure);
+        }
         [Fact]
         public async Task GetProductId_When_Name_Is_Valid_Return_Product()
         {
@@ -160,48 +184,6 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
 
         #endregion
 
-        #region DeleteProduct
-
-        [Fact]
-        public async Task DeleteProduct_When_Product_Is_Zero_Return_Failure()
-        {
-            //Arrange
-            int productId = 0;
-
-            //Act
-            var result = await productService.DeleteProductAsync(productId);
-
-            //Assert
-            Assert.True(result.IsFailure);
-        }
-
-        [Fact]
-        public async Task DeleteProduct_When_Product_Is_Not_In_Db_Return_Failure()
-        {
-            //Arrange
-            int productId = 30;
-
-            //Act
-            var createProductResponseDto = await productService.DeleteProductAsync(productId);
-
-            //Assert
-            Assert.True(createProductResponseDto.IsFailure);
-        }
-
-
-        [Fact]
-        public async Task DeleteProduct_When_Product_Is_Valid_Return_Success()
-        {
-            //Arrange
-            int productId = 1;
-
-            //Act
-            var UpdateProductCount = await productService.DeleteProductAsync(productId);
-
-            //Assert
-            Assert.True(UpdateProductCount.IsSuccess);
-        }
-        #endregion
 
         #region UpdateProduct
 

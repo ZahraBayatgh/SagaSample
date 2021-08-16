@@ -28,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\ProductCatalog\ProductCatalogService.csproj" />
     <ProjectReference Include="..\..\src\Services\InventoryService\InventoryService.csproj" />
     <ProjectReference Include="..\..\src\Services\SaleService\SaleService.csproj" />
   </ItemGroup>

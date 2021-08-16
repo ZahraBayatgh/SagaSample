@@ -1,7 +1,6 @@
-
-using InventoryService.Test.Config;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SagaPattern.UnitTests.Config;
 using SaleService.Dtos;
 using SaleService.Services;
 using System.Threading.Tasks;
@@ -26,6 +25,19 @@ namespace SagaPattern.Tests.Sale
         {
             //Arrange
             var id = 0;
+
+            //Act
+            var product = await productService.GetProductByIdAsync(id);
+
+            //Assert
+            Assert.True(product.IsFailure);
+        }
+       
+        [Fact]
+        public async Task GetProductById_When_Product_Is_Not_Found_Return_Failure()
+        {
+            //Arrange
+            var id = 1000;
 
             //Act
             var product = await productService.GetProductByIdAsync(id);

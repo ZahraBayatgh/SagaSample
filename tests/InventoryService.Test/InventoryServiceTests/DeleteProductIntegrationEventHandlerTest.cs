@@ -1,8 +1,8 @@
 using InventoryService.IntegrationEvents.EventHandling;
 using InventoryService.Services;
-using InventoryService.Test.Config;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SagaPattern.UnitTests.Config;
 using System;
 using System.Threading.Tasks;
 using Xunit;

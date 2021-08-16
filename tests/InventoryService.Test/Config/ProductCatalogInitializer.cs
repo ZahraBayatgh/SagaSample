@@ -1,13 +1,13 @@
-﻿using InventoryService.Data;
-using InventoryService.Models;
+﻿using ProductCatalog.Data;
+using ProductCatalogService.Models;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace SagaPattern.UnitTests.Config
 {
-    public class ProductInitializer
+    public class ProductCatalogInitializer
     {
-        public void InitializeData(InventoryDbContext dbContext)
+        public void InitializeData(ProductCatalogDbContext dbContext)
         {
             if (!dbContext.Products.Any())
             {
@@ -17,13 +17,19 @@ namespace SagaPattern.UnitTests.Config
                   {
                       Id=1,
                       Name="Mouse",
-                       Count=20
+                      ProductStatus=ProductStatus.Completed
                   },
                   new Product
                   {
                       Id=2,
                       Name="Monitor",
-                       Count=12
+                      ProductStatus=ProductStatus.SalesIsOk
+                  },
+                   new Product
+                  {
+                      Id=3,
+                      Name="Keyboard",
+                      ProductStatus=ProductStatus.InventoryIsOk
                   }
                 };
 

@@ -1,12 +1,12 @@
-﻿using CustomerService.Data;
-using CustomerService.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ProductCatalog.Data;
+using ProductCatalogService.Models;
 using System;
 using System.Threading.Tasks;
 
-namespace InventoryService.Data
+namespace ProductCatalogService.Data
 {
     public class SeedData
     {
@@ -24,7 +24,7 @@ namespace InventoryService.Data
             serviceCollection.AddSingleton<IConfiguration>(config);
 
             // DbContext
-            serviceCollection.AddDbContext<CustomerDbContext>(option =>
+            serviceCollection.AddDbContext<ProductCatalogDbContext>(option =>
             {
                 var connectionString = config.GetConnectionString("DefaultConnection");
                 if (string.IsNullOrEmpty(connectionString))
@@ -43,22 +43,21 @@ namespace InventoryService.Data
             using (var serviceScope = GenerateServiceScope())
             {
                 var serviceProvider = serviceScope.ServiceProvider;
-                var context = serviceProvider.GetService<CustomerDbContext>();
+                var context = serviceProvider.GetService<ProductCatalogDbContext>();
                 context.Database.EnsureCreated();
 
                 Console.WriteLine("Database Created");
 
-                // Check product exist
-                var customer = await context.Customers.FirstOrDefaultAsync(x => x.FirstName == "Zahra");
-                if (customer == null)
-                {
-                    customer = new Customer()
-                    {
-                        FirstName = "Zahra",
-                        LastName="Bayat"
-                    };
-                    await context.Customers.AddAsync(customer);
 
+                var product = await context.Products.FirstOrDefaultAsync(x => x.Name == "Mouse");
+                if (product == null)
+                {
+                    product = new Product()
+                    {
+                        Name = "Mouse",
+                    };
+
+                    await context.Products.AddAsync(product);
                     await context.SaveChangesAsync();
                 }
                 else

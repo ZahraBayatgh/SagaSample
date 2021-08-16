@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using System;
 
-namespace InventoryService.Test.Config
+namespace SagaPattern.UnitTests.Config
 {
     public class InventoryMemoryDatabaseConfig
     {

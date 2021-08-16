@@ -38,6 +38,10 @@ namespace SaleService.Services
                 // Get product by product id
                 var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == productId);
 
+                // Check product in db
+                if (product == null)
+                    return Result.Failure<Product>($"Product not found.");
+
                 return Result.Success(product);
             }
             catch (Exception ex)

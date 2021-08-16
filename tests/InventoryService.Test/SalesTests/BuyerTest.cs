@@ -1,9 +1,7 @@
 using CustomerService.Services;
-using InventoryService.Dtos;
-using InventoryService.Services;
-using InventoryService.Test.Config;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SagaPattern.UnitTests.Config;
 using SaleService.Dtos;
 using System.Threading.Tasks;
 using Xunit;
