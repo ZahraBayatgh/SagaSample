@@ -54,7 +54,7 @@ namespace SaleService.Data
                     product = new Product()
                     {
                         Name = "Mouse",
-                        Count = 300,
+                        OnHand = 300,
                     };
 
                     await context.Products.AddAsync(product);

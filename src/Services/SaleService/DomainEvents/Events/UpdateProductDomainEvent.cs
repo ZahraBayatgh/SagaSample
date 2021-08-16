@@ -4,16 +4,18 @@ namespace SaleService.DomainEvents.Events
 {
     public class UpdateProductDomainEvent : INotification
     {
-        public UpdateProductDomainEvent(int orderId, string name, int decreaseCount)
+        public UpdateProductDomainEvent(int orderId,int orderItemId, string productName, int quantity)
         {
             OrderId = orderId;
-            Name = name;
-            DecreaseCount = decreaseCount;
+            OrderItemId = orderItemId;
+            ProductName = productName;
+            Quantity = quantity;
         }
 
         public int OrderId { get; set; }
-        public string Name { get; set; }
-        public int DecreaseCount { get; set; }
+        public int OrderItemId { get; }
+        public string ProductName { get; set; }
+        public int Quantity { get; set; }
 
     }
 }

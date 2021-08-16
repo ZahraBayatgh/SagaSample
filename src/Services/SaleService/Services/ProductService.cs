@@ -102,7 +102,7 @@ namespace SaleService.Services
                 var product = new Product
                 {
                     Name = createProductRequestDto.Name,
-                    Count = createProductRequestDto.Count
+                    OnHand = createProductRequestDto.Count
                 };
 
                 // Add product in database
@@ -139,11 +139,11 @@ namespace SaleService.Services
                 var product = await _context.Products.FirstOrDefaultAsync(x => x.Name == updateProductDto.Name);
 
                 // Check that the product count value is not less than the DecreaseCount.
-                if (product.Count < updateProductDto.DecreaseCount)
+                if (product.OnHand < updateProductDto.DecreaseCount)
                     return Result.Failure<int>($"{product.Name} product count lesser than DecreaseCount.");
 
                 // Decrease product count
-                product.Count -= updateProductDto.DecreaseCount;
+                product.OnHand -= updateProductDto.DecreaseCount;
                 await _context.SaveChangesAsync();
 
                 return Result.Success();
@@ -208,7 +208,7 @@ namespace SaleService.Services
                 var result = await _context.Products.FirstOrDefaultAsync(x => x.Name == cancelChangeProductCount.Name);
 
                 //Roll back product count
-                result.Count += cancelChangeProductCount.DecreaseCount;
+                result.OnHand += cancelChangeProductCount.DecreaseCount;
                 await _context.SaveChangesAsync();
 
                 return Result.Success();

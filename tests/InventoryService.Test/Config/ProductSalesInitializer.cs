@@ -17,13 +17,13 @@ namespace SagaPattern.UnitTests.Config
                  {
                      Id=1,
                      Name="Mouse",
-                     Count=20
+                     OnHand=20
                  },
                  new Product
                  {
                      Id=2,
                      Name="Monitor",
-                     Count=12
+                     OnHand=12
                  }
             };
 

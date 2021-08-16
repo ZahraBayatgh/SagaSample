@@ -33,17 +33,31 @@ namespace SaleService.Controllers
 
             return BadRequest(order.Error);
         }
-
-        [HttpPut]
-        public async Task<IActionResult> CreateOrderAsync(CreateOrderDto orderDto)
+        [HttpPost]
+        public async Task<IActionResult> CreateOrderAsync(CreateOrderRequestDto createOrderRequestDto)
         {
             // Add order
-            var orderResult = await _orderService.CreateOrderAsync(orderDto);
+            var orderResult = await _orderService.CreateOrderAsync(createOrderRequestDto);
+
+            if (orderResult.IsSuccess)
+            {
+                return CreatedAtAction(nameof(GetOrderByIdAsync), new { id = orderResult.Value }, null);
+
+            }
+
+            return BadRequest(orderResult.Error);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> CreateOrderItemAsync(CreateOrderItemRequestDto createOrderItemRequestDto)
+        {
+            // Add order
+            var orderResult = await _orderService.CreateOrderItemAsync(createOrderItemRequestDto);
 
             if (orderResult.IsSuccess)
             {
                 // update product count after add order
-                var updateProductDomainEvent = new UpdateProductDomainEvent(orderResult.Value.OrderId, orderResult.Value.Name, orderResult.Value.DecreaseCount);
+                var updateProductDomainEvent = new UpdateProductDomainEvent(orderResult.Value.OrderItemId, createOrderItemRequestDto.OrderId, orderResult.Value.ProductName, orderResult.Value.Quantity);
                 await _mediator.Publish(updateProductDomainEvent);
 
                 return NoContent();

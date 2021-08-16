@@ -39,15 +39,15 @@ namespace SaleService.DomainEvents.EventHandling
                 // Intialize UpdateProductCountDto
                 UpdateProductCountDto updateProductCountDto = new UpdateProductCountDto
                 {
-                    Name = @event.Name,
-                    DecreaseCount = @event.DecreaseCount
+                    Name = @event.ProductName,
+                    DecreaseCount = @event.Quantity
                 };
 
                 // Update product count in product table
                 var product = await _productService.UpdateProductCountAsync(updateProductCountDto);
                 if (product.IsSuccess)
                 {
-                    UpdateProductCountAndAddInventoryTransaction updateProductIntegrationEvent = new UpdateProductCountAndAddInventoryTransaction(updateProductCountDto.Name, updateProductCountDto.DecreaseCount);
+                    UpdateProductCountAndAddInventoryTransactionEvent updateProductIntegrationEvent = new UpdateProductCountAndAddInventoryTransactionEvent(updateProductCountDto.Name, updateProductCountDto.DecreaseCount,@event.OrderId,@event.OrderItemId);
                     _eventBus.Publish(updateProductIntegrationEvent);
                 }
             }
@@ -58,7 +58,7 @@ namespace SaleService.DomainEvents.EventHandling
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Update product {@event.Name} has been Canceled. Exception detail:{ex.Message}");
+                _logger.LogInformation($"Update product {@event.ProductName} has been Canceled. Exception detail:{ex.Message}");
                 await _orderService.DeleteOrderAsync(@event.OrderId);
                 throw;
             }

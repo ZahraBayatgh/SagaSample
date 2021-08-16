@@ -1,10 +1,12 @@
 ﻿using CSharpFunctionalExtensions;
+using CustomerService.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SaleService.Data;
 using SaleService.Dtos;
 using SaleService.Models;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SaleService.Services
@@ -30,73 +32,105 @@ namespace SaleService.Services
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns></returns>
-        public async Task<Result<Order>> GetOrderByIdAsync(int orderId)
+        public async Task<Result<GetOrderResponse>> GetOrderByIdAsync(int orderId)
         {
             try
             {
                 // Check order id
                 if (orderId <= 0)
-                    return Result.Failure<Order>($"Order id is invalid.");
+                    return Result.Failure<GetOrderResponse>($"Order id is invalid.");
 
                 // Get order by order id
                 var order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == orderId);
 
-                return Result.Success(order);
+                // Check order in db
+                if (order==null)
+                    return Result.Failure<GetOrderResponse>($"Order is not in db.");
+                
+                var orderItems =await _context.OrderItems.Where(x => x.OrderId == order.Id).ToListAsync();
+                var GetOrderResponse = new GetOrderResponse(order.BuyerId, $"{order.Buyer.FirstName} {order.Buyer.LastName}", order.OrderDate, orderItems);
+              
+                return Result.Success(GetOrderResponse);
             }
             catch (Exception ex)
             {
                 _logger.LogInformation($"Get {orderId} order id failed. Exception detail:{ex.Message}");
 
-                return Result.Failure<Order>($"Get {orderId} order id failed.");
+                return Result.Failure<GetOrderResponse>($"Get {orderId} order id failed.");
             }
         }
-
         /// <summary>
         /// This method adds a Order to the table.
         /// If the input createProductDto is not valid or an expiration occurs, a Failure will be returned.
         /// </summary>
-        /// <param name="createOrderDto"></param>
-        public async Task<Result<CreateOrderResponseDto>> CreateOrderAsync(CreateOrderDto createOrderDto)
+        /// <param name="createOrderRequestDto"></param>
+        public async Task<Result<int>> CreateOrderAsync(CreateOrderRequestDto createOrderRequestDto)
         {
             try
             {
                 // Check product instance
-                var orderValidation = CheckProductInstance(createOrderDto);
+                var orderValidation =await CheckCreateOrderRequestDtoInstanceAsync(createOrderRequestDto);
                 if (orderValidation.IsFailure)
-                    return Result.Failure<CreateOrderResponseDto>(orderValidation.Error);
-
-                // Check product id in database
-                var product = await _productService.GetProductByIdAsync(createOrderDto.ProductId);
-                if (product.Value == null)
-                    return Result.Failure<CreateOrderResponseDto>($"Product Id {createOrderDto.ProductId} is invalid.");
-
-                // Check produt count
-                if (product.Value.Count < createOrderDto.Count)
-                    return Result.Failure<CreateOrderResponseDto>($"The count of the product {product.Value.Id} id is less than the count of the order");
+                    return Result.Failure<int>(orderValidation.Error);
 
                 // Intialize Order
                 Order order = new Order
                 {
-                    ProductId = createOrderDto.ProductId,
-                    Count = createOrderDto.Count
+                    BuyerId = createOrderRequestDto.BuyerId,
+                    OrderDate = DateTime.Now
                 };
 
                 // Add order in database
                 await _context.Orders.AddAsync(order);
+
                 await _context.SaveChangesAsync();
 
-                CreateOrderResponseDto createOrderResponseDto = new CreateOrderResponseDto
+                return Result.Success(order.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"Add order with {createOrderRequestDto.BuyerId} buyyer id failed. Exception detail:{ex.Message}");
+
+                return Result.Failure<int>($"Add order with {createOrderRequestDto.BuyerId} buyyer id failed.");
+            }
+        }
+        /// <summary>
+        /// This method adds a Order item to the table.
+        /// If the input createProductDto is not valid or an expiration occurs, a Failure will be returned.
+        /// </summary>
+        /// <param name="createOrderItemRequestDto"></param>
+        public async Task<Result<CreateOrderItemResponseDto>> CreateOrderItemAsync(CreateOrderItemRequestDto  createOrderItemRequestDto)
+        {
+            try
+            {
+                // Check product instance
+                var orderValidation =await CheckCreateOrderItemRequestDtoInstanceAsync(createOrderItemRequestDto);
+                if (orderValidation.IsFailure)
+                    return Result.Failure<CreateOrderItemResponseDto>(orderValidation.Error);
+
+                // Intialize Order
+                OrderItem orderItem = new OrderItem
                 {
-                    Name = product.Value.Name,
-                    DecreaseCount = createOrderDto.Count
+                    OrderId = createOrderItemRequestDto.OrderId,
+                    ProductId = createOrderItemRequestDto.ProductId,
+                    Quantity = createOrderItemRequestDto.Quantity,
+                    UnitPrice = createOrderItemRequestDto.UnitPrice
                 };
+
+                // Add order in database
+                await _context.OrderItems.AddAsync(orderItem);
+
+             
+                await _context.SaveChangesAsync();
+
+                CreateOrderItemResponseDto createOrderResponseDto = new CreateOrderItemResponseDto(orderItem.Id, orderValidation.Value, createOrderItemRequestDto.Quantity);
                 return Result.Success(createOrderResponseDto);
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Add order with {createOrderDto.ProductId} product failed. Exception detail:{ex.Message}");
+                _logger.LogInformation($"Add order with {createOrderItemRequestDto.ProductId} product failed. Exception detail:{ex.Message}");
 
-                return Result.Failure<CreateOrderResponseDto>($"Add order with {createOrderDto.ProductId} product failed.");
+                return Result.Failure<CreateOrderItemResponseDto>($"Add order with {createOrderItemRequestDto.ProductId} product failed.");
             }
         }
 
@@ -134,22 +168,60 @@ namespace SaleService.Services
         }
 
         /// <summary>
-        /// This methode check a orderDto instance
+        /// This methode check a createOrderRequestDto instance
         /// </summary>
-        /// <param name="createOrderDto"></param>
+        /// <param name="createOrderRequestDto"></param>
         /// <returns></returns>
-        private Result CheckProductInstance(CreateOrderDto createOrderDto)
+        private async Task< Result> CheckCreateOrderRequestDtoInstanceAsync(CreateOrderRequestDto createOrderRequestDto)
         {
-            if (createOrderDto == null)
-                return Result.Failure($"CreateOrderDto is null.");
+            if (createOrderRequestDto == null)
+                return Result.Failure($"CreateOrderRequestDto is null.");
 
-            if (createOrderDto.ProductId <= 0)
-                return Result.Failure($"ProductId is invalid.");
+            if (createOrderRequestDto.BuyerId <= 0)
+                return Result.Failure($"BuyerId is invalid.");
 
-            if (createOrderDto.Count <= 0)
-                return Result.Failure($"Count is invalid.");
+           var buyer=await _context.Buyers.FirstOrDefaultAsync(x=>x.Id==createOrderRequestDto.BuyerId);
+            if (buyer==null)
+                return Result.Failure($"BuyerId is not in db.");
+
 
             return Result.Success();
+        }
+
+        /// <summary>
+        /// This methode check a CreateOrderItemRequestDto instance
+        /// </summary>
+        /// <param name="createOrderItemRequestDto"></param>
+        /// <returns></returns>
+        private async Task< Result<string>> CheckCreateOrderItemRequestDtoInstanceAsync(CreateOrderItemRequestDto createOrderItemRequestDto)
+        {
+            if (createOrderItemRequestDto == null)
+                return Result.Failure<string>($"CreateOrderItemRequestDto is null.");
+
+            if (createOrderItemRequestDto.OrderId <= 0)
+                return Result.Failure<string>($"OrderId is invalid.");
+
+            var order = _context.Orders.FirstOrDefaultAsync(x => x.Id == createOrderItemRequestDto.OrderId);
+            if (order == null)
+                return Result.Failure<string>($"OrderId is not in db.");
+
+            if (createOrderItemRequestDto.ProductId <= 0)
+                return Result.Failure<string>($"ProductId is invalid.");
+
+            var product =await _context.Products.FirstOrDefaultAsync(x => x.Id == createOrderItemRequestDto.ProductId);
+            if (product == null)
+                return Result.Failure<string>($"ProductId is not in db.");
+
+            if (createOrderItemRequestDto.Quantity <= 0)
+                return Result.Failure<string>($"Quantity is invalid.");
+
+            if (product.OnHand<createOrderItemRequestDto.Quantity)
+                return Result.Failure<string>($"Quantity is more then than product count.");
+
+            if (createOrderItemRequestDto.UnitPrice <= 0)
+                return Result.Failure<string>($"UnitPrice is invalid.");
+
+            return Result.Success(product.Name);
         }
     }
 }

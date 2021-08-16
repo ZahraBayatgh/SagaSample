@@ -30,11 +30,14 @@ namespace SaleService.IntegrationEvents.EventHandling
 
                 var productDto = new CancelChangeProductCountDto
                 {
-                    Name = @event.Name,
-                    DecreaseCount = @event.DecreaseCount
+                    Name = @event.ProductName,
+                    DecreaseCount = @event.Quantity
                 };
 
                 await _productService.CancelChangeProductCountAsync(productDto);
+
+                //To do: delete order and orderitem
+
             }
             catch (ArgumentNullException ex)
             {
@@ -43,7 +46,7 @@ namespace SaleService.IntegrationEvents.EventHandling
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Product {@event.Name} has been Canceled. Exception detail:{ex.Message}");
+                _logger.LogInformation($"Product {@event.ProductName} has been Canceled. Exception detail:{ex.Message}");
                 throw;
             }
         }

@@ -1,5 +1,6 @@
 ﻿using SaleService.Data;
 using SaleService.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,8 +17,14 @@ namespace SagaPattern.UnitTests.Config
                    new Order
                    {
                        Id=1,
-                       ProductId=1,
-                        Count=2
+                       BuyerId=1,
+                        Buyer=new Buyer
+                        {
+                             Id=1,
+                              FirstName="Zahra",
+                              LastName="Bayat"
+                        },
+                         OrderDate=DateTime.Now,
                    },
                  };
 

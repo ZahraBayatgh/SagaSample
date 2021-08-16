@@ -81,7 +81,6 @@ namespace Service2
             eventBus.Subscribe<DeleteInventoryIntegrationEvent, IIntegrationEventHandler<DeleteInventoryIntegrationEvent>>();
             
             eventBus.Subscribe<UpdateProductCountAndAddInventoryTransactionEvent, IIntegrationEventHandler<UpdateProductCountAndAddInventoryTransactionEvent>>();
-            eventBus.Subscribe<DeleteProductIntegrationEvent, IIntegrationEventHandler<DeleteProductIntegrationEvent>>();
 
         }
 

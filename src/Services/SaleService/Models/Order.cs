@@ -1,9 +1,15 @@
-﻿namespace SaleService.Models
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace SaleService.Models
 {
     public class Order
     {
         public int Id { get; set; }
-        public int ProductId { get; set; }
-        public int Count { get; set; }
+        public int BuyerId { get; set; }
+        public Buyer Buyer { get; set; }
+        public DateTime OrderDate { get; set; }
+
     }
 }

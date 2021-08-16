@@ -4,12 +4,17 @@ namespace SaleService.IntegrationEvents.Events
 {
     public class CancelChangeProductCountIntegrationEvent : IntegrationEvent
     {
-        public CancelChangeProductCountIntegrationEvent(string name, int count)
+        public CancelChangeProductCountIntegrationEvent(string productName, int quantity, int orderId, int orderItemId)
         {
-            Name = name;
-            DecreaseCount = count;
+            ProductName = productName;
+            Quantity = quantity;
+            OrderId = orderId;
+            OrderItemId = orderItemId;
         }
-        public string Name { get; set; }
-        public int DecreaseCount { get; set; }
+
+        public string ProductName { get; private set; }
+        public int Quantity { get; private set; }
+        public int OrderId { get; }
+        public int OrderItemId { get; private set; }
     }
 }

@@ -37,6 +37,19 @@ namespace SagaPattern.Tests.Sale
         }
 
         [Fact]
+        public async Task GetOrderById_When_OrderId_Is_Not_In_Db_Return_Failure()
+        {
+            //Arrange
+            var id = 2;
+
+            //Act
+            var order = await orderService.GetOrderByIdAsync(id);
+
+            //Assert
+            Assert.True(order.IsFailure);
+        }
+
+        [Fact]
         public async Task GetOrderById_When_OrderId_Is_Valid_Return_Order()
         {
             //Arrange
@@ -46,7 +59,7 @@ namespace SagaPattern.Tests.Sale
             var order = await orderService.GetOrderByIdAsync(id);
 
             //Assert
-            Assert.Equal(id, order.Value.Id);
+            Assert.Equal(id, order.Value.BuyerId);
         }
 
         #endregion
@@ -64,84 +77,40 @@ namespace SagaPattern.Tests.Sale
         }
 
         [Fact]
-        public async Task CreateOrder_When_Product_Id_Is_Zero_Return_Failure()
+        public async Task CreateOrder_When_Buyer_Id_Is_Zero_Return_Failure()
         {
             //Arrange
-            var createOrderDto = new CreateOrderDto
-            {
-                ProductId = 0
-            };
+            var createOrderRequestDto = new CreateOrderRequestDto(0);
 
             //Act
-            var createOrderResponseDto = await orderService.CreateOrderAsync(createOrderDto);
+            var createOrderResponseDto = await orderService.CreateOrderAsync(createOrderRequestDto);
 
             //Assert
             Assert.True(createOrderResponseDto.IsFailure);
         }
 
         [Fact]
-        public async Task CreateOrder_When_Order_Count_Is_Zero_Return_Failure()
+        public async Task CreateOrder_When_Order_Buyer_Is_Invalid_Return_Failure()
         {
             //Arrange
-            var createOrderDto = new CreateOrderDto
-            {
-                ProductId = 1,
-                Count = 0
-            };
+            var createOrderRequestDto = new CreateOrderRequestDto(3);
 
             //Act
-            var createOrderResponseDto = await orderService.CreateOrderAsync(createOrderDto);
+            var createOrderResponseDto = await orderService.CreateOrderAsync(createOrderRequestDto);
 
             //Assert
             Assert.True(createOrderResponseDto.IsFailure);
         }
 
-        [Fact]
-        public async Task CreateOrder_When_Product_Id_Is_Invalid_Return_Failure()
-        {
-            //Arrange
-            var createOrderDto = new CreateOrderDto
-            {
-                ProductId = 12,
-                Count = 10
-            };
-
-            //Act
-            var createOrderResponseDto = await orderService.CreateOrderAsync(createOrderDto);
-
-            //Assert
-            Assert.True(createOrderResponseDto.IsFailure);
-        }
-
-        [Fact]
-        public async Task CreateOrder_When_Order_Count_More_Than_Product_Count_Return_Failure()
-        {
-            //Arrange
-            var createOrderDto = new CreateOrderDto
-            {
-                ProductId = 1,
-                Count = 100
-            };
-
-            //Act
-            var createOrderResponseDto = await orderService.CreateOrderAsync(createOrderDto);
-
-            //Assert
-            Assert.True(createOrderResponseDto.IsFailure);
-        }
-
+    
         [Fact]
         public async Task CreateOrder_When_Order_Input_Is_Valid_Return_CreateOrderResponseDto()
         {
             //Arrange
-            var createOrderDto = new CreateOrderDto
-            {
-                ProductId = 1,
-                Count = 2
-            };
+            var createOrderRequestDto = new CreateOrderRequestDto(1);
 
             //Act
-            var createOrderResponseDto = await orderService.CreateOrderAsync(createOrderDto);
+            var createOrderResponseDto = await orderService.CreateOrderAsync(createOrderRequestDto);
 
             //Assert
             Assert.True(createOrderResponseDto.IsSuccess);

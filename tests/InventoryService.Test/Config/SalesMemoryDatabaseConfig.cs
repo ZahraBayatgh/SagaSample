@@ -14,6 +14,7 @@ namespace SagaPattern.UnitTests.Config
             Context = CreateContext();
 
             new OrderInitializer().InitializeData(Context);
+            new OrderItemInitializer().InitializeData(Context);
             new ProductSalesInitializer().InitializeData(Context);
             new BuyerInitializer().InitializeData(Context);
         }

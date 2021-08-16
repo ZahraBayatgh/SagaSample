@@ -42,7 +42,7 @@ namespace InventoryService.IntegrationEvents.EventHandling
                 bool isCommit = false;
 
                 // Get product id
-                var productId = await _productService.GetProductIdAsync(@event.Name);
+                var productId = await _productService.GetProductIdAsync(@event.ProductName);
 
                 // Get latest InventoryTransaction by product id
                 var latestInventoryTransactionCount = await _inventoryTransactionService.GetLatestInventoryTransactionByProductIdAsync(productId.Value);
@@ -55,8 +55,8 @@ namespace InventoryService.IntegrationEvents.EventHandling
                 var inventoryTransaction = new InventoryTransactionDto
                 {
                     ProductId = productId.Value,
-                    ChangeCount = @event.DecreaseCount,
-                    CurrentCount = latestInventoryTransactionCount.Value - @event.DecreaseCount
+                    ChangeCount = @event.Quantity,
+                    CurrentCount = latestInventoryTransactionCount.Value - @event.Quantity
                 };
 
                 // Create InventoryTransaction
@@ -67,7 +67,7 @@ namespace InventoryService.IntegrationEvents.EventHandling
                     // Intialize ProductDto
                     var productRequestDto = new ProductRequestDto
                     {
-                        ProductName = @event.Name,
+                        ProductName = @event.ProductName,
                         Count = inventoryTransactionResult.Value.CurrentCount
                     };
 
@@ -93,10 +93,10 @@ namespace InventoryService.IntegrationEvents.EventHandling
             }
             catch (Exception ex)
             {
-                var cancelProductIntegrationEvent = new CancelChangeProductCountIntegrationEvent(@event.Name, @event.DecreaseCount);
+                var cancelProductIntegrationEvent = new CancelChangeProductCountIntegrationEvent(@event.ProductName, @event.Quantity,@event.OrderId,@event.OrderItemId);
                 _eventBus.Publish(cancelProductIntegrationEvent);
 
-                _logger.LogInformation($"Product{@event.Name} has been canceled. Exception detail:{ex.Message}");
+                _logger.LogInformation($"Product{@event.ProductName} has been canceled. Exception detail:{ex.Message}");
             }
         }
     }
