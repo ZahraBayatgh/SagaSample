@@ -10,6 +10,9 @@ services:
   SaleData:
     image: mcr.microsoft.com/mssql/server:2017-latest
 
+  ProductCatalogData:
+    image: mcr.microsoft.com/mssql/server:2017-latest
+
   inventoryservice:
     image: ${DOCKER_REGISTRY-}inventoryservice
     build:
@@ -26,3 +29,11 @@ services:
     depends_on:
       - SaleData
 
+
+  productcatalogservice:
+    image: ${DOCKER_REGISTRY-}productcatalogservice
+    build:
+      context: .
+      dockerfile: src/ProductCatalog/Dockerfile
+    depends_on:
+     - ProductCatalogData

@@ -10,7 +10,7 @@ namespace SagaPattern.UnitTests.Config
     {
         public void InitializeData(SaleDbContext dbContext)
         {
-            if (!dbContext.Orders.Any())
+            if (!dbContext.OrderItems.Any())
             {
                 var orderItems = new List<OrderItem>
                  {
@@ -21,7 +21,15 @@ namespace SagaPattern.UnitTests.Config
                        ProductId=1,
                        Quantity=10,
                        UnitPrice=100
-                   }
+                   },
+                   new OrderItem
+                   {
+                       Id=2,
+                       OrderId=1,
+                       ProductId=2,
+                       Quantity=10,
+                       UnitPrice=100
+                   },
                  };
 
                 dbContext.OrderItems.AddRange(orderItems);

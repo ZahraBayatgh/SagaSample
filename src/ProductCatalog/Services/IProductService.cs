@@ -10,6 +10,7 @@ namespace ProductCatalogService.Services
     {
         Task<Result<CreateProductResponseDto>> CreateProductAsync(CreateProductRequestDto createProductRequestDto);
         Task<Result> DeleteProductAsync(int productId);
+        Task<Result<Product>> GetProductByNameAsync(string productName);
         Task<Result<Product>> GetProductByIdAsync(int productId);
         Task<Result> UpdateProductStatusAsync(UpdateProductStatusRequestDto updateProductStatusRequestDto);
     }

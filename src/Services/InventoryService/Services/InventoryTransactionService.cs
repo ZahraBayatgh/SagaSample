@@ -5,6 +5,7 @@ using InventoryService.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,6 +21,36 @@ namespace InventoryService.Services
         {
             _context = context;
             _logger = logger;
+        }
+
+        /// <summary>
+        /// This method get latest invertory transaction by product id.
+        /// If the input productId is not valid or an expiration occurs, a Failure will be returned.
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        public async Task<Result<InventoryTransaction>> GetInventoryTransactionsByProductIdAsync(int productId)
+        {
+            try
+            {
+                // Check product id
+                if (productId <= 0)
+                    return Result.Failure<InventoryTransaction>($"Product id is invalid.");
+
+                // Get latast InventoryTransaction by product id
+                var inventoryTransaction = await _context.InventoryTransactions.FirstOrDefaultAsync(x => x.ProductId == productId);
+
+                // Check inventoryTransaction
+                if (inventoryTransaction == null)
+                    return Result.Failure<InventoryTransaction>($"Get all inventory transaction by product id {productId} was not found.");
+
+                return Result.Success(inventoryTransaction);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"Get all inventory transaction by product id {productId} was failed. Exception detail:{ex.Message}");
+                return Result.Failure<InventoryTransaction>($"Get all inventory transaction by product id {productId} was failed.");
+            }
         }
 
         /// <summary>
@@ -58,7 +89,7 @@ namespace InventoryService.Services
         /// </summary>
         /// <param name="inventoryTransactionDto"></param>
         /// <returns></returns>
-        public async Task<Result<InventoryTransaction>> CreateInventoryTransactionAsync(InventoryTransactionDto inventoryTransactionDto)
+        public async Task<Result<InventoryTransaction>> CreateInventoryTransactionAsync(InventoryTransactionRequestDto inventoryTransactionDto)
         {
             try
             {
@@ -71,7 +102,7 @@ namespace InventoryService.Services
                 var inventoryTransaction = new InventoryTransaction
                 {
                     ProductId = inventoryTransactionDto.ProductId,
-                    Type = InventoryType.Out,
+                    Type = inventoryTransactionDto.Type,
                     ChangeCount = inventoryTransactionDto.ChangeCount,
                     CurrentCount = inventoryTransactionDto.CurrentCount
                 };
@@ -126,20 +157,20 @@ namespace InventoryService.Services
         /// <summary>
         /// This methode check a inventoryTransactionDto instance
         /// </summary>
-        /// <param name="inventoryTransactionDto"></param>
+        /// <param name="inventoryTransactionRequestDto"></param>
         /// <returns></returns>
-        private static Result CheckInventoryTransactionInstance(InventoryTransactionDto inventoryTransactionDto)
+        private static Result CheckInventoryTransactionInstance(InventoryTransactionRequestDto inventoryTransactionRequestDto)
         {
-            if (inventoryTransactionDto == null)
+            if (inventoryTransactionRequestDto == null)
                 return Result.Failure("InventoryTransactionDto instance is invalid.");
 
-            if (inventoryTransactionDto.ProductId <= 0)
+            if (inventoryTransactionRequestDto.ProductId <= 0)
                 return Result.Failure("InventoryTransaction ProductId is invalid.");
 
-            if (inventoryTransactionDto.ChangeCount <= 0)
+            if (inventoryTransactionRequestDto.ChangeCount <= 0)
                 return Result.Failure("InventoryTransaction ChangeCount is invalid.");
 
-            if (inventoryTransactionDto.CurrentCount <= 0)
+            if (inventoryTransactionRequestDto.CurrentCount <= 0)
                 return Result.Failure("InventoryTransaction CurrentCount is invalid.");
 
             return Result.Success();

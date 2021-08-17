@@ -16,14 +16,17 @@ namespace SaleService.Services
         private readonly SaleDbContext _context;
         private readonly ILogger<OrderService> _logger;
         private readonly IProductService _productService;
+        private readonly IBuyerService _buyerService;
 
         public OrderService(SaleDbContext context,
             ILogger<OrderService> logger,
-            IProductService productService)
+            IProductService productService,
+            IBuyerService buyerService)
         {
             _context = context;
             _logger = logger;
             _productService = productService;
+            _buyerService = buyerService;
         }
 
         /// <summary>
@@ -46,9 +49,14 @@ namespace SaleService.Services
                 // Check order in db
                 if (order==null)
                     return Result.Failure<GetOrderResponse>($"Order is not in db.");
-                
+
+                var buyer = await _buyerService.GetBuyerByIdAsync(order.BuyerId);
+                if (buyer.Value==null)
+                    return Result.Failure<GetOrderResponse>($"Buyer is not in db.");
+
                 var orderItems =await _context.OrderItems.Where(x => x.OrderId == order.Id).ToListAsync();
-                var GetOrderResponse = new GetOrderResponse(order.BuyerId, $"{order.Buyer.FirstName} {order.Buyer.LastName}", order.OrderDate, orderItems);
+
+                var GetOrderResponse = new GetOrderResponse(order.BuyerId, $"{buyer.Value.FirstName} {buyer.Value.LastName}", order.OrderDate, orderItems);
               
                 return Result.Success(GetOrderResponse);
             }
@@ -144,17 +152,13 @@ namespace SaleService.Services
         {
             try
             {
-                // Check product id
-                if (orderId <= 0)
-                    return Result.Failure($"Order id is zero.");
-
-                // Get order by product id
-                var order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == orderId);
-                if (order == null)
-                    return Result.Failure($"Order id is invalid.");
+                // Check order
+                var orderValidation = await CheckDeleteOrder(orderId);
+                if (orderValidation.IsFailure)
+                    return Result.Failure<Order>(orderValidation.Error);
 
                 // Remove order
-                _context.Orders.Remove(order);
+                _context.Orders.Remove(orderValidation.Value);
                 await _context.SaveChangesAsync();
 
                 return Result.Success();
@@ -164,6 +168,35 @@ namespace SaleService.Services
                 _logger.LogInformation($"Delete order with {orderId} id failed. Exception detail:{ex.Message}");
 
                 return Result.Failure($"Delete order with {orderId} id failed.");
+            }
+        }
+
+        /// <summary>
+        /// This method delete a Order Item to the table.
+        /// If the input orderId is not valid or an expiration occurs, a Failure will be returned.
+        /// </summary>
+        /// <param name="orderItemId"></param>
+        /// <returns></returns>
+        public async Task<Result> DeleteOrderItemAsync(int orderItemId)
+        {
+            try
+            {
+               // Check order item
+                var orderItemValidation = await CheckDeleteOrderItem(orderItemId);
+                if (orderItemValidation.IsFailure)
+                    return Result.Failure<Order>(orderItemValidation.Error);
+
+                // Remove order
+                _context.OrderItems.Remove(orderItemValidation.Value);
+                await _context.SaveChangesAsync();
+
+                return Result.Success();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"Delete order item with {orderItemId} id failed. Exception detail:{ex.Message}");
+
+                return Result.Failure($"Delete order item with {orderItemId} id failed.");
             }
         }
 
@@ -201,7 +234,7 @@ namespace SaleService.Services
             if (createOrderItemRequestDto.OrderId <= 0)
                 return Result.Failure<string>($"OrderId is invalid.");
 
-            var order = _context.Orders.FirstOrDefaultAsync(x => x.Id == createOrderItemRequestDto.OrderId);
+            var order =await _context.Orders.FirstOrDefaultAsync(x => x.Id == createOrderItemRequestDto.OrderId);
             if (order == null)
                 return Result.Failure<string>($"OrderId is not in db.");
 
@@ -222,6 +255,34 @@ namespace SaleService.Services
                 return Result.Failure<string>($"UnitPrice is invalid.");
 
             return Result.Success(product.Name);
+        }
+
+        private async Task<Result<Order>> CheckDeleteOrder(int orderId)
+        {
+            // Check order id
+            if (orderId <= 0)
+                return Result.Failure<Order>($"Order id is zero.");
+
+            // Get order by order id
+            var order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == orderId);
+            if (order == null)
+                return Result.Failure<Order>($"Order id is invalid.");
+
+            return Result.Success(order);
+        }
+
+        private async Task<Result<OrderItem>> CheckDeleteOrderItem(int orderItemId)
+        {
+            // Check order item id
+            if (orderItemId <= 0)
+                return Result.Failure<OrderItem>($"Order item id is zero.");
+
+            // Get order by order item id
+            var orderItem = await _context.OrderItems.FirstOrDefaultAsync(x => x.Id == orderItemId);
+            if (orderItem == null)
+                return Result.Failure<OrderItem>($"Order item id is invalid.");
+
+            return Result.Success(orderItem);
         }
     }
 }

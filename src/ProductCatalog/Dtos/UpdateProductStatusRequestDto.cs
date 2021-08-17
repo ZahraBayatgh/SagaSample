@@ -1,6 +1,4 @@
-﻿using ProductCatalogService.Models;
-
-namespace SaleService.Dtos
+﻿namespace SaleService.Dtos
 {
     public class UpdateProductStatusRequestDto
     {

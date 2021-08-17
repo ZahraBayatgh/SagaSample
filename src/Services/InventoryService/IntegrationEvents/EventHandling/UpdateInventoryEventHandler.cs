@@ -2,6 +2,7 @@
 using InventoryService.Data;
 using InventoryService.Dtos;
 using InventoryService.IntegrationEvents.Events;
+using InventoryService.Models;
 using InventoryService.Services;
 using Microsoft.Extensions.Logging;
 using System;
@@ -9,16 +10,16 @@ using System.Threading.Tasks;
 
 namespace InventoryService.IntegrationEvents.EventHandling
 {
-    public class UpdateProductCountAndAddInventoryTransactionEventHandler : IIntegrationEventHandler<UpdateProductCountAndAddInventoryTransactionEvent>
+    public class UpdateInventoryEventHandler : IIntegrationEventHandler<UpdateInventoryEvent>
     {
         private readonly InventoryDbContext _context;
-        private readonly ILogger<UpdateProductCountAndAddInventoryTransactionEvent> _logger;
+        private readonly ILogger<UpdateInventoryEvent> _logger;
         private readonly IProductService _productService;
         private readonly IInventoryTransactionService _inventoryTransactionService;
         private readonly IEventBus _eventBus;
 
-        public UpdateProductCountAndAddInventoryTransactionEventHandler(InventoryDbContext context,
-            ILogger<UpdateProductCountAndAddInventoryTransactionEvent> logger,
+        public UpdateInventoryEventHandler(InventoryDbContext context,
+            ILogger<UpdateInventoryEvent> logger,
             IProductService productService,
             IInventoryTransactionService inventoryService,
             IEventBus eventBus)
@@ -30,7 +31,7 @@ namespace InventoryService.IntegrationEvents.EventHandling
             _eventBus = eventBus;
         }
 
-        public async Task Handle(UpdateProductCountAndAddInventoryTransactionEvent @event)
+        public async Task Handle(UpdateInventoryEvent @event)
         {
             using var transaction = _context.Database.BeginTransaction();
             try
@@ -44,6 +45,9 @@ namespace InventoryService.IntegrationEvents.EventHandling
                 // Get product id
                 var productId = await _productService.GetProductIdAsync(@event.ProductName);
 
+                if (productId.IsFailure)
+                    throw new ArgumentNullException("UpdateProductCountAndAddInventoryTransactionEvent product is invalid.");
+
                 // Get latest InventoryTransaction by product id
                 var latestInventoryTransactionCount = await _inventoryTransactionService.GetLatestInventoryTransactionByProductIdAsync(productId.Value);
 
@@ -52,12 +56,8 @@ namespace InventoryService.IntegrationEvents.EventHandling
                     throw new Exception(latestInventoryTransactionCount.Error);
 
                 // Intialize InventoryTransactionDto
-                var inventoryTransaction = new InventoryTransactionDto
-                {
-                    ProductId = productId.Value,
-                    ChangeCount = @event.Quantity,
-                    CurrentCount = latestInventoryTransactionCount.Value - @event.Quantity
-                };
+                var inventoryTransaction = new InventoryTransactionRequestDto(productId.Value, @event.Quantity, latestInventoryTransactionCount.Value - @event.Quantity, InventoryType.Out);
+
 
                 // Create InventoryTransaction
                 var inventoryTransactionResult = await _inventoryTransactionService.CreateInventoryTransactionAsync(inventoryTransaction);

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq;
-using ProductCatalog.Dtos;
 using ProductCatalogService.Services;
 using SagaPattern.UnitTests.Config;
 using SaleService.Dtos;
@@ -62,6 +61,48 @@ namespace SagaPattern.UnitTests.ProductCatalogServiceTests
 
         #endregion
 
+        #region GetProductByName
+
+        [Fact]
+        public async Task GetProductByName_When_ProductName_Is_Null_Return_Failure()
+        {
+            //Act
+            var product = await productService.GetProductByNameAsync(null);
+
+            //Assert
+            Assert.True(product.IsFailure);
+        }
+        [Fact]
+        public async Task GetProductByName_When_ProductName_Is_Empty_Return_Failure()
+        {
+            //Act
+            var product = await productService.GetProductByNameAsync("");
+
+            //Assert
+            Assert.True(product.IsFailure);
+        }
+        [Fact]
+        public async Task GetProductByName_When_Product_Is_Not_Found_Return_Failure()
+        {
+            //Act
+            var product = await productService.GetProductByNameAsync("Clock");
+
+            //Assert
+            Assert.True(product.IsFailure);
+        }
+
+        [Fact]
+        public async Task GetProductByName_When_ProductId_Is_Valid_Return_Product()
+        {
+            //Act
+            var product = await productService.GetProductByNameAsync("Mouse");
+
+            //Assert
+            Assert.Equal(1, product.Value.Id);
+        }
+
+        #endregion
+
         #region CreateProduct
 
         [Fact]
@@ -91,7 +132,7 @@ namespace SagaPattern.UnitTests.ProductCatalogServiceTests
         public async Task CreateProduct_When_Product_Name_Is_Empty_Return_Failure()
         {
             //Arrange
-            var createProductRequestDto = new ProductCatalog.Dtos.CreateProductRequestDto(null, null, 10);
+            var createProductRequestDto = new ProductCatalog.Dtos.CreateProductRequestDto("", null, 10);
 
             //Act
             var createProductResponseDto = await productService.CreateProductAsync(createProductRequestDto);
@@ -111,7 +152,7 @@ namespace SagaPattern.UnitTests.ProductCatalogServiceTests
             var createProductResponseDto = await productService.CreateProductAsync(createProductRequestDto);
 
             //Assert
-            Assert.Equal(4, createProductResponseDto.Value.ProductId);
+            Assert.Equal(7, createProductResponseDto.Value.ProductId);
         }
 
         #endregion

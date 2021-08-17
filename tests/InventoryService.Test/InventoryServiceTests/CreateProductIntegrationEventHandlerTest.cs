@@ -23,9 +23,12 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
             var loggerProduct = new Mock<ILogger<ProductService>>();
             var productService = new ProductService(Context, loggerProduct.Object);
 
+            var loggerInventoryTransaction = new Mock<ILogger<InventoryTransactionService>>();
+           var inventoryTransactionService = new InventoryTransactionService(Context, loggerInventoryTransaction.Object);
+
             var eventBus = new Mock<IEventBus>();
 
-            createProductIntegrationEventHandler = new CreateProductIntegrationEventHandler(logger.Object, productService, eventBus.Object);
+            createProductIntegrationEventHandler = new CreateProductIntegrationEventHandler(logger.Object,Context, productService, inventoryTransactionService, eventBus.Object);
         }
 
 
@@ -49,7 +52,7 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
         public async Task CreateProductIntegrationEvent_When_Product_Name_Is_Null_throw_ArgumentNullException()
         {
             // Arrange
-            CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(0, null, 10);
+            CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(1, null, 10);
 
             //Act - Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() => createProductIntegrationEventHandler.Handle(createProductIntegrationEvent));
@@ -59,7 +62,7 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
         public async Task CreateProductIntegrationEvent_When_Product_Name_Is_Empty_throw_ArgumentNullException()
         {
             // Arrange
-            CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(0, "", 10);
+            CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(1, "", 10);
 
             //Act - Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() => createProductIntegrationEventHandler.Handle(createProductIntegrationEvent));

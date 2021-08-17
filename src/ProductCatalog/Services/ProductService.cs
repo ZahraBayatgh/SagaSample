@@ -36,14 +36,14 @@ namespace ProductCatalogService.Services
             {
                 // Check product id
                 if (productId <= 0)
-                    return Result.Failure<Product>($"Product id is invalid.");
+                    return Result.Failure<Product>("Product id is invalid.");
 
                 // Get product by product id
                 var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == productId);
 
                 // Check product in db
                 if (product == null)
-                    return Result.Failure<Product>($"Product not found.");
+                    return Result.Failure<Product>("Product not found.");
 
                 return Result.Success(product);
             }
@@ -55,6 +55,37 @@ namespace ProductCatalogService.Services
             }
         }
 
+        /// <summary>
+        /// This metode get product by product name.
+        /// If the input name is not valid or an expiration occurs, a Failure will be returned.
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        public async Task<Result<Product>> GetProductByNameAsync(string productName)
+        {
+            try
+            {
+                // Check product name
+                if (string.IsNullOrEmpty(productName))
+                    return Result.Failure<Product>("Product name is null.");
+
+                // Get product by product name
+                var product = await _context.Products.FirstOrDefaultAsync(x => x.Name == productName);
+
+                // Check product in db
+                if (product == null)
+                    return Result.Failure<Product>("Product not found.");
+
+                return Result.Success(product);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"Get {productName} product name failed. Exception detail:{ex.Message}");
+
+                return Result.Failure<Product>($"Get {productName} product name failed.");
+            }
+        }
+       
         /// <summary>
         /// This method adds a Product to the table.
         /// If the input createProductDto is not valid or an expiration occurs, a Failure will be returned.
@@ -171,10 +202,10 @@ namespace ProductCatalogService.Services
         private static Result CheckProductInstance(CreateProductRequestDto createProductRequestDto)
         {
             if (createProductRequestDto == null)
-                return Result.Failure($"CreateProductDto instance is invalid.");
+                return Result.Failure("CreateProductDto instance is invalid.");
 
             if (string.IsNullOrEmpty(createProductRequestDto.Name))
-                return Result.Failure($"Product name is empty.");
+                return Result.Failure("Product name is empty.");
 
             return Result.Success();
         }
@@ -187,13 +218,13 @@ namespace ProductCatalogService.Services
         private static Result CheckUpdateProductStatusRequestDtoInstance(UpdateProductStatusRequestDto updateProductStatusRequestDto)
         {
             if (updateProductStatusRequestDto == null)
-                return Result.Failure($"UpdateProductStatusRequestDto instance is invalid.");
+                return Result.Failure("UpdateProductStatusRequestDto instance is invalid.");
 
             if (string.IsNullOrEmpty(updateProductStatusRequestDto.Name))
-                return Result.Failure($"UpdateProductStatusRequestDto name is empty.");
+                return Result.Failure("UpdateProductStatusRequestDto name is empty.");
 
             if (!Enum.IsDefined(typeof(ProductStatus), (ProductStatus)updateProductStatusRequestDto.ProductStatus))
-                return Result.Failure($"UpdateProductStatusRequestDto ProductStatus is invaild.");
+                return Result.Failure("UpdateProductStatusRequestDto ProductStatus is invaild.");
 
             return Result.Success();
         }

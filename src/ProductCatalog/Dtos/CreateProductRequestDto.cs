@@ -9,8 +9,8 @@
             InitialHand = initialHand;
         }
 
-        public string Name { get;private set; }
-        public string Photo { get; private set; }
-        public int InitialHand { get; private set; }
+        public string Name { get; set; }
+        public string Photo { get;  set; }
+        public int InitialHand { get;  set; }
     }
 }

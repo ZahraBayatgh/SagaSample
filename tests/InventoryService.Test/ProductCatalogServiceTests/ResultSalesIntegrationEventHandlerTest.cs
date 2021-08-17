@@ -8,7 +8,6 @@ using ProductCatalogService.Models;
 using ProductCatalogService.Services;
 using SagaPattern.UnitTests.Config;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -49,42 +48,31 @@ namespace SagaPattern.UnitTests.ProductCatalogServiceTests
         }
 
         [Fact]
-        public async Task ResultSalesIntegrationEventHandler_When_Product_Is_Invalid_throw_ArgumentNullException()
-        {
-            // Arrange
-            ResultSalesIntegrationEvent resultSalesIntegrationEvent = new ResultSalesIntegrationEvent(10, false);
-
-            //Act - Assert
-            await Assert.ThrowsAsync<ArgumentNullException>((() => resultSalesIntegrationEventHandler.Handle(resultSalesIntegrationEvent)));
-        }
-
-        [Fact]
-        public async Task ResultSalesIntegrationEventHandler_When_IsSuccess_Is_False_Then_Delete_Product()
-        {
-            // Arrange
-            ResultSalesIntegrationEvent resultSalesIntegrationEvent = new ResultSalesIntegrationEvent(1, false);
-
-            //Act 
-            await resultSalesIntegrationEventHandler.Handle(resultSalesIntegrationEvent);
-            var hasProduct = await Context.Products.AnyAsync(x => x.Id == resultSalesIntegrationEvent.ProductId);
-
-            // Assert
-            Assert.False(hasProduct);
-        }
-
-        [Fact]
-        public async Task ResultSalesIntegrationEventHandler_When_IsSuccess_Is_True_Then_Update_ProductStatus()
+        public async Task ResultSalesIntegrationEventHandler_When_Product_Is_In_Db_And_Event_Is_Success_And_ProductStatus_In_Db_Is_Not_SalesIsOk_Update_Product_Status()
         {
             // Arrange
             ResultSalesIntegrationEvent resultSalesIntegrationEvent = new ResultSalesIntegrationEvent(3, true);
 
-            //Act 
-            await resultSalesIntegrationEventHandler.Handle(resultSalesIntegrationEvent);
+            //Act
+           var resultSalesIntegrationEventResponse=  resultSalesIntegrationEventHandler.Handle(resultSalesIntegrationEvent);
             var product = await Context.Products.FirstOrDefaultAsync(x => x.Id == resultSalesIntegrationEvent.ProductId);
 
             // Assert
             Assert.Equal(ProductStatus.Completed, product.ProductStatus);
         }
 
+        [Fact]
+        public async Task ResultSalesIntegrationEventHandler_When_Product_Is_In_Db_And_Event_Is_Failure_And_ProductStatus_In_Db_Is_InventoryIsOk_Delete_Product()
+        {
+            // Arrange
+            ResultSalesIntegrationEvent resultSalesIntegrationEvent = new ResultSalesIntegrationEvent(6, false);
+
+            //Act
+            var resultSalesIntegrationEventResponse = resultSalesIntegrationEventHandler.Handle(resultSalesIntegrationEvent);
+            var product = await Context.Products.FirstOrDefaultAsync(x => x.Id == resultSalesIntegrationEvent.ProductId);
+
+            // Assert
+            Assert.Null(product);
+        }
     }
 }

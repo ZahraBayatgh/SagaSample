@@ -1,6 +1,4 @@
-﻿using CSharpFunctionalExtensions;
-using EventBus.Abstractions;
-using EventBus.Events;
+﻿using EventBus.Abstractions;
 using Microsoft.Extensions.Logging;
 using ProductCatalogService.IntegrationEvents.Events;
 using ProductCatalogService.Models;
@@ -35,33 +33,28 @@ namespace ProductCatalogService.IntegrationEvents.EventHandling
 
                 // Get and Check product in db
                 var getProduct = await _productService.GetProductByIdAsync(@event.ProductId);
-                if (getProduct.IsFailure)
-                    throw new ArgumentNullException(getProduct.Error);
-
-                if (!@event.IsSuccess)
+                if (getProduct.IsFailure && @event.IsSuccess)
                 {
-                    if (getProduct.Value.ProductStatus == ProductStatus.InventoryIsOk)
-                    {
-                        // Publish DeleteInventoryIntegrationEvent
-                        DeleteInventoryIntegrationEvent deleteInventoryIntegrationEvent = new DeleteInventoryIntegrationEvent(getProduct.Value.Name);
-                        _eventBus.Publish(deleteInventoryIntegrationEvent);
-                    }
+                    // Publish DeleteInventoryIntegrationEvent
+                    DeleteSalesIntegrationEvent deleteInventoryIntegrationEvent = new DeleteSalesIntegrationEvent(getProduct.Value.Name);
+                    _eventBus.Publish(deleteInventoryIntegrationEvent);
 
-                    // Delete product
-                    await _productService.DeleteProductAsync(getProduct.Value.Id);
                 }
-                else
+                else if (getProduct.IsSuccess && @event.IsSuccess && (int)getProduct.Value.ProductStatus != (int)ProductStatus.SalesIsOk)
                 {
-                    // Update ProductStatus
-                    var productStatus = (int)ProductStatus.SalesIsOk;
-                    if ((int)getProduct.Value.ProductStatus != (int)ProductStatus.SalesIsOk)
-                    {
-                        productStatus += (int)getProduct.Value.ProductStatus;
-
-                    }
+                    var productStatus = (int)ProductStatus.SalesIsOk + (int)getProduct.Value.ProductStatus;
                     UpdateProductStatusRequestDto updateProductStatusRequestDto = new UpdateProductStatusRequestDto(getProduct.Value.Name, productStatus);
 
                     await _productService.UpdateProductStatusAsync(updateProductStatusRequestDto);
+                }
+                if (getProduct.IsSuccess && !@event.IsSuccess && getProduct.Value.ProductStatus == ProductStatus.InventoryIsOk)
+                {
+                    // Publish DeleteInventoryIntegrationEvent
+                    DeleteInventoryIntegrationEvent deleteInventoryIntegrationEvent = new DeleteInventoryIntegrationEvent(getProduct.Value.Name);
+                    _eventBus.Publish(deleteInventoryIntegrationEvent);
+
+                    // Delete product
+                    await _productService.DeleteProductAsync(getProduct.Value.Id);
                 }
             }
             catch (ArgumentNullException ex)

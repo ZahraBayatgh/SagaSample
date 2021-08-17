@@ -22,7 +22,7 @@ namespace SagaPattern.UnitTests.SaleTests
         #region GetBuyerById
 
         [Fact]
-        public async Task GetBuyerById_When_ProducId_Is_Invalid_Return_Failure()
+        public async Task GetBuyerById_When_BuyerId_Is_Invalid_Return_Failure()
         {
             //Arrange
             var id = 0;
@@ -35,7 +35,20 @@ namespace SagaPattern.UnitTests.SaleTests
         }
 
         [Fact]
-        public async Task GetBuyerById_When_ProducId_Is_Valid_Return_Buyer()
+        public async Task GetBuyerById_When_BuyerId_Is_Not_In_Db_Return_Failure()
+        {
+            //Arrange
+            var id = 2;
+
+            //Act
+            var buyer = await buyerService.GetBuyerByIdAsync(id);
+
+            //Assert
+            Assert.True(buyer.IsFailure);
+        }
+
+        [Fact]
+        public async Task GetBuyerById_When_BuyerId_Is_Valid_Return_Buyer()
         {
             //Arrange
             var id = 1;
@@ -62,86 +75,65 @@ namespace SagaPattern.UnitTests.SaleTests
         }
 
         [Fact]
-        public async Task CreateBuyer_When_Buyer_FirstName_Is_Null_Return_Failure()
+        public async Task CreateBuyer_When_FirstName_Is_Null_Return_Failure()
         {
             //Arrange
-            var createBuyerDto = new BuyerDto
-            {
-                LastName="Bayat"
-            };
+            var createBuyerRequestDto = new CreateBuyerRequestDto(null, "Bayat");
 
             //Act
-            var createBuyerResponseDto = await buyerService.CreateBuyerAsync(createBuyerDto);
+            var createBuyerResponseDto = await buyerService.CreateBuyerAsync(createBuyerRequestDto);
+
+            //Assert
+            Assert.True(createBuyerResponseDto.IsFailure);
+        }
+        [Fact]
+        public async Task CreateBuyer_When_FirstName_Is_Empty_Return_Failure()
+        {
+            //Arrange
+            var createBuyerRequestDto = new CreateBuyerRequestDto("", "Bayat");
+
+            //Act
+            var createBuyerResponseDto = await buyerService.CreateBuyerAsync(createBuyerRequestDto);
+
+            //Assert
+            Assert.True(createBuyerResponseDto.IsFailure);
+        }
+        [Fact]
+        public async Task CreateBuyer_When_LasttName_Is_Null_Return_Failure()
+        {
+            //Arrange
+            var createBuyerRequestDto = new CreateBuyerRequestDto("Zahra", null);
+
+            //Act
+            var createBuyerResponseDto = await buyerService.CreateBuyerAsync(createBuyerRequestDto);
+
+            //Assert
+            Assert.True(createBuyerResponseDto.IsFailure);
+        }
+        [Fact]
+        public async Task CreateBuyer_When_LastName_Is_Null_Return_Failure()
+        {
+            //Arrange
+            var createBuyerRequestDto = new CreateBuyerRequestDto("Zahra", "");
+
+            //Act
+            var createBuyerResponseDto = await buyerService.CreateBuyerAsync(createBuyerRequestDto);
 
             //Assert
             Assert.True(createBuyerResponseDto.IsFailure);
         }
 
         [Fact]
-        public async Task CreateBuyer_When_Buyer_LastName_Is_Empty_Return_Failure()
+        public async Task CreateBuyer_When_Buyer_Input_Is_Valid_Return_CreateBuyerResponseDto()
         {
             //Arrange
-            var createBuyerDto = new BuyerDto
-            {
-                FirstName = "",
-                LastName = "Bayat"
-            };
+            var createBuyerRequestDto = new CreateBuyerRequestDto("Ali", "Bayat");
 
             //Act
-            var createBuyerResponseDto = await buyerService.CreateBuyerAsync(createBuyerDto);
+            var createBuyerResponseDto = await buyerService.CreateBuyerAsync(createBuyerRequestDto);
 
             //Assert
-            Assert.True(createBuyerResponseDto.IsFailure);
-        }
-
-        [Fact]
-        public async Task CreateBuyer_When_Buyer_LastName_Is_Null_Return_Failure()
-        {
-            //Arrange
-            var createBuyerDto = new BuyerDto
-            {
-                FirstName = "Sara"
-            };
-
-            //Act
-            var createBuyerResponseDto = await buyerService.CreateBuyerAsync(createBuyerDto);
-
-            //Assert
-            Assert.True(createBuyerResponseDto.IsFailure);
-        }
-
-        [Fact]
-        public async Task CreateBuyer_When_Buyer_FirstName_Is_Empty_Return_Failure()
-        {
-            //Arrange
-            var createBuyerDto = new BuyerDto
-            {
-                FirstName = "Sara",
-                LastName = ""
-            };
-
-            //Act
-            var createBuyerResponseDto = await buyerService.CreateBuyerAsync(createBuyerDto);
-
-            //Assert
-            Assert.True(createBuyerResponseDto.IsFailure);
-        }
-
-        [Fact]
-        public async Task CreateBuyer_When_Buyer_Is_Valid_Return_BuyerId()
-        {
-            //Arrange
-            var createBuyerDto = new BuyerDto
-            {
-                FirstName = "Sara",
-                LastName = "Bayat"
-            };
-
-            //Act
-            var createBuyerResponseDto = await buyerService.CreateBuyerAsync(createBuyerDto);
-
-            //Assert
-            Assert.Equal(2, createBuyerResponseDto.Value);
+            Assert.True(createBuyerResponseDto.IsSuccess);
         }
 
         #endregion

@@ -80,13 +80,13 @@ namespace Service2
             eventBus.Subscribe<CreateProductIntegrationEvent, IIntegrationEventHandler<CreateProductIntegrationEvent>>();
             eventBus.Subscribe<DeleteInventoryIntegrationEvent, IIntegrationEventHandler<DeleteInventoryIntegrationEvent>>();
             
-            eventBus.Subscribe<UpdateProductCountAndAddInventoryTransactionEvent, IIntegrationEventHandler<UpdateProductCountAndAddInventoryTransactionEvent>>();
+            eventBus.Subscribe<UpdateInventoryEvent, IIntegrationEventHandler<UpdateInventoryEvent>>();
 
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            builder.RegisterAssemblyTypes(typeof(UpdateProductCountAndAddInventoryTransactionEvent).GetTypeInfo().Assembly)
+            builder.RegisterAssemblyTypes(typeof(UpdateInventoryEvent).GetTypeInfo().Assembly)
                 .AsClosedTypesOf(typeof(IIntegrationEventHandler<>));
         }
     }

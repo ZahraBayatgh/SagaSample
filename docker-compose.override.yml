@@ -25,9 +25,20 @@ services:
       - ACCEPT_EULA=Y
 
     ports:
-      - "5433:1433"
+      - "5434:1433"
     volumes:
       - x-saledata:/var/opt/mssql
+
+  ProductCatalogData:
+    container_name: ProductCatalogDB
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+
+    ports:
+      - "5436:1433"
+    volumes:
+      - x-productcatalogdata:/var/opt/mssql
 
   inventoryservice:
     environment:
@@ -54,8 +65,23 @@ services:
     volumes:
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
+  productcatalogservice:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ConnectionStrings__DefaultConnection=server=ProductCatalogData;database=ProductCatalogDB;uid=sa;password=Pass@word;
+      - EventBusConnection=rabbitmq
+      - SubscriptionClientName=ProductCatalogService
+      - EventBusRetryCount= 5
+    ports:
+      - "5003:80"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+
 volumes:
   x-saledata:
     external: false
   x-inventorydata:
+    external: false
+  x-productcatalogdata:
     external: false

@@ -30,10 +30,10 @@ namespace CustomerService.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBuyerAsync(BuyerDto buyerDto)
+        public async Task<IActionResult> CreateBuyerAsync(CreateBuyerRequestDto createBuyerRequest)
         {
             // Create buyer and inventory transaction
-            var createBuyerResponse = await _buyerService.CreateBuyerAsync(buyerDto);
+            var createBuyerResponse = await _buyerService.CreateBuyerAsync(createBuyerRequest);
 
             if (createBuyerResponse.IsSuccess)
             {

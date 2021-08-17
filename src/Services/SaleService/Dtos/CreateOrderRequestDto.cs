@@ -11,6 +11,6 @@ namespace SaleService.Dtos
             BuyerId = buyerId;
         }
 
-        public int BuyerId { get; private set; }
+        public int BuyerId { get;  set; }
     }
 }

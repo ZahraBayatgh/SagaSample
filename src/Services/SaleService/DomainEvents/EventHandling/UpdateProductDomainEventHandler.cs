@@ -47,7 +47,7 @@ namespace SaleService.DomainEvents.EventHandling
                 var product = await _productService.UpdateProductCountAsync(updateProductCountDto);
                 if (product.IsSuccess)
                 {
-                    UpdateProductCountAndAddInventoryTransactionEvent updateProductIntegrationEvent = new UpdateProductCountAndAddInventoryTransactionEvent(updateProductCountDto.Name, updateProductCountDto.DecreaseCount,@event.OrderId,@event.OrderItemId);
+                    UpdateInventoryEvent updateProductIntegrationEvent = new UpdateInventoryEvent(updateProductCountDto.Name, updateProductCountDto.DecreaseCount,@event.OrderId,@event.OrderItemId);
                     _eventBus.Publish(updateProductIntegrationEvent);
                 }
             }

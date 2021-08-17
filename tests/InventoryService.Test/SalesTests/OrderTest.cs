@@ -1,3 +1,4 @@
+using CustomerService.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SagaPattern.UnitTests.Config;
@@ -17,8 +18,11 @@ namespace SagaPattern.Tests.Sale
             var productLogger = new Mock<ILogger<ProductService>>();
             var productService = new ProductService(Context, productLogger.Object);
 
+            var buyerLogger = new Mock<ILogger<BuyerService>>();
+            var buyerService = new BuyerService(Context, buyerLogger.Object);
+
             var orderLogger = new Mock<ILogger<OrderService>>();
-            orderService = new OrderService(Context, orderLogger.Object, productService);
+            orderService = new OrderService(Context, orderLogger.Object, productService, buyerService);
         }
 
         #region GetOrderById
@@ -102,7 +106,6 @@ namespace SagaPattern.Tests.Sale
             Assert.True(createOrderResponseDto.IsFailure);
         }
 
-    
         [Fact]
         public async Task CreateOrder_When_Order_Input_Is_Valid_Return_CreateOrderResponseDto()
         {
@@ -114,6 +117,124 @@ namespace SagaPattern.Tests.Sale
 
             //Assert
             Assert.True(createOrderResponseDto.IsSuccess);
+        }
+
+        #endregion
+
+        #region CreateOrderItem
+
+        [Fact]
+        public async Task CreateOrderItem_When_OrderItem_Is_null_Return_Failure()
+        {
+            //Act
+            var createOrderItemResponseDto = await orderService.CreateOrderItemAsync(null);
+
+            //Assert
+            Assert.True(createOrderItemResponseDto.IsFailure);
+        }
+
+        [Fact]
+        public async Task CreateOrderItem_When_Order_Id_Is_Zero_Return_Failure()
+        {
+            //Arrange
+            var createOrderItemRequestDto = new CreateOrderItemRequestDto(0, 1, 2, 200);
+
+            //Act
+            var createOrderItemResponseDto = await orderService.CreateOrderItemAsync(createOrderItemRequestDto);
+
+            //Assert
+            Assert.True(createOrderItemResponseDto.IsFailure);
+        }
+
+        [Fact]
+        public async Task CreateOrderItem_When_Order_Is_Not_In_Db_Return_Failure()
+        {
+            //Arrange
+            var createOrderItemRequestDto = new CreateOrderItemRequestDto(10, 1, 2, 200);
+
+            //Act
+            var createOrderItemResponseDto = await orderService.CreateOrderItemAsync(createOrderItemRequestDto);
+
+            //Assert
+            Assert.True(createOrderItemResponseDto.IsFailure);
+        }
+
+        [Fact]
+        public async Task CreateOrderItem_When_Product_Id_Is_Zero_Return_Failure()
+        {
+            //Arrange
+            var createOrderItemRequestDto = new CreateOrderItemRequestDto(1, 0, 2, 200);
+
+            //Act
+            var createOrderItemResponseDto = await orderService.CreateOrderItemAsync(createOrderItemRequestDto);
+
+            //Assert
+            Assert.True(createOrderItemResponseDto.IsFailure);
+        }
+
+        [Fact]
+        public async Task CreateOrderItem_When_Product_Is_Not_In_Db_Return_Failure()
+        {
+            //Arrange
+            var createOrderItemRequestDto = new CreateOrderItemRequestDto(10, 10, 2, 200);
+
+            //Act
+            var createOrderItemResponseDto = await orderService.CreateOrderItemAsync(createOrderItemRequestDto);
+
+            //Assert
+            Assert.True(createOrderItemResponseDto.IsFailure);
+        }
+
+        [Fact]
+        public async Task CreateOrderItem_When_Quantity_Is_Zero_Return_Failure()
+        {
+            //Arrange
+            var createOrderItemRequestDto = new CreateOrderItemRequestDto(1, 1, 0, 200);
+
+            //Act
+            var createOrderItemResponseDto = await orderService.CreateOrderItemAsync(createOrderItemRequestDto);
+
+            //Assert
+            Assert.True(createOrderItemResponseDto.IsFailure);
+        }
+
+        [Fact]
+        public async Task CreateOrderItem_When_Quantity_Is_More_Then_Than_Product_Count_Return_Failure()
+        {
+            //Arrange
+            var createOrderItemRequestDto = new CreateOrderItemRequestDto(1, 1, 100, 200);
+
+            //Act
+            var createOrderItemResponseDto = await orderService.CreateOrderItemAsync(createOrderItemRequestDto);
+
+            //Assert
+            Assert.True(createOrderItemResponseDto.IsFailure);
+        }
+
+        [Fact]
+        public async Task CreateOrderItem_When_UnitPrice_Is_Zero_Return_Failure()
+        {
+            //Arrange
+            var createOrderItemRequestDto = new CreateOrderItemRequestDto(1, 1, 2, 0);
+
+            //Act
+            var createOrderItemResponseDto = await orderService.CreateOrderItemAsync(createOrderItemRequestDto);
+
+            //Assert
+            Assert.True(createOrderItemResponseDto.IsFailure);
+        }
+
+        [Fact]
+        public async Task CreateOrderItem_When_Order_Input_Is_Valid_Return_CreateOrderItemResponseDto()
+        {
+            //Arrange
+            var createOrderItemRequestDto = new CreateOrderItemRequestDto(1, 1, 2, 100);
+
+            //Act
+            var createOrderItemResponseDto = await orderService.CreateOrderItemAsync(createOrderItemRequestDto);
+
+            //Assert
+            Assert.True(createOrderItemResponseDto.IsSuccess);
         }
 
         #endregion
@@ -161,5 +282,47 @@ namespace SagaPattern.Tests.Sale
         }
         #endregion
 
+        #region DeleteOrderItem
+
+        [Fact]
+        public async Task DeleteOrderItem_When_OrderItem_Is_Zero_Return_Failure()
+        {
+            //Arrange
+            int orderItemId = 0;
+
+            //Act
+            var result = await orderService.DeleteOrderItemAsync(orderItemId);
+
+            //Assert
+            Assert.True(result.IsFailure);
+        }
+
+        [Fact]
+        public async Task DeleteOrderItem_When_OrderItem_Is_Not_In_Db_Return_Failure()
+        {
+            //Arrange
+            int orderItemId = 30;
+
+            //Act
+            var createOrderItemResponseDto = await orderService.DeleteOrderItemAsync(orderItemId);
+
+            //Assert
+            Assert.True(createOrderItemResponseDto.IsFailure);
+        }
+
+
+        [Fact]
+        public async Task DeleteOrderItem_When_OrderItem_Is_Valid_Return_Success()
+        {
+            //Arrange
+            int orderItemId = 1;
+
+            //Act
+            var UpdateOrderItemCount = await orderService.DeleteOrderItemAsync(orderItemId);
+
+            //Assert
+            Assert.True(UpdateOrderItemCount.IsSuccess);
+        }
+        #endregion
     }
 }

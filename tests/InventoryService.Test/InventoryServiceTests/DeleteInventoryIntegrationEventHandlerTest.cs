@@ -1,5 +1,4 @@
-﻿using EventBus.Abstractions;
-using InventoryService.IntegrationEvents.EventHandling;
+﻿using InventoryService.IntegrationEvents.EventHandling;
 using InventoryService.IntegrationEvents.Events;
 using InventoryService.Services;
 using Microsoft.EntityFrameworkCore;
@@ -23,8 +22,10 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
             var loggerProduct = new Mock<ILogger<ProductService>>();
             var productService = new ProductService(Context, loggerProduct.Object);
 
+            var loggerInventoryTransactio = new Mock<ILogger<InventoryTransactionService>>();
+           var inventoryTransactionService = new InventoryTransactionService(Context, loggerInventoryTransactio.Object);
 
-            deleteInventoryIntegrationEventHandler = new DeleteInventoryIntegrationEventHandler(logger.Object, productService);
+            deleteInventoryIntegrationEventHandler = new DeleteInventoryIntegrationEventHandler(logger.Object,Context, productService, inventoryTransactionService);
         }
 
 

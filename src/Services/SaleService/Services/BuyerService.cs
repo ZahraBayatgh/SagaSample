@@ -36,6 +36,8 @@ namespace CustomerService.Services
 
                 // Get buyer by buyer id
                 var buyer = await _context.Buyers.FirstOrDefaultAsync(x => x.Id == buyerId);
+                if (buyer == null)
+                    return Result.Failure<Buyer>($"Buyer id is invalid.");
 
                 return Result.Success(buyer);
             }
@@ -51,22 +53,22 @@ namespace CustomerService.Services
         /// This method adds a Buyer to the table.
         /// If the input createBuyerDto is not valid or an expiration occurs, a Failure will be returned.
         /// </summary>
-        /// <param name="buyerDto"></param>
+        /// <param name="createBuyerRequest"></param>
         /// <returns></returns>
-        public async Task<Result<int>> CreateBuyerAsync(BuyerDto buyerDto)
+        public async Task<Result<int>> CreateBuyerAsync(CreateBuyerRequestDto createBuyerRequest)
         {
             try
             {
                 // Check buyer instance
-                var buyerValidation = CheckCreateBuyerInstance(buyerDto);
+                var buyerValidation = CheckCreateBuyerInstance(createBuyerRequest);
                 if (buyerValidation.IsFailure)
                     return Result.Failure<int>(buyerValidation.Error);
 
                 // Intialize buyer
                 var buyer = new Buyer
                 {
-                    FirstName = buyerDto.FirstName,
-                    LastName = buyerDto.LastName
+                    FirstName = createBuyerRequest.FirstName,
+                    LastName = createBuyerRequest.LastName
                 };
 
                 // Add buyer in database
@@ -77,9 +79,9 @@ namespace CustomerService.Services
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Add {buyerDto.FirstName} {buyerDto.LastName} buyer failed. Exception detail:{ex.Message}");
+                _logger.LogInformation($"Add {createBuyerRequest.FirstName} {createBuyerRequest.LastName} buyer failed. Exception detail:{ex.Message}");
 
-                return Result.Failure<int>($"Add {buyerDto.FirstName} {buyerDto.LastName} buyer failed.");
+                return Result.Failure<int>($"Add {createBuyerRequest.FirstName} {createBuyerRequest.LastName} buyer failed.");
             }
         }
 
@@ -88,15 +90,15 @@ namespace CustomerService.Services
         /// </summary>
         /// <param name="createProductDto"></param>
         /// <returns></returns>
-        private Result CheckCreateBuyerInstance(BuyerDto buyerDto)
+        private Result CheckCreateBuyerInstance(CreateBuyerRequestDto createBuyerRequest)
         {
-            if (buyerDto==null)
+            if (createBuyerRequest==null)
                 return Result.Failure($"BuyerDto is null.");
 
-            if (string.IsNullOrEmpty(buyerDto.FirstName))
+            if (string.IsNullOrEmpty(createBuyerRequest.FirstName))
                 return Result.Failure($"FirstName is empty.");
 
-            if (string.IsNullOrEmpty(buyerDto.LastName))
+            if (string.IsNullOrEmpty(createBuyerRequest.LastName))
                 return Result.Failure($"LastName is empty.");
 
             return Result.Success();

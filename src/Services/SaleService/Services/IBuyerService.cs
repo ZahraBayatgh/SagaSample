@@ -7,7 +7,7 @@ namespace CustomerService.Services
 {
     public interface IBuyerService
     {
-        Task<Result<int>> CreateBuyerAsync(BuyerDto buyerDto);
+        Task<Result<int>> CreateBuyerAsync(CreateBuyerRequestDto createBuyerRequest);
         Task<Result<Buyer>> GetBuyerByIdAsync(int buyerId);
     }
 }

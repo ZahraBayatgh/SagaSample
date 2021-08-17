@@ -18,13 +18,7 @@ namespace SagaPattern.UnitTests.Config
                    {
                        Id=1,
                        BuyerId=1,
-                        Buyer=new Buyer
-                        {
-                             Id=1,
-                              FirstName="Zahra",
-                              LastName="Bayat"
-                        },
-                         OrderDate=DateTime.Now,
+                       OrderDate=DateTime.Now,
                    },
                  };
 

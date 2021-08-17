@@ -38,7 +38,7 @@ namespace SaleService.IntegrationEvents.EventHandling
                 var createProductResponce = await _productService.CreateProductAsync(createProductRequestDto);
                 
                 // Publish ResultSalesIntegrationEvent
-                bool createProductStatus = createProductResponce.IsSuccess ? true : false;
+               bool createProductStatus = createProductResponce.IsSuccess ? true : false;
                 PublishResult(@event, createProductStatus);
             }
             catch (ArgumentNullException ex)

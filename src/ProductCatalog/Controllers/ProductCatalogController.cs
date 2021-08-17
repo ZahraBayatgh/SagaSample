@@ -15,7 +15,7 @@ namespace ProductCatalog.Controllers
         private readonly IEventBus _eventBus;
 
         public ProductCatalogController(IProductService productService,
-                IEventBus eventBus)
+                                        IEventBus eventBus)
         {
             _productService = productService;
             _eventBus = eventBus;
@@ -42,10 +42,11 @@ namespace ProductCatalog.Controllers
 
             if (createProductResponse.IsSuccess)
             {
+                // Publish CreateProductIntegrationEvent
                 CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(createProductResponse.Value.ProductId,createProductRequestDto.Name, createProductRequestDto.InitialHand);
                 _eventBus.Publish(createProductIntegrationEvent);
 
-                return CreatedAtAction(nameof(GetProductByIdAsync), new { id = createProductResponse.Value }, null);
+                return CreatedAtAction(nameof(GetProductByIdAsync), new { id = createProductResponse.Value.ProductId }, null);
             }
 
             return BadRequest(createProductResponse.Error);

@@ -33,33 +33,29 @@ namespace ProductCatalogService.IntegrationEvents.EventHandling
 
                 // Get and Check product in db
                 var getProduct = await _productService.GetProductByIdAsync(@event.ProductId);
-                if (getProduct.IsFailure)
-                    throw new ArgumentNullException(getProduct.Error);
-
-                if (!@event.IsSuccess)
+                if (getProduct.IsFailure && @event.IsSuccess)
                 {
-                    if (getProduct.Value.ProductStatus == ProductStatus.SalesIsOk)
-                    {
-                        // Publish DeleteInventoryIntegrationEvent
-                        DeleteSalesIntegrationEvent deleteInventoryIntegrationEvent = new DeleteSalesIntegrationEvent(getProduct.Value.Name);
-                        _eventBus.Publish(deleteInventoryIntegrationEvent);
-                    }
-
-                    // Delete product
-                    await _productService.DeleteProductAsync(getProduct.Value.Id);
+                    // Publish DeleteInventoryIntegrationEvent
+                    DeleteInventoryIntegrationEvent deleteInventoryIntegrationEvent = new DeleteInventoryIntegrationEvent(getProduct.Value.Name);
+                    _eventBus.Publish(deleteInventoryIntegrationEvent);
                 }
-                else
+                else if (getProduct.IsSuccess && @event.IsSuccess && (int)getProduct.Value.ProductStatus != (int)ProductStatus.InventoryIsOk)
                 {
                     // Update ProductStatus
-                    var productStatus = (int)ProductStatus.InventoryIsOk;
-                    if ((int)getProduct.Value.ProductStatus != (int)ProductStatus.InventoryIsOk)
-                    {
-                        productStatus += (int)getProduct.Value.ProductStatus;
+                    var productStatus = (int)ProductStatus.InventoryIsOk + (int)getProduct.Value.ProductStatus;
 
-                    }
                     UpdateProductStatusRequestDto updateProductStatusRequestDto = new UpdateProductStatusRequestDto(getProduct.Value.Name, productStatus);
 
                     await _productService.UpdateProductStatusAsync(updateProductStatusRequestDto);
+                }
+                if (getProduct.IsSuccess && !@event.IsSuccess && getProduct.Value.ProductStatus == ProductStatus.SalesIsOk)
+                {
+                    // Publish DeleteInventoryIntegrationEvent
+                    DeleteSalesIntegrationEvent deleteInventoryIntegrationEvent = new DeleteSalesIntegrationEvent(getProduct.Value.Name);
+                    _eventBus.Publish(deleteInventoryIntegrationEvent);
+
+                    // Delete product
+                    await _productService.DeleteProductAsync(getProduct.Value.Id);
                 }
             }
             catch (ArgumentNullException ex)

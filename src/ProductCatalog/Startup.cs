@@ -31,7 +31,7 @@ namespace ProductCatalog
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ProductCatalogDbContext>(options =>
-           options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddEventBus(Configuration);
             services.AddCustomIntegrations(Configuration);
 
@@ -53,8 +53,6 @@ namespace ProductCatalog
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProductCatalog v1"));
             }
-
-            app.UseHttpsRedirection();
 
             app.UseRouting();
 

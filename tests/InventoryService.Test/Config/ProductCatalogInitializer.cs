@@ -25,12 +25,30 @@ namespace SagaPattern.UnitTests.Config
                       Name="Monitor",
                       ProductStatus=ProductStatus.SalesIsOk
                   },
-                   new Product
+                  new Product
                   {
                       Id=3,
                       Name="Keyboard",
                       ProductStatus=ProductStatus.InventoryIsOk
-                  }
+                  },
+                  new Product
+                  {
+                      Id=4,
+                      Name="Door",
+                      ProductStatus=ProductStatus.SalesIsOk
+                  },
+                  new Product
+                  {
+                      Id=5,
+                      Name="Bag",
+                      ProductStatus=ProductStatus.SalesIsOk
+                  },
+                  new Product
+                  {
+                      Id=6,
+                      Name="Hub",
+                      ProductStatus=ProductStatus.InventoryIsOk
+                  },
                 };
 
                 dbContext.Products.AddRange(products);
