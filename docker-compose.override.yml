@@ -8,7 +8,7 @@ services:
       - "5672:5672"
 
   InventoryData:
-    container_name: InventoryDB
+    container_name: InventoryDatabase
     environment:
       - SA_PASSWORD=Pass@word
       - ACCEPT_EULA=Y
@@ -16,10 +16,10 @@ services:
     ports:
       - "5435:1433"
     volumes:
-      - x-inventorydata:/var/opt/mssql
+      - template-inventorydata:/var/opt/mssql
 
   SaleData:
-    container_name: SaleDB
+    container_name: SaleDatabase
     environment:
       - SA_PASSWORD=Pass@word
       - ACCEPT_EULA=Y
@@ -27,10 +27,10 @@ services:
     ports:
       - "5434:1433"
     volumes:
-      - x-saledata:/var/opt/mssql
+      - template-saledata:/var/opt/mssql
 
   ProductCatalogData:
-    container_name: ProductCatalogDB
+    container_name: ProductCatalogDatabase
     environment:
       - SA_PASSWORD=Pass@word
       - ACCEPT_EULA=Y
@@ -38,7 +38,7 @@ services:
     ports:
       - "5436:1433"
     volumes:
-      - x-productcatalogdata:/var/opt/mssql
+      - template-productcatalogdata:/var/opt/mssql
 
   inventoryservice:
     environment:
@@ -79,9 +79,9 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
 
 volumes:
-  x-saledata:
+  template-saledata:
     external: false
-  x-inventorydata:
+  template-inventorydata:
     external: false
-  x-productcatalogdata:
+  template-productcatalogdata:
     external: false

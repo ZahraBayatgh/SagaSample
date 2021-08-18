@@ -10,8 +10,8 @@ using SaleService.Data;
 namespace SaleService.Migrations
 {
     [DbContext(typeof(SaleDbContext))]
-    [Migration("20210817044857_AddOrderItems")]
-    partial class AddOrderItems
+    [Migration("20210817141513_AddOrderItem")]
+    partial class AddOrderItem
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

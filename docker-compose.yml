@@ -29,7 +29,6 @@ services:
     depends_on:
       - SaleData
 
-
   productcatalogservice:
     image: ${DOCKER_REGISTRY-}productcatalogservice
     build:
