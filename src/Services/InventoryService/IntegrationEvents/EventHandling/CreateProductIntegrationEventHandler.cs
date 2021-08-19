@@ -51,7 +51,7 @@ namespace InventoryService.IntegrationEvents.EventHandling
                     throw new Exception("CreateProductIntegrationEvent is failure.");
 
                 // Initial InventoryTransactionRequestDto
-                var InventoryTransactionDto = new InventoryTransactionRequestDto(createProductResponce.Value.ProductId, @event.InitialOnHand, @event.InitialOnHand, Models.InventoryType.In);
+                var InventoryTransactionDto = new InventoryTransactionRequestDto(createProductResponce.Value.ProductId, @event.InitialOnHand,Models.InventoryType.In);
 
                 // Add InventoryTransaction
                 var inventoryTransactionResponse = await _inventoryTransactionService.CreateInventoryTransactionAsync(InventoryTransactionDto);

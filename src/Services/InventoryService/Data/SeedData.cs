@@ -54,16 +54,14 @@ namespace InventoryService.Data
                     product = new Product()
                     {
                         Name = "Mouse",
-                        Count = 300,
                     };
                     await context.Products.AddAsync(product);
 
                     var inventoryTransaction = new InventoryTransaction
                     {
                         ProductId = product.Id,
-                        Type = InventoryType.In,
-                        ChangeCount = product.Count,
-                        CurrentCount = product.Count
+                        InventoryTransactionType = InventoryType.In,
+                        Count = 30,
                     };
                     await context.AddAsync(inventoryTransaction);
 

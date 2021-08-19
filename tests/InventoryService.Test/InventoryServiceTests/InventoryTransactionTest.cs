@@ -19,36 +19,6 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
             inventoryTransactionService = new InventoryTransactionService(Context, logger.Object);
         }
 
-        #region GetLatestInventoryTransactionByProductId
-
-        [Fact]
-        public async Task GetLatestInventoryTransactionByProductId_When_ProducId_Is_Invalid_Return_Failure()
-        {
-            //Arrange
-            var id = 0;
-
-            //Act
-            var product = await inventoryTransactionService.GetLatestInventoryTransactionByProductIdAsync(id);
-
-            //Assert
-            Assert.True(product.IsFailure);
-        }
-
-        [Fact]
-        public async Task GetLatestInventoryTransactionByProductId_When_ProducId_Is_Valid_Return_InventoryTransactionCurrentCount()
-        {
-            //Arrange
-            var id = 1;
-
-            //Act
-            var inventoryTransactionCurrentCount = await inventoryTransactionService.GetLatestInventoryTransactionByProductIdAsync(id);
-
-            //Assert
-            Assert.Equal(18, inventoryTransactionCurrentCount.Value);
-        }
-
-        #endregion
-
         #region CreateInventoryTransaction
 
         [Fact]
@@ -65,7 +35,7 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
         public async Task CreateInventoryTransaction_When_ProductId_Is_Zero_Return_Failure()
         {
             //Arrange
-            var inventoryTransactionRequestDto = new InventoryTransactionRequestDto(0, 18, 2, InventoryType.Out);
+            var inventoryTransactionRequestDto = new InventoryTransactionRequestDto(0, 18,  InventoryType.Out);
 
             //Act
             var inventoryTransaction = await inventoryTransactionService.CreateInventoryTransactionAsync(inventoryTransactionRequestDto);
@@ -73,44 +43,17 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
             //Assert
             Assert.True(inventoryTransaction.IsFailure);
         }
-
-        [Fact]
-        public async Task CreateInventoryTransaction_When_ChangeCount_Is_Zero_Return_Failure()
-        {
-            //Arrange
-            var inventoryTransactionRequestDto = new InventoryTransactionRequestDto(1, 18, 0, InventoryType.Out);
-            
-            //Act
-            var inventoryTransaction = await inventoryTransactionService.CreateInventoryTransactionAsync(inventoryTransactionRequestDto);
-
-            //Assert
-            Assert.True(inventoryTransaction.IsFailure);
-        }
-
-        [Fact]
-        public async Task CreateInventoryTransaction_When_CurrentCountt_Is_Zero_Return_Failure()
-        {
-            //Arrange
-            var inventoryTransactionRequestDto = new InventoryTransactionRequestDto(1, 0, 2, InventoryType.Out);
-          
-            //Act
-            var inventoryTransaction = await inventoryTransactionService.CreateInventoryTransactionAsync(inventoryTransactionRequestDto);
-
-            //Assert
-            Assert.True(inventoryTransaction.IsFailure);
-        }
-
         [Fact]
         public async Task CreateInventoryTransaction_When_InventoryTransactionDto_Is_Valid_Return_InventoryTransactionDto()
         {
             //Arrange
-            var inventoryTransactionRequestDto = new InventoryTransactionRequestDto(1, 18, 2, InventoryType.Out);
+            var inventoryTransactionRequestDto = new InventoryTransactionRequestDto(1, 18,  InventoryType.Out);
            
             //Act
             var inventoryTransaction = await inventoryTransactionService.CreateInventoryTransactionAsync(inventoryTransactionRequestDto);
 
             //Assert
-            Assert.Equal(18, inventoryTransaction.Value.ChangeCount);
+            Assert.Equal(18, inventoryTransaction.Value.Count);
         }
 
         #endregion

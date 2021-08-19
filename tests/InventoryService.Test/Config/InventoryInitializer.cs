@@ -17,9 +17,8 @@ namespace SagaPattern.UnitTests.Config
                   {
                        Id=1,
                        ProductId=1,
-                       Type=InventoryType.In,
-                       ChangeCount=2,
-                       CurrentCount=18
+                       InventoryTransactionType=InventoryType.In,
+                       Count=2,
                   }
                 };
 

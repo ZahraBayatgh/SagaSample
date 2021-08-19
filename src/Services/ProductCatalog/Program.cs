@@ -11,17 +11,9 @@ namespace ProductCatalog
     {
         public static async Task Main(string[] args)
         {
-            try
-            {
                 await SeedData.Seed();
                 CreateHostBuilder(args)
                    .Build().Run();
-            }
-            catch (System.Exception ex)
-            {
-
-                throw;
-            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

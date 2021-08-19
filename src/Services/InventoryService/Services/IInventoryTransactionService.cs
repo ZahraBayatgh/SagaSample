@@ -8,7 +8,6 @@ namespace InventoryService.Services
 {
     public interface IInventoryTransactionService
     {
-        Task<Result<int>> GetLatestInventoryTransactionByProductIdAsync(int productId);
         Task<Result<InventoryTransaction>> GetInventoryTransactionsByProductIdAsync(int productId);
         Task<Result<InventoryTransaction>> CreateInventoryTransactionAsync(InventoryTransactionRequestDto inventoryTransactionDto);
         Task<Result> DeleteInventoryTransactionAsync(int inventoryTransactionId);

@@ -54,36 +54,6 @@ namespace InventoryService.Services
         }
 
         /// <summary>
-        /// This method get latest invertory transaction by product id.
-        /// If the input productId is not valid or an expiration occurs, a Failure will be returned.
-        /// </summary>
-        /// <param name="productId"></param>
-        /// <returns></returns>
-        public async Task<Result<int>> GetLatestInventoryTransactionByProductIdAsync(int productId)
-        {
-            try
-            {
-                // Check product id
-                if (productId <= 0)
-                    return Result.Failure<int>($"Product id is invalid.");
-
-                // Get latast InventoryTransaction by product id
-                var inventoryTransaction = await _context.InventoryTransactions.OrderByDescending(x => x.Id).FirstOrDefaultAsync(x => x.ProductId == productId);
-
-                // Check inventoryTransaction
-                if (inventoryTransaction == null)
-                    return Result.Failure<int>($"Get latest inventory transaction by product id {productId} was not found.");
-
-                return Result.Success(inventoryTransaction.CurrentCount);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogInformation($"Get latest inventory transaction by product id {productId} was failed. Exception detail:{ex.Message}");
-                return Result.Failure<int>($"et latest inventory transaction by product id {productId} was failed.");
-            }
-        }
-
-        /// <summary>
         /// This method add invertory transaction by product id.
         /// If the input inventoryTransactionDto is not valid or an expiration occurs, a Failure will be returned. 
         /// </summary>
@@ -102,9 +72,8 @@ namespace InventoryService.Services
                 var inventoryTransaction = new InventoryTransaction
                 {
                     ProductId = inventoryTransactionDto.ProductId,
-                    Type = inventoryTransactionDto.Type,
-                    ChangeCount = inventoryTransactionDto.ChangeCount,
-                    CurrentCount = inventoryTransactionDto.CurrentCount
+                    InventoryTransactionType = inventoryTransactionDto.Type,
+                    Count = inventoryTransactionDto.Count,
                 };
 
                 // Add InventoryTransaction
@@ -167,11 +136,8 @@ namespace InventoryService.Services
             if (inventoryTransactionRequestDto.ProductId <= 0)
                 return Result.Failure("InventoryTransaction ProductId is invalid.");
 
-            if (inventoryTransactionRequestDto.ChangeCount <= 0)
+            if (inventoryTransactionRequestDto.Count <= 0)
                 return Result.Failure("InventoryTransaction ChangeCount is invalid.");
-
-            if (inventoryTransactionRequestDto.CurrentCount <= 0)
-                return Result.Failure("InventoryTransaction CurrentCount is invalid.");
 
             return Result.Success();
         }

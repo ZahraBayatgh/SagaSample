@@ -4,12 +4,8 @@
     {
         public int Id { get; set; }
         public int ProductId { get; set; }
-        //To do: InventoryTransactionType
-        public InventoryType Type { get; set; }
-        //To do: Count
-        public int ChangeCount { get; set; }
-        //To do:Delete
-        public int CurrentCount { get; set; }
+        public InventoryType InventoryTransactionType { get; set; }
+        public int Count { get; set; }
 
     }
     public enum InventoryType

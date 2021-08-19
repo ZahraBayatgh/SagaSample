@@ -127,7 +127,6 @@ namespace InventoryService.Services
                 var product = new Product
                 {
                     Name = productDto.ProductName,
-                    Count = productDto.Count
                 };
 
                 // Add product in database
@@ -135,13 +134,8 @@ namespace InventoryService.Services
                 await _context.SaveChangesAsync();
 
                 //Intialize CreateProductResponseDto
-                CreateProductResponseDto createProductResponseDto = new CreateProductResponseDto
-                {
-                    ProductId = product.Id,
-                    ProductName = product.Name,
-                    ChangeCount = product.Count,
-                    CurrentCount = product.Count
-                };
+                CreateProductResponseDto createProductResponseDto = new CreateProductResponseDto(product.Id, product.Name, productDto.Count);
+
                 return Result.Success(createProductResponseDto);
             }
             catch (Exception ex)
@@ -184,39 +178,6 @@ namespace InventoryService.Services
                 return Result.Failure($"Delete product with {productId} id failed.");
             }
         }
-
-        /// <summary>
-        /// This method update a ProductDto to the table.
-        /// If the input productDto is not valid or an expiration occurs, a Failure will be returned.
-        /// </summary>
-        /// <param name="productDto"></param>
-        /// <returns></returns>
-        public async Task<Result<Product>> UpdateProductAsync(ProductRequestDto productDto)
-        {
-            try
-            {
-                // Check product instance
-                var productValidation = CheckUpdateProductInstance(productDto);
-                if (productValidation.IsFailure)
-                    return Result.Failure<Product>(productValidation.Error);
-
-                // Get product by name
-                var product = await _context.Products.FirstOrDefaultAsync(x => x.Name == productDto.ProductName);
-
-                // Update product
-                product.Count = productDto.Count;
-                await _context.SaveChangesAsync();
-
-                return product;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogInformation($"Update {productDto.ProductName} product failed. Exception detail:{ex.Message}");
-                return Result.Failure<Product>($"Update {productDto.ProductName} product failed.");
-
-            }
-        }
-
         /// <summary>
         /// This methode check a createProductDto instance
         /// </summary>

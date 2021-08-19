@@ -40,51 +40,18 @@ namespace InventoryService.IntegrationEvents.EventHandling
                 if (@event == null)
                     throw new ArgumentNullException("UpdateProductCountAndAddInventoryTransactionEvent is null.");
 
-                bool isCommit = false;
-
                 // Get product id
                 var productId = await _productService.GetProductIdAsync(@event.ProductName);
 
                 if (productId.IsFailure)
                     throw new ArgumentNullException("UpdateProductCountAndAddInventoryTransactionEvent product is invalid.");
 
-                // Get latest InventoryTransaction by product id
-                var latestInventoryTransactionCount = await _inventoryTransactionService.GetLatestInventoryTransactionByProductIdAsync(productId.Value);
-
-                // Check latest InventoryTransaction
-                if (latestInventoryTransactionCount.IsFailure)
-                    throw new Exception(latestInventoryTransactionCount.Error);
-
                 // Intialize InventoryTransactionDto
-                var inventoryTransaction = new InventoryTransactionRequestDto(productId.Value, @event.Quantity, latestInventoryTransactionCount.Value - @event.Quantity, InventoryType.Out);
+                var inventoryTransaction = new InventoryTransactionRequestDto(productId.Value, @event.Quantity, InventoryType.Out);
 
 
                 // Create InventoryTransaction
                 var inventoryTransactionResult = await _inventoryTransactionService.CreateInventoryTransactionAsync(inventoryTransaction);
-
-                if (inventoryTransactionResult.IsSuccess)
-                {
-                    // Intialize ProductDto
-                    var productRequestDto = new ProductRequestDto
-                    {
-                        ProductName = @event.ProductName,
-                        Count = inventoryTransactionResult.Value.CurrentCount
-                    };
-
-                    // Update product
-                    var product = await _productService.UpdateProductAsync(productRequestDto);
-                    if (product.IsSuccess)
-                        isCommit = true;
-                }
-
-                if (isCommit)
-                {
-                    transaction.Commit();
-                }
-                else
-                {
-                    transaction.Rollback();
-                }
             }
             catch (ArgumentNullException ex)
             {

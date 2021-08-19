@@ -12,6 +12,5 @@ namespace InventoryService.Services
         Task<Result<Product>> GetProductByNameAsync(string productName);
         Task<Result<CreateProductResponseDto>> CreateProductAsync(ProductRequestDto productRequestDto);
         Task<Result> DeleteProductAsync(int productId);
-        Task<Result<Product>> UpdateProductAsync(ProductRequestDto productRequestDto);
     }
 }
