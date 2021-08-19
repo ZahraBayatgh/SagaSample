@@ -10,13 +10,13 @@ namespace ProductCatalog.Controllers
     public class ProductCatalogController : ControllerBase
     {
         private readonly IProductService _productService;
-        private readonly IProductorchestrator _productorchestrator;
+        private readonly IProductOrchestratorService _productOrchestratorService;
 
         public ProductCatalogController(IProductService productService,
-                                        IProductorchestrator productorchestrator)
+                                        IProductOrchestratorService productOrchestratorService)
         {
             _productService = productService;
-            _productorchestrator = productorchestrator;
+            _productOrchestratorService = productOrchestratorService;
         }
 
         [HttpGet("{id}")]
@@ -36,7 +36,7 @@ namespace ProductCatalog.Controllers
         public async Task<IActionResult> CreateProductAsync(CreateProductRequestDto createProductRequestDto)
         {
             // Create product and inventory transaction
-            var createProductResponse = await _productorchestrator.CreateProductAndPublishEvent(createProductRequestDto);
+            var createProductResponse = await _productOrchestratorService.CreateProductAndPublishEvent(createProductRequestDto, HttpContext.TraceIdentifier);
 
             if (createProductResponse.IsSuccess)
             {

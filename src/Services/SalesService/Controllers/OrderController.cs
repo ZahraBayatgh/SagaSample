@@ -1,6 +1,4 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using SalesService.DomainEvents.Events;
+﻿using Microsoft.AspNetCore.Mvc;
 using SalesService.Dtos;
 using SalesService.Services;
 using System.Threading.Tasks;
@@ -13,13 +11,13 @@ namespace SalesService.Controllers
     {
 
         private readonly IOrderService _orderService;
-        private readonly IMediator _mediator;
+        private readonly IOrderOrchestratorService _orderOrchestratorService;
 
         public OrderController(IOrderService orderService,
-                               IMediator mediator)
+            IOrderOrchestratorService orderOrchestratorService                             )
         {
             _orderService = orderService;
-            _mediator = mediator;
+            _orderOrchestratorService = orderOrchestratorService;
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrderByIdAsync(int id)
@@ -52,14 +50,10 @@ namespace SalesService.Controllers
         public async Task<IActionResult> CreateOrderItemAsync(CreateOrderItemRequestDto createOrderItemRequestDto)
         {
             // Add order
-            var orderResult = await _orderService.CreateOrderItemAsync(createOrderItemRequestDto);
+            var orderResult = await _orderOrchestratorService.AddOrderAndUpdateProduct(createOrderItemRequestDto, HttpContext.TraceIdentifier);
 
             if (orderResult.IsSuccess)
             {
-                // update product count after add order
-                var updateProductDomainEvent = new UpdateProductDomainEvent(orderResult.Value.OrderItemId, createOrderItemRequestDto.OrderId, orderResult.Value.ProductName, orderResult.Value.Quantity, HttpContext.TraceIdentifier);
-                await _mediator.Publish(updateProductDomainEvent);
-
                 return NoContent();
             }
 

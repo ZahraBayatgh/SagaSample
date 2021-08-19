@@ -127,7 +127,7 @@ namespace SalesService.Services
 
                 await _context.SaveChangesAsync();
 
-                CreateOrderItemResponseDto createOrderResponseDto = new CreateOrderItemResponseDto(orderItem.Id, orderValidation.Value, createOrderItemRequestDto.Quantity);
+                CreateOrderItemResponseDto createOrderResponseDto = new CreateOrderItemResponseDto(orderItem.Id,orderItem.OrderId, orderValidation.Value, createOrderItemRequestDto.Quantity);
                 return Result.Success(createOrderResponseDto);
             }
             catch (Exception ex)

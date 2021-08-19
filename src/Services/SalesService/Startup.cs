@@ -3,7 +3,6 @@ using EventBus;
 using EventBus.Abstractions;
 using EventBus.RabbitMQ;
 using EventBus.ServiceBus;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.ServiceBus;
@@ -15,7 +14,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using RabbitMQ.Client;
 using SalesService.Data;
-using SalesService.DomainEvents.EventHandling;
 using SalesService.IntegrationEvents.Events;
 using SalesService.Services;
 using System.Reflection;
@@ -38,11 +36,11 @@ namespace SalesService
 
             services.AddEventBus(Configuration);
             services.AddCustomIntegrations(Configuration);
-            services.AddMediatR(Assembly.GetExecutingAssembly());
 
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<IOrderOrchestratorService, OrderOrchestratorService>();
 
             services.AddControllers(options =>
             {
@@ -90,9 +88,6 @@ namespace SalesService
         {
             builder.RegisterAssemblyTypes(typeof(CancelChangeProductCountIntegrationEvent).GetTypeInfo().Assembly)
                 .AsClosedTypesOf(typeof(IIntegrationEventHandler<>));
-
-            builder.RegisterAssemblyTypes(typeof(UpdateProductDomainEventHandler).GetTypeInfo().Assembly)
-             .AsClosedTypesOf(typeof(INotificationHandler<>));
         }
     }
 

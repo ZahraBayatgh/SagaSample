@@ -8,24 +8,24 @@ using System.Threading.Tasks;
 
 namespace ProductCatalogService.Services
 {
-    public class Productorchestrator : IProductorchestrator
+    public class ProductOrchestratorService :  IProductOrchestratorService
     {
         private readonly ProductCatalogDbContext _context;
         private readonly IProductService _productService;
         private readonly IEventBus _eventBus;
-        private readonly ILogger<Productorchestrator> _logger;
+        private readonly ILogger<ProductOrchestratorService> _logger;
 
-        public Productorchestrator(ProductCatalogDbContext context,
+        public ProductOrchestratorService(ProductCatalogDbContext context,
             IProductService productService,
             IEventBus eventBus,
-            ILogger<Productorchestrator> logger)
+            ILogger<ProductOrchestratorService> logger)
         {
             _context = context;
             _productService = productService;
             _eventBus = eventBus;
             _logger = logger;
         }
-        public async Task<Result<int>> CreateProductAndPublishEvent(CreateProductRequestDto createProductRequestDto)
+        public async Task<Result<int>> CreateProductAndPublishEvent(CreateProductRequestDto createProductRequestDto, string correlationId)
         {
             using var transaction = _context.Database.BeginTransaction();
             try
@@ -35,13 +35,13 @@ namespace ProductCatalogService.Services
                 if (createProductResponse.IsSuccess)
                 {
                     // Publish CreateProductIntegrationEvent
-                    CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(createProductResponse.Value.ProductId, createProductRequestDto.Name, createProductRequestDto.InitialHand, HttpContext.TraceIdentifier);
+                    CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(createProductResponse.Value.ProductId, createProductRequestDto.Name, createProductRequestDto.InitialHand, correlationId);
                     await _eventBus.PublishAsync(createProductIntegrationEvent, "test");
 
                     transaction.Commit();
                 }
 
-              return  Result.Success(createProductResponse.Value.ProductId);
+                return Result.Success(createProductResponse.Value.ProductId);
             }
             catch (System.Exception ex)
             {

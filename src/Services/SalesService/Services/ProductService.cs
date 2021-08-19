@@ -139,11 +139,11 @@ namespace SalesService.Services
                 var product = await _context.Products.FirstOrDefaultAsync(x => x.Name == updateProductDto.Name);
 
                 // Check that the product count value is not less than the DecreaseCount.
-                if (product.OnHand < updateProductDto.DecreaseCount)
+                if (product.OnHand < updateProductDto.Quantity)
                     return Result.Failure<int>($"{product.Name} product count lesser than DecreaseCount.");
 
                 // Decrease product count
-                product.OnHand -= updateProductDto.DecreaseCount;
+                product.OnHand -= updateProductDto.Quantity;
                 await _context.SaveChangesAsync();
 
                 return Result.Success();
@@ -253,7 +253,7 @@ namespace SalesService.Services
             if (string.IsNullOrEmpty(updateProductDto.Name))
                 return Result.Failure($"UpdateProductDto name is empty.");
 
-            if (updateProductDto.DecreaseCount <= 0)
+            if (updateProductDto.Quantity <= 0)
                 return Result.Failure($"UpdateProductDto DecreaseCount is invaild.");
 
             return Result.Success();

@@ -202,7 +202,7 @@ namespace SagaPattern.Tests.Sale
             //Arrange
             var UpdateProductCountDto = new UpdateProductCountDto
             {
-                DecreaseCount = 3
+                Quantity = 3
             };
 
             //Act
@@ -219,7 +219,7 @@ namespace SagaPattern.Tests.Sale
             var UpdateProductCountDto = new UpdateProductCountDto
             {
                 Name = "",
-                DecreaseCount = 3
+                Quantity = 3
             };
 
             //Act
@@ -236,7 +236,7 @@ namespace SagaPattern.Tests.Sale
             var updateProductCountDto = new UpdateProductCountDto
             {
                 Name = "Mouse",
-                DecreaseCount = 0
+                Quantity = 0
             };
 
             //Act
@@ -253,7 +253,7 @@ namespace SagaPattern.Tests.Sale
             var updateProductCountDto = new UpdateProductCountDto
             {
                 Name = "Mouse",
-                DecreaseCount = 1000
+                Quantity = 1000
             };
 
             //Act
@@ -270,7 +270,7 @@ namespace SagaPattern.Tests.Sale
             var UpdateProductCountDto = new UpdateProductCountDto
             {
                 Name = "Mouse",
-                DecreaseCount = 3
+                Quantity = 3
             };
 
             //Act
