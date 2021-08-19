@@ -93,7 +93,7 @@ namespace InventoryService.IntegrationEvents.EventHandling
             }
             catch (Exception ex)
             {
-                var cancelProductIntegrationEvent = new CancelChangeProductCountIntegrationEvent(@event.ProductName, @event.Quantity,@event.OrderId,@event.OrderItemId);
+                var cancelProductIntegrationEvent = new CancelChangeProductCountIntegrationEvent(@event.ProductName, @event.Quantity,@event.OrderId,@event.OrderItemId, @event.CorrelationId);
                await _eventBus.PublishAsync(cancelProductIntegrationEvent);
 
                 _logger.LogInformation($"Product{@event.ProductName} has been canceled. Exception detail:{ex.Message}");

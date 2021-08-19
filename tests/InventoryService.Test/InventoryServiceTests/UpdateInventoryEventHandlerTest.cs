@@ -16,9 +16,12 @@ namespace SagaPattern.Tests.Inventory
     {
         private InventoryTransactionService inventoryTransactionService;
         private UpdateInventoryEventHandler updateProductCountAndAddInventoryTransaction;
+        private string correlationId;
 
         public UpdateInventoryEventHandlerTest()
         {
+            correlationId = "123";
+
             var logger = new Mock<ILogger<UpdateInventoryEvent>>();
 
             var loggerProduct = new Mock<ILogger<ProductService>>();
@@ -51,7 +54,7 @@ namespace SagaPattern.Tests.Inventory
         public async Task UpdateProductCountAndAddInventoryTransaction_When_EveryThing_Is_OK_Update_Product()
         {
             // Arrange
-            UpdateInventoryEvent updateInventoryEvent = new UpdateInventoryEvent("Mouse", 10,1,1);
+            UpdateInventoryEvent updateInventoryEvent = new UpdateInventoryEvent("Mouse", 10,1,1,correlationId);
 
             //Act 
             await updateProductCountAndAddInventoryTransaction.Handle(updateInventoryEvent);

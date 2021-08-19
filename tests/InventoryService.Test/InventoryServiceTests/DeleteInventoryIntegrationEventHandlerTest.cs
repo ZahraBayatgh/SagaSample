@@ -14,9 +14,12 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
     public class DeleteInventoryIntegrationEventHandlerTest : InventoryMemoryDatabaseConfig
     {
         private DeleteInventoryIntegrationEventHandler deleteInventoryIntegrationEventHandler;
+        private string correlationId;
 
         public DeleteInventoryIntegrationEventHandlerTest()
         {
+            correlationId = "123";
+
             var logger = new Mock<ILogger<DeleteInventoryIntegrationEventHandler>>();
 
             var loggerProduct = new Mock<ILogger<ProductService>>();
@@ -40,7 +43,7 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
         public async Task DeleteInventoryIntegrationEvent_When_Product_Name_Is_Null_throw_ArgumentNullException()
         {
             // Arrange
-            DeleteInventoryIntegrationEvent deleteSalesIntegrationEvent = new DeleteInventoryIntegrationEvent(null);
+            DeleteInventoryIntegrationEvent deleteSalesIntegrationEvent = new DeleteInventoryIntegrationEvent(null,correlationId);
 
             //Act - Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() => deleteInventoryIntegrationEventHandler.Handle(deleteSalesIntegrationEvent));
@@ -50,7 +53,7 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
         public async Task DeleteInventoryIntegrationEvent_When_Product_Name_Is_Empty_throw_ArgumentNullException()
         {
             // Arrange
-            DeleteInventoryIntegrationEvent deleteSalesIntegrationEvent = new DeleteInventoryIntegrationEvent("");
+            DeleteInventoryIntegrationEvent deleteSalesIntegrationEvent = new DeleteInventoryIntegrationEvent("",correlationId);
 
             //Act - Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() => deleteInventoryIntegrationEventHandler.Handle(deleteSalesIntegrationEvent));
@@ -60,7 +63,7 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
         public async Task DeleteInventoryIntegrationEvent_When_Everything_Is_OK_Create_Product()
         {
             // Arrange
-            DeleteInventoryIntegrationEvent deleteSalesIntegrationEvent = new DeleteInventoryIntegrationEvent("Mouse");
+            DeleteInventoryIntegrationEvent deleteSalesIntegrationEvent = new DeleteInventoryIntegrationEvent("Mouse",correlationId);
 
             //Act 
             await deleteInventoryIntegrationEventHandler.Handle(deleteSalesIntegrationEvent);

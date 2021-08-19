@@ -93,7 +93,7 @@ namespace InventoryService.IntegrationEvents.EventHandling
         private async Task PublishResult(CreateProductIntegrationEvent @event, bool createProductStatus)
         {
             // Publish ResultSalesIntegrationEvent
-            ResultInventoryIntegrationEvent resultInventoryIntegrationEvent = new ResultInventoryIntegrationEvent(@event.ProductId, createProductStatus);
+            ResultInventoryIntegrationEvent resultInventoryIntegrationEvent = new ResultInventoryIntegrationEvent(@event.ProductId, createProductStatus, @event.CorrelationId);
           await  _eventBus.PublishAsync(resultInventoryIntegrationEvent);
         }
 

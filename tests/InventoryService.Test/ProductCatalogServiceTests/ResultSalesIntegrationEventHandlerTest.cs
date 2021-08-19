@@ -16,9 +16,12 @@ namespace SagaPattern.UnitTests.ProductCatalogServiceTests
     public class ResultSalesIntegrationEventHandlerTest : ProductCatalogMemoryDatabaseConfig
     {
         private ResultSalesIntegrationEventHandler resultSalesIntegrationEventHandler;
+        private string correlationId;
 
         public ResultSalesIntegrationEventHandlerTest()
         {
+            correlationId = "123";
+
             var logger = new Mock<ILogger<ResultSalesIntegrationEventHandler>>();
 
             var loggerProduct = new Mock<ILogger<ProductService>>();
@@ -41,7 +44,7 @@ namespace SagaPattern.UnitTests.ProductCatalogServiceTests
         public async Task ResultSalesIntegrationEventHandler_When_Product_Id_Is_Zero_throw_ArgumentNullException()
         {
             // Arrange
-            ResultSalesIntegrationEvent resultSalesIntegrationEvent = new ResultSalesIntegrationEvent(0, false);
+            ResultSalesIntegrationEvent resultSalesIntegrationEvent = new ResultSalesIntegrationEvent(0, false,correlationId);
 
             //Act - Assert
             await Assert.ThrowsAsync<ArgumentNullException>((() => resultSalesIntegrationEventHandler.Handle(resultSalesIntegrationEvent)));
@@ -51,7 +54,7 @@ namespace SagaPattern.UnitTests.ProductCatalogServiceTests
         public async Task ResultSalesIntegrationEventHandler_When_Product_Is_In_Db_And_Event_Is_Success_And_ProductStatus_In_Db_Is_Not_SalesIsOk_Update_Product_Status()
         {
             // Arrange
-            ResultSalesIntegrationEvent resultSalesIntegrationEvent = new ResultSalesIntegrationEvent(3, true);
+            ResultSalesIntegrationEvent resultSalesIntegrationEvent = new ResultSalesIntegrationEvent(3, true,correlationId);
 
             //Act
            var resultSalesIntegrationEventResponse=  resultSalesIntegrationEventHandler.Handle(resultSalesIntegrationEvent);
@@ -65,7 +68,7 @@ namespace SagaPattern.UnitTests.ProductCatalogServiceTests
         public async Task ResultSalesIntegrationEventHandler_When_Product_Is_In_Db_And_Event_Is_Failure_And_ProductStatus_In_Db_Is_InventoryIsOk_Delete_Product()
         {
             // Arrange
-            ResultSalesIntegrationEvent resultSalesIntegrationEvent = new ResultSalesIntegrationEvent(6, false);
+            ResultSalesIntegrationEvent resultSalesIntegrationEvent = new ResultSalesIntegrationEvent(6, false,correlationId);
 
             //Act
             var resultSalesIntegrationEventResponse = resultSalesIntegrationEventHandler.Handle(resultSalesIntegrationEvent);

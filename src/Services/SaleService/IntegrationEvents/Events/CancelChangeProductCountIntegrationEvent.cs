@@ -4,12 +4,13 @@ namespace SaleService.IntegrationEvents.Events
 {
     public class CancelChangeProductCountIntegrationEvent : IntegrationEvent
     {
-        public CancelChangeProductCountIntegrationEvent(string productName, int quantity, int orderId, int orderItemId)
+        public CancelChangeProductCountIntegrationEvent(string productName, int quantity, int orderId, int orderItemId, string correlationId) : base(correlationId)
         {
             ProductName = productName;
             Quantity = quantity;
             OrderId = orderId;
             OrderItemId = orderItemId;
+            CorrelationId = correlationId;
         }
 
         public string ProductName { get; private set; }

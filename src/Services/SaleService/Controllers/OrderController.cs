@@ -57,7 +57,7 @@ namespace SaleService.Controllers
             if (orderResult.IsSuccess)
             {
                 // update product count after add order
-                var updateProductDomainEvent = new UpdateProductDomainEvent(orderResult.Value.OrderItemId, createOrderItemRequestDto.OrderId, orderResult.Value.ProductName, orderResult.Value.Quantity);
+                var updateProductDomainEvent = new UpdateProductDomainEvent(orderResult.Value.OrderItemId, createOrderItemRequestDto.OrderId, orderResult.Value.ProductName, orderResult.Value.Quantity,HttpContext.TraceIdentifier);
                 await _mediator.Publish(updateProductDomainEvent);
 
                 return NoContent();

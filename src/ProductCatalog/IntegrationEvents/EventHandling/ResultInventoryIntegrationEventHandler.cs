@@ -36,7 +36,7 @@ namespace ProductCatalogService.IntegrationEvents.EventHandling
                 if (getProduct.IsFailure && @event.IsSuccess)
                 {
                     // Publish DeleteInventoryIntegrationEvent
-                    DeleteInventoryIntegrationEvent deleteInventoryIntegrationEvent = new DeleteInventoryIntegrationEvent(getProduct.Value.Name);
+                    DeleteInventoryIntegrationEvent deleteInventoryIntegrationEvent = new DeleteInventoryIntegrationEvent(getProduct.Value.Name, @event.CorrelationId);
                   await  _eventBus.PublishAsync(deleteInventoryIntegrationEvent);
                 }
                 else if (getProduct.IsSuccess && @event.IsSuccess && (int)getProduct.Value.ProductStatus != (int)ProductStatus.InventoryIsOk)
@@ -51,7 +51,7 @@ namespace ProductCatalogService.IntegrationEvents.EventHandling
                 if (getProduct.IsSuccess && !@event.IsSuccess && getProduct.Value.ProductStatus == ProductStatus.SalesIsOk)
                 {
                     // Publish DeleteInventoryIntegrationEvent
-                    DeleteSalesIntegrationEvent deleteInventoryIntegrationEvent = new DeleteSalesIntegrationEvent(getProduct.Value.Name);
+                    DeleteSalesIntegrationEvent deleteInventoryIntegrationEvent = new DeleteSalesIntegrationEvent(getProduct.Value.Name, @event.CorrelationId);
                    await _eventBus.PublishAsync(deleteInventoryIntegrationEvent);
 
                     // Delete product

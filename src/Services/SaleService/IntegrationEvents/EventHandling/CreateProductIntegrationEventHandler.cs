@@ -60,7 +60,7 @@ namespace SaleService.IntegrationEvents.EventHandling
         private async Task PublishResult(CreateProductIntegrationEvent @event, bool createProductStatus)
         {
             // Publish ResultSalesIntegrationEvent
-            ResultSalesIntegrationEvent resultSalesIntegrationEvent = new ResultSalesIntegrationEvent(@event.ProductId, createProductStatus);
+            ResultSalesIntegrationEvent resultSalesIntegrationEvent = new ResultSalesIntegrationEvent(@event.ProductId, createProductStatus,@event.CorrelationId);
           await  _eventBus.PublishAsync(resultSalesIntegrationEvent);
         }
 

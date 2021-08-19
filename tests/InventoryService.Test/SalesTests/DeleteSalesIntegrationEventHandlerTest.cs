@@ -14,9 +14,12 @@ namespace SagaPattern.UnitTests.SaleTests
     public class DeleteInventoryIntegrationEventHandlerTest : SalesMemoryDatabaseConfig
     {
         private DeleteSalesIntegrationEventHandler deleteSalesIntegrationEventHandler;
+        private string correlationId;
 
         public DeleteInventoryIntegrationEventHandlerTest()
         {
+            correlationId = "123";
+
             var logger = new Mock<ILogger<DeleteSalesIntegrationEventHandler>>();
 
             var loggerProduct = new Mock<ILogger<ProductService>>();
@@ -38,7 +41,7 @@ namespace SagaPattern.UnitTests.SaleTests
         public async Task DeleteSalesIntegrationEvent_When_Product_Name_Is_Null_throw_ArgumentNullException()
         {
             // Arrange
-            DeleteSalesIntegrationEvent deleteSalesIntegrationEvent = new DeleteSalesIntegrationEvent(null);
+            DeleteSalesIntegrationEvent deleteSalesIntegrationEvent = new DeleteSalesIntegrationEvent(null,correlationId);
 
             //Act - Assert
             await Assert.ThrowsAsync<ArgumentNullException>((() => deleteSalesIntegrationEventHandler.Handle(deleteSalesIntegrationEvent)));
@@ -48,7 +51,7 @@ namespace SagaPattern.UnitTests.SaleTests
         public async Task DeleteSalesIntegrationEvent_When_Product_Name_Is_Empty_throw_ArgumentNullException()
         {
             // Arrange
-            DeleteSalesIntegrationEvent deleteSalesIntegrationEvent = new DeleteSalesIntegrationEvent("");
+            DeleteSalesIntegrationEvent deleteSalesIntegrationEvent = new DeleteSalesIntegrationEvent("",correlationId);
 
             //Act - Assert
             await Assert.ThrowsAsync<ArgumentNullException>((() => deleteSalesIntegrationEventHandler.Handle(deleteSalesIntegrationEvent)));
@@ -58,7 +61,7 @@ namespace SagaPattern.UnitTests.SaleTests
         public async Task DeleteSalesIntegrationEvent_When_Everything_Is_OK_Create_Product()
         {
             // Arrange
-            DeleteSalesIntegrationEvent deleteSalesIntegrationEvent = new DeleteSalesIntegrationEvent("Mouse");
+            DeleteSalesIntegrationEvent deleteSalesIntegrationEvent = new DeleteSalesIntegrationEvent("Mouse",correlationId);
 
             //Act 
             await deleteSalesIntegrationEventHandler.Handle(deleteSalesIntegrationEvent);

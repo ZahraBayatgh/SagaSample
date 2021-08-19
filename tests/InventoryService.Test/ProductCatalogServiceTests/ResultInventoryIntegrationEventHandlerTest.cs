@@ -16,9 +16,12 @@ namespace SagaPattern.UnitTests.ProductCatalogServiceTests
     public class ResultInventoryIntegrationEventHandlerTest : ProductCatalogMemoryDatabaseConfig
     {
         private ResultInventoryIntegrationEventHandler resultInventoryIntegrationEventHandler;
+        private string correlationId;
 
         public ResultInventoryIntegrationEventHandlerTest()
         {
+            correlationId = "123";
+
             var logger = new Mock<ILogger<ResultInventoryIntegrationEventHandler>>();
 
             var loggerProduct = new Mock<ILogger<ProductService>>();
@@ -41,7 +44,7 @@ namespace SagaPattern.UnitTests.ProductCatalogServiceTests
         public async Task ResultInventoryIntegrationEventHandler_When_Product_Id_Is_Zero_throw_ArgumentNullException()
         {
             // Arrange
-            ResultInventoryIntegrationEvent resultInventoryIntegrationEvent = new ResultInventoryIntegrationEvent(0, false);
+            ResultInventoryIntegrationEvent resultInventoryIntegrationEvent = new ResultInventoryIntegrationEvent(0, false,correlationId);
 
             //Act - Assert
             await Assert.ThrowsAsync<ArgumentNullException>((() => resultInventoryIntegrationEventHandler.Handle(resultInventoryIntegrationEvent)));
@@ -51,7 +54,7 @@ namespace SagaPattern.UnitTests.ProductCatalogServiceTests
         public async Task ResultInventoryIntegrationEventHandler_When_Product_Is_In_Db_And_Event_Is_Success_And_ProductStatus_In_Db_Is_Not_InventoryIsOk_Update_Product_Status()
         {
             // Arrange
-            ResultInventoryIntegrationEvent resultInventoryIntegrationEvent = new ResultInventoryIntegrationEvent(4, true);
+            ResultInventoryIntegrationEvent resultInventoryIntegrationEvent = new ResultInventoryIntegrationEvent(4, true,correlationId);
 
             //Act
             var resultInventoryIntegrationEventResponse = resultInventoryIntegrationEventHandler.Handle(resultInventoryIntegrationEvent);
@@ -65,7 +68,7 @@ namespace SagaPattern.UnitTests.ProductCatalogServiceTests
         public async Task ResultInventoryIntegrationEventHandler_When_Product_Is_In_Db_And_Event_Is_Failure_And_ProductStatus_In_Db_Is_InventoryIsOk_Delete_Product()
         {
             // Arrange
-            ResultInventoryIntegrationEvent resultInventoryIntegrationEvent = new ResultInventoryIntegrationEvent(5, false);
+            ResultInventoryIntegrationEvent resultInventoryIntegrationEvent = new ResultInventoryIntegrationEvent(5, false,correlationId);
 
             //Act 
             await resultInventoryIntegrationEventHandler.Handle(resultInventoryIntegrationEvent);

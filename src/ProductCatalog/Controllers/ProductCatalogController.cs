@@ -43,7 +43,7 @@ namespace ProductCatalog.Controllers
             if (createProductResponse.IsSuccess)
             {
                 // Publish CreateProductIntegrationEvent
-                CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(createProductResponse.Value.ProductId,createProductRequestDto.Name, createProductRequestDto.InitialHand);
+                CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(createProductResponse.Value.ProductId,createProductRequestDto.Name, createProductRequestDto.InitialHand, HttpContext.TraceIdentifier);
                await _eventBus.PublishAsync(createProductIntegrationEvent,"test");
 
                 return CreatedAtAction(nameof(GetProductByIdAsync), new { id = createProductResponse.Value.ProductId }, null);

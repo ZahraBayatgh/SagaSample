@@ -15,9 +15,11 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
     public class CreateProductIntegrationEventHandlerTest : InventoryMemoryDatabaseConfig
     {
         private CreateProductIntegrationEventHandler createProductIntegrationEventHandler;
+        private string correlationId;
 
         public CreateProductIntegrationEventHandlerTest()
         {
+            correlationId = "123";
             var logger = new Mock<ILogger<CreateProductIntegrationEventHandler>>();
 
             var loggerProduct = new Mock<ILogger<ProductService>>();
@@ -43,7 +45,7 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
         public async Task CreateProductIntegrationEvent_When_Product_Id_Is_Zero_throw_ArgumentNullException()
         {
             // Arrange
-           CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(0, "Flash", 10);
+           CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(0, "Flash", 10, correlationId);
 
             //Act - Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() => createProductIntegrationEventHandler.Handle(createProductIntegrationEvent));
@@ -52,7 +54,7 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
         public async Task CreateProductIntegrationEvent_When_Product_Name_Is_Null_throw_ArgumentNullException()
         {
             // Arrange
-            CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(1, null, 10);
+            CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(1, null, 10, correlationId);
 
             //Act - Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() => createProductIntegrationEventHandler.Handle(createProductIntegrationEvent));
@@ -62,7 +64,7 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
         public async Task CreateProductIntegrationEvent_When_Product_Name_Is_Empty_throw_ArgumentNullException()
         {
             // Arrange
-            CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(1, "", 10);
+            CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(1, "", 10, correlationId);
 
             //Act - Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() => createProductIntegrationEventHandler.Handle(createProductIntegrationEvent));
@@ -72,7 +74,7 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
         public async Task CreateProductIntegrationEvent_When_Everything_Is_OK_Create_Product()
         {
             // Arrange
-            CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(3, "Hub", 10);
+            CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(3, "Hub", 10, correlationId);
 
             //Act 
             await createProductIntegrationEventHandler.Handle(createProductIntegrationEvent);
