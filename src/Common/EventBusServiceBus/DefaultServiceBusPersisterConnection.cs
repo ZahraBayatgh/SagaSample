@@ -5,19 +5,24 @@ namespace EventBus.ServiceBus
 {
     public class DefaultServiceBusPersisterConnection : IServiceBusPersisterConnection
     {
+        public string SubscriptionClientName { get => subscriptionClientName; set { 
+                subscriptionClientName = value;
+                _subscriptionClient = new SubscriptionClient(_serviceBusConnectionStringBuilder, subscriptionClientName);
+            } }
+
         private readonly ServiceBusConnectionStringBuilder _serviceBusConnectionStringBuilder;
-        private readonly string _subscriptionClientName;
         private SubscriptionClient _subscriptionClient;
         private ITopicClient _topicClient;
 
         bool _disposed;
+        private string subscriptionClientName;
 
         public DefaultServiceBusPersisterConnection(ServiceBusConnectionStringBuilder serviceBusConnectionStringBuilder,
             string subscriptionClientName)
         {
             _serviceBusConnectionStringBuilder = serviceBusConnectionStringBuilder ??
                 throw new ArgumentNullException(nameof(serviceBusConnectionStringBuilder));
-            _subscriptionClientName = subscriptionClientName;
+            SubscriptionClientName = subscriptionClientName;
             _subscriptionClient = new SubscriptionClient(_serviceBusConnectionStringBuilder, subscriptionClientName);
             _topicClient = new TopicClient(_serviceBusConnectionStringBuilder, RetryPolicy.Default);
         }
@@ -40,13 +45,14 @@ namespace EventBus.ServiceBus
             {
                 if (_subscriptionClient.IsClosedOrClosing)
                 {
-                    _subscriptionClient = new SubscriptionClient(_serviceBusConnectionStringBuilder, _subscriptionClientName);
+                    _subscriptionClient = new SubscriptionClient(_serviceBusConnectionStringBuilder, SubscriptionClientName);
                 }
                 return _subscriptionClient;
             }
         }
 
         public ServiceBusConnectionStringBuilder ServiceBusConnectionStringBuilder => _serviceBusConnectionStringBuilder;
+
 
         public ITopicClient CreateModel()
         {

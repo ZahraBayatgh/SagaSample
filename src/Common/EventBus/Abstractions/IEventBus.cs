@@ -5,9 +5,8 @@ namespace EventBus.Abstractions
 {
     public interface IEventBus
     {
-        Task PublishAsync(IntegrationEvent @event);
-
-        Task SubscribeAsync<T, TH>()
+        Task PublishAsync(IntegrationEvent @event, string queueName = null);
+        Task SubscribeAsync<T, TH>(string queueName = null)
             where T : IntegrationEvent
             where TH : IIntegrationEventHandler<T>;
 
@@ -20,5 +19,6 @@ namespace EventBus.Abstractions
         Task Unsubscribe<T, TH>()
             where TH : IIntegrationEventHandler<T>
             where T : IntegrationEvent;
+        
     }
 }

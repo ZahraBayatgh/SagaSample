@@ -84,9 +84,8 @@ namespace SaleService
             IEventBus eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
 
             eventBus.SubscribeAsync<CancelChangeProductCountIntegrationEvent, IIntegrationEventHandler<CancelChangeProductCountIntegrationEvent>>();
-            eventBus.SubscribeAsync<CreateProductIntegrationEvent, IIntegrationEventHandler<CreateProductIntegrationEvent>>();
+            eventBus.SubscribeAsync<CreateProductIntegrationEvent, IIntegrationEventHandler<CreateProductIntegrationEvent>>("test");
             eventBus.SubscribeAsync<DeleteSalesIntegrationEvent, IIntegrationEventHandler<DeleteSalesIntegrationEvent>>();
-            
         }
         public void ConfigureContainer(ContainerBuilder builder)
         {

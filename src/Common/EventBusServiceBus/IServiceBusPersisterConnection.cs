@@ -7,5 +7,6 @@ namespace EventBus.ServiceBus
     {
         ITopicClient TopicClient { get; }
         ISubscriptionClient SubscriptionClient { get; }
+        public string SubscriptionClientName { get; set; }
     }
 }

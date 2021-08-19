@@ -65,10 +65,14 @@ namespace EventBus.RabbitMQ
             }
         }
 
-        public async Task PublishAsync(IntegrationEvent @event)
+        public async Task PublishAsync(IntegrationEvent @event,string queueName=null)
         {
             await Task.Run(() =>
             {
+                if (!string.IsNullOrWhiteSpace(queueName))
+                {
+                    _queueName = queueName;
+                }
 
                 if (!_persistentConnection.IsConnected)
                 {
@@ -125,13 +129,18 @@ namespace EventBus.RabbitMQ
             StartBasicConsume();
         }
 
-        public async Task SubscribeAsync<T, TH>()
+        public async Task SubscribeAsync<T, TH>(string queueName=null)
             where T : IntegrationEvent
             where TH : IIntegrationEventHandler<T>
         {
+            if (!string.IsNullOrWhiteSpace(queueName))
+            {
+                _queueName = queueName;
+                _consumerChannel = CreateConsumerChannel();
+            }
             //await Task.Run(() =>
             //{
-                string eventName = _subsManager.GetEventKey<T>();
+            string eventName = _subsManager.GetEventKey<T>();
                 DoInternalSubscription(eventName);
 
                 _logger.LogInformation("Subscribing to event {EventName} with {EventHandler}", eventName, typeof(TH).GetGenericTypeName());

@@ -71,7 +71,7 @@ services:
       - ASPNETCORE_URLS=https://+:443;http://+:80
       - ConnectionStrings__DefaultConnection=server=ProductCatalogData;database=ProductCatalogDB;uid=sa;password=Pass@word;
       - EventBusConnection=rabbitmq
-      - SubscriptionClientName=ProductCatalogService
+      #- SubscriptionClientName=ProductCatalogService
       - EventBusRetryCount= 5
     ports:
       - "5003:80"

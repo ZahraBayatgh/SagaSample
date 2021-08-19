@@ -31,8 +31,12 @@ namespace EventBus.ServiceBus
             RegisterSubscriptionClientMessageHandler();
         }
 
-        public async Task PublishAsync(IntegrationEvent @event)
+        public async Task PublishAsync(IntegrationEvent @event, string queueName = null)
         {
+            if (!string.IsNullOrWhiteSpace(queueName))
+            {
+                _serviceBusPersisterConnection.SubscriptionClientName = queueName;
+            }
             var eventName = @event.GetType().Name.Replace(INTEGRATION_EVENT_SUFFIX, "");
             var jsonMessage = JsonSerializer.Serialize(@event);
             var body = Encoding.UTF8.GetBytes(jsonMessage);
@@ -55,10 +59,14 @@ namespace EventBus.ServiceBus
             _subsManager.AddDynamicSubscription<TH>(eventName);
         }
 
-        public async Task SubscribeAsync<T, TH>()
+        public async Task SubscribeAsync<T, TH>(string queueName = null)
             where T : IntegrationEvent
             where TH : IIntegrationEventHandler<T>
         {
+            if (!string.IsNullOrWhiteSpace(queueName))
+            {
+                _serviceBusPersisterConnection.SubscriptionClientName = queueName;
+            }
             var eventName = typeof(T).Name.Replace(INTEGRATION_EVENT_SUFFIX, "");
 
             var containsKey = _subsManager.HasSubscriptionsForEvent<T>();

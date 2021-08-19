@@ -77,7 +77,7 @@ namespace Service2
         private void ConfigureEventBus(IApplicationBuilder app)
         {
             IEventBus eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
-            eventBus.SubscribeAsync<CreateProductIntegrationEvent, IIntegrationEventHandler<CreateProductIntegrationEvent>>();
+            eventBus.SubscribeAsync<CreateProductIntegrationEvent, IIntegrationEventHandler<CreateProductIntegrationEvent>>("test");
             eventBus.SubscribeAsync<DeleteInventoryIntegrationEvent, IIntegrationEventHandler<DeleteInventoryIntegrationEvent>>();
             
             eventBus.SubscribeAsync<UpdateInventoryEvent, IIntegrationEventHandler<UpdateInventoryEvent>>();
