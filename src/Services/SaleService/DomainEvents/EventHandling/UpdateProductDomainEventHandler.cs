@@ -48,7 +48,7 @@ namespace SaleService.DomainEvents.EventHandling
                 if (product.IsSuccess)
                 {
                     UpdateInventoryEvent updateProductIntegrationEvent = new UpdateInventoryEvent(updateProductCountDto.Name, updateProductCountDto.DecreaseCount,@event.OrderId,@event.OrderItemId);
-                    _eventBus.Publish(updateProductIntegrationEvent);
+                  await  _eventBus.PublishAsync(updateProductIntegrationEvent);
                 }
             }
             catch (ArgumentNullException ex)
@@ -60,6 +60,7 @@ namespace SaleService.DomainEvents.EventHandling
             {
                 _logger.LogInformation($"Update product {@event.ProductName} has been Canceled. Exception detail:{ex.Message}");
                 await _orderService.DeleteOrderAsync(@event.OrderId);
+                // to do : delete orderitem
                 throw;
             }
         }

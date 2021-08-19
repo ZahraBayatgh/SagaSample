@@ -71,7 +71,7 @@ namespace InventoryService.IntegrationEvents.EventHandling
                 }
 
                 // Publish ResultSalesIntegrationEvent
-                PublishResult(@event, createProductStatus);
+               await PublishResult(@event, createProductStatus);
 
             }
             catch (ArgumentNullException ex)
@@ -84,17 +84,17 @@ namespace InventoryService.IntegrationEvents.EventHandling
                 _logger.LogInformation($"Product {@event.ProductName} wan not created. Exception detail:{ex.Message}");
 
                 // Publish ResultSalesIntegrationEvent
-                PublishResult(@event, false);
+               await PublishResult(@event, false);
 
                 throw;
             }
         }
 
-        private void PublishResult(CreateProductIntegrationEvent @event, bool createProductStatus)
+        private async Task PublishResult(CreateProductIntegrationEvent @event, bool createProductStatus)
         {
             // Publish ResultSalesIntegrationEvent
             ResultInventoryIntegrationEvent resultInventoryIntegrationEvent = new ResultInventoryIntegrationEvent(@event.ProductId, createProductStatus);
-            _eventBus.Publish(resultInventoryIntegrationEvent);
+          await  _eventBus.PublishAsync(resultInventoryIntegrationEvent);
         }
 
         private static void CheckCreateProductIntegrationEventInstance(CreateProductIntegrationEvent @event)

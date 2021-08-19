@@ -39,7 +39,7 @@ namespace SaleService.IntegrationEvents.EventHandling
                 
                 // Publish ResultSalesIntegrationEvent
                bool createProductStatus = createProductResponce.IsSuccess ? true : false;
-                PublishResult(@event, createProductStatus);
+               await PublishResult(@event, createProductStatus);
             }
             catch (ArgumentNullException ex)
             {
@@ -51,17 +51,17 @@ namespace SaleService.IntegrationEvents.EventHandling
                 _logger.LogInformation($"Product {@event.ProductName} wan not created. Exception detail:{ex.Message}");
                 
                 // Publish ResultSalesIntegrationEvent
-                PublishResult(@event, false);
+              await  PublishResult(@event, false);
 
                 throw;
             }
         }
 
-        private void PublishResult(CreateProductIntegrationEvent @event, bool createProductStatus)
+        private async Task PublishResult(CreateProductIntegrationEvent @event, bool createProductStatus)
         {
             // Publish ResultSalesIntegrationEvent
             ResultSalesIntegrationEvent resultSalesIntegrationEvent = new ResultSalesIntegrationEvent(@event.ProductId, createProductStatus);
-            _eventBus.Publish(resultSalesIntegrationEvent);
+          await  _eventBus.PublishAsync(resultSalesIntegrationEvent);
         }
 
         private static void CheckCreateProductIntegrationEventInstance(CreateProductIntegrationEvent @event)

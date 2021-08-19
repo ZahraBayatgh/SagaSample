@@ -65,49 +65,54 @@ namespace EventBus.RabbitMQ
             }
         }
 
-        public void Publish(IntegrationEvent @event)
+        public async Task PublishAsync(IntegrationEvent @event)
         {
-            if (!_persistentConnection.IsConnected)
-            {
-                _persistentConnection.TryConnect();
-            }
-
-            RetryPolicy policy = Policy.Handle<BrokerUnreachableException>()
-                .Or<SocketException>()
-                .WaitAndRetry(_retryCount, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), (ex, time) =>
-                {
-                    _logger.LogWarning(ex, "Could not publish event: {EventId} after {Timeout}s ({ExceptionMessage})", @event.Id, $"{time.TotalSeconds:n1}", ex.Message);
-                });
-
-            string eventName = @event.GetType().Name;
-
-            _logger.LogTrace("Creating RabbitMQ channel to publish event: {EventId} ({EventName})", @event.Id, eventName);
-
-            using (IModel channel = _persistentConnection.CreateModel())
+            await Task.Run(() =>
             {
 
-                _logger.LogTrace("Declaring RabbitMQ exchange to publish event: {EventId}", @event.Id);
-
-                channel.ExchangeDeclare(exchange: BROKER_NAME, type: "direct");
-
-                string message = JsonConvert.SerializeObject(@event);
-                byte[] body = Encoding.UTF8.GetBytes(message);
-
-                policy.Execute(() =>
+                if (!_persistentConnection.IsConnected)
                 {
-                    IBasicProperties properties = channel.CreateBasicProperties();
-                    properties.DeliveryMode = 2; // persistent
+                    _persistentConnection.TryConnect();
+                }
+
+                RetryPolicy policy = Policy.Handle<BrokerUnreachableException>()
+                    .Or<SocketException>()
+                    .WaitAndRetry(_retryCount, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), (ex, time) =>
+                    {
+                        _logger.LogWarning(ex, "Could not publish event: {EventId} after {Timeout}s ({ExceptionMessage})", @event.Id, $"{time.TotalSeconds:n1}", ex.Message);
+                    });
+
+                string eventName = @event.GetType().Name;
+
+                _logger.LogTrace("Creating RabbitMQ channel to publish event: {EventId} ({EventName})", @event.Id, eventName);
+
+                using (IModel channel = _persistentConnection.CreateModel())
+                {
+
+                    _logger.LogTrace("Declaring RabbitMQ exchange to publish event: {EventId}", @event.Id);
+
+                    channel.ExchangeDeclare(exchange: BROKER_NAME, type: "direct");
+
+                    string message = JsonConvert.SerializeObject(@event);
+                    byte[] body = Encoding.UTF8.GetBytes(message);
+
+                    policy.Execute(() =>
+                    {
+                        IBasicProperties properties = channel.CreateBasicProperties();
+                        properties.DeliveryMode = 2; // persistent
 
                     _logger.LogTrace("Publishing event to RabbitMQ: {EventId}", @event.Id);
 
-                    channel.BasicPublish(
-                        exchange: BROKER_NAME,
-                        routingKey: eventName,
-                        mandatory: true,
-                        basicProperties: properties,
-                        body: body);
-                });
-            }
+                        channel.BasicPublish(
+                            exchange: BROKER_NAME,
+                            routingKey: eventName,
+                            mandatory: true,
+                            basicProperties: properties,
+                            body: body);
+                    });
+
+                }
+            });
         }
 
         public void SubscribeDynamic<TH>(string eventName)
@@ -120,17 +125,20 @@ namespace EventBus.RabbitMQ
             StartBasicConsume();
         }
 
-        public void Subscribe<T, TH>()
+        public async Task SubscribeAsync<T, TH>()
             where T : IntegrationEvent
             where TH : IIntegrationEventHandler<T>
         {
-            string eventName = _subsManager.GetEventKey<T>();
-            DoInternalSubscription(eventName);
+            //await Task.Run(() =>
+            //{
+                string eventName = _subsManager.GetEventKey<T>();
+                DoInternalSubscription(eventName);
 
-            _logger.LogInformation("Subscribing to event {EventName} with {EventHandler}", eventName, typeof(TH).GetGenericTypeName());
+                _logger.LogInformation("Subscribing to event {EventName} with {EventHandler}", eventName, typeof(TH).GetGenericTypeName());
 
-            _subsManager.AddSubscription<T, TH>();
-            StartBasicConsume();
+                _subsManager.AddSubscription<T, TH>();
+                StartBasicConsume();
+            //});
         }
 
         private void DoInternalSubscription(string eventName)
@@ -152,15 +160,18 @@ namespace EventBus.RabbitMQ
             }
         }
 
-        public void Unsubscribe<T, TH>()
+        public async Task Unsubscribe<T, TH>()
             where T : IntegrationEvent
             where TH : IIntegrationEventHandler<T>
         {
-            string eventName = _subsManager.GetEventKey<T>();
+            await Task.Run(() =>
+            {
+                string eventName = _subsManager.GetEventKey<T>();
 
-            _logger.LogInformation("Unsubscribing from event {EventName}", eventName);
+                _logger.LogInformation("Unsubscribing from event {EventName}", eventName);
 
-            _subsManager.RemoveSubscription<T, TH>();
+                _subsManager.RemoveSubscription<T, TH>();
+            });
         }
 
         public void UnsubscribeDynamic<TH>(string eventName)

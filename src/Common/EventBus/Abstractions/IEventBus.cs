@@ -1,12 +1,13 @@
 ﻿using EventBus.Events;
+using System.Threading.Tasks;
 
 namespace EventBus.Abstractions
 {
     public interface IEventBus
     {
-        void Publish(IntegrationEvent @event);
+        Task PublishAsync(IntegrationEvent @event);
 
-        void Subscribe<T, TH>()
+        Task SubscribeAsync<T, TH>()
             where T : IntegrationEvent
             where TH : IIntegrationEventHandler<T>;
 
@@ -16,7 +17,7 @@ namespace EventBus.Abstractions
         void UnsubscribeDynamic<TH>(string eventName)
             where TH : IDynamicIntegrationEventHandler;
 
-        void Unsubscribe<T, TH>()
+        Task Unsubscribe<T, TH>()
             where TH : IIntegrationEventHandler<T>
             where T : IntegrationEvent;
     }

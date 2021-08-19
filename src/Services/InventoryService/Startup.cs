@@ -77,10 +77,10 @@ namespace Service2
         private void ConfigureEventBus(IApplicationBuilder app)
         {
             IEventBus eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
-            eventBus.Subscribe<CreateProductIntegrationEvent, IIntegrationEventHandler<CreateProductIntegrationEvent>>();
-            eventBus.Subscribe<DeleteInventoryIntegrationEvent, IIntegrationEventHandler<DeleteInventoryIntegrationEvent>>();
+            eventBus.SubscribeAsync<CreateProductIntegrationEvent, IIntegrationEventHandler<CreateProductIntegrationEvent>>();
+            eventBus.SubscribeAsync<DeleteInventoryIntegrationEvent, IIntegrationEventHandler<DeleteInventoryIntegrationEvent>>();
             
-            eventBus.Subscribe<UpdateInventoryEvent, IIntegrationEventHandler<UpdateInventoryEvent>>();
+            eventBus.SubscribeAsync<UpdateInventoryEvent, IIntegrationEventHandler<UpdateInventoryEvent>>();
 
         }
 
