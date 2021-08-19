@@ -1,11 +1,9 @@
-﻿
-using CustomerService.Services;
-using EventBus.Abstractions;
+﻿using EventBus.Abstractions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SagaPattern.UnitTests.Config;
-using SaleService.DomainEvents.EventHandling;
-using SaleService.Services;
+using SalesService.DomainEvents.EventHandling;
+using SalesService.Services;
 using System;
 using System.Threading.Tasks;
 using Xunit;
@@ -23,11 +21,11 @@ namespace SagaPattern.UnitTests.SaleTests
             var loggerProduct = new Mock<ILogger<ProductService>>();
             var productService = new ProductService(Context, loggerProduct.Object);
 
-            var buyerLogger = new Mock<ILogger<BuyerService>>();
-            var buyerService = new BuyerService(Context, buyerLogger.Object);
+            var customerLogger = new Mock<ILogger<CustomerService>>();
+            var customerService = new CustomerService(Context, customerLogger.Object);
 
             var loggerOrder = new Mock<ILogger<OrderService>>();
-            var orderService = new OrderService(Context, loggerOrder.Object, productService, buyerService);
+            var orderService = new OrderService(Context, loggerOrder.Object,  customerService);
 
             var eventBus = new Mock<IEventBus>();
 

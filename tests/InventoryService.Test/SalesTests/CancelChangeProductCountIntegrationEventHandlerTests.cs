@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq;
 using SagaPattern.UnitTests.Config;
-using SaleService.IntegrationEvents.EventHandling;
-using SaleService.Services;
+using SalesService.IntegrationEvents.EventHandling;
+using SalesService.Services;
 using System;
 using System.Threading.Tasks;
 using Xunit;

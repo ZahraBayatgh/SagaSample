@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using SaleService.Data;
+using SalesService.Data;
 using System;
 
 namespace SagaPattern.UnitTests.Config
@@ -16,7 +16,7 @@ namespace SagaPattern.UnitTests.Config
             new OrderInitializer().InitializeData(Context);
             new OrderItemInitializer().InitializeData(Context);
             new ProductSalesInitializer().InitializeData(Context);
-            new BuyerInitializer().InitializeData(Context);
+            new CustomerInitializer().InitializeData(Context);
         }
 
         protected SaleDbContext Context { get; set; }

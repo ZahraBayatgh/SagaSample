@@ -1,5 +1,5 @@
-﻿using SaleService.Data;
-using SaleService.Models;
+﻿using SalesService.Data;
+using SalesService.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +17,7 @@ namespace SagaPattern.UnitTests.Config
                    new Order
                    {
                        Id=1,
-                       BuyerId=1,
+                       CustomerId=1,
                        OrderDate=DateTime.Now,
                    },
                  };

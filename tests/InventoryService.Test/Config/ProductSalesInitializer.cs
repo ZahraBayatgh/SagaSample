@@ -1,5 +1,5 @@
-﻿using SaleService.Data;
-using SaleService.Models;
+﻿using SalesService.Data;
+using SalesService.Models;
 using System.Collections.Generic;
 using System.Linq;
 

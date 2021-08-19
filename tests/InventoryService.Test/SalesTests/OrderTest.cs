@@ -1,9 +1,8 @@
-using CustomerService.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SagaPattern.UnitTests.Config;
-using SaleService.Dtos;
-using SaleService.Services;
+using SalesService.Dtos;
+using SalesService.Services;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -15,14 +14,11 @@ namespace SagaPattern.Tests.Sale
 
         public OrderTest()
         {
-            var productLogger = new Mock<ILogger<ProductService>>();
-            var productService = new ProductService(Context, productLogger.Object);
-
-            var buyerLogger = new Mock<ILogger<BuyerService>>();
-            var buyerService = new BuyerService(Context, buyerLogger.Object);
+            var customerLogger = new Mock<ILogger<CustomerService>>();
+            var customerService = new CustomerService(Context, customerLogger.Object);
 
             var orderLogger = new Mock<ILogger<OrderService>>();
-            orderService = new OrderService(Context, orderLogger.Object, productService, buyerService);
+            orderService = new OrderService(Context, orderLogger.Object,  customerService);
         }
 
         #region GetOrderById
@@ -63,7 +59,7 @@ namespace SagaPattern.Tests.Sale
             var order = await orderService.GetOrderByIdAsync(id);
 
             //Assert
-            Assert.Equal(id, order.Value.BuyerId);
+            Assert.Equal(id, order.Value.CustomerId);
         }
 
         #endregion
@@ -81,7 +77,7 @@ namespace SagaPattern.Tests.Sale
         }
 
         [Fact]
-        public async Task CreateOrder_When_Buyer_Id_Is_Zero_Return_Failure()
+        public async Task CreateOrder_When_Customer_Id_Is_Zero_Return_Failure()
         {
             //Arrange
             var createOrderRequestDto = new CreateOrderRequestDto(0);
@@ -94,7 +90,7 @@ namespace SagaPattern.Tests.Sale
         }
 
         [Fact]
-        public async Task CreateOrder_When_Order_Buyer_Is_Invalid_Return_Failure()
+        public async Task CreateOrder_When_Order_Customer_Is_Invalid_Return_Failure()
         {
             //Arrange
             var createOrderRequestDto = new CreateOrderRequestDto(3);
