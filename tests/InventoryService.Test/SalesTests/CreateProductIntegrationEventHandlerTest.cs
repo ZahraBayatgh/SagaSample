@@ -44,7 +44,7 @@ namespace SagaPattern.UnitTests.SaleTests
         public async Task CreateProductIntegrationEvent_When_Product_Id_Is_Zero_throw_ArgumentNullException()
         {
             // Arrange
-            CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(0, "Flash",10,correlationId);
+            CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(0, "Flash", 10, correlationId);
 
             //Act - Assert
             await Assert.ThrowsAsync<ArgumentNullException>((() => createProductIntegrationEventHandler.Handle(createProductIntegrationEvent)));
@@ -53,7 +53,7 @@ namespace SagaPattern.UnitTests.SaleTests
         public async Task CreateProductIntegrationEvent_When_Product_Name_Is_Null_throw_ArgumentNullException()
         {
             // Arrange
-            CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(0, null, 10,correlationId);
+            CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(0, null, 10, correlationId);
 
             //Act - Assert
             await Assert.ThrowsAsync<ArgumentNullException>((() => createProductIntegrationEventHandler.Handle(createProductIntegrationEvent)));
@@ -63,7 +63,7 @@ namespace SagaPattern.UnitTests.SaleTests
         public async Task CreateProductIntegrationEvent_When_Product_Name_Is_Empty_throw_ArgumentNullException()
         {
             // Arrange
-            CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(0, "", 10,correlationId);
+            CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(0, "", 10, correlationId);
 
             //Act - Assert
             await Assert.ThrowsAsync<ArgumentNullException>((() => createProductIntegrationEventHandler.Handle(createProductIntegrationEvent)));
@@ -73,14 +73,14 @@ namespace SagaPattern.UnitTests.SaleTests
         public async Task CreateProductIntegrationEvent_When_Everything_Is_OK_Create_Product()
         {
             // Arrange
-            CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(3, "Clock", 10,correlationId);
+            CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(3, "Clock", 10, correlationId);
 
             //Act 
             await createProductIntegrationEventHandler.Handle(createProductIntegrationEvent);
             var product = await Context.Products.FirstOrDefaultAsync(x => x.Id == createProductIntegrationEvent.ProductId);
 
             // Assert
-            Assert.Equal(3,product.Id);
+            Assert.Equal(3, product.Id);
         }
     }
 }

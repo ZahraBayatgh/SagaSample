@@ -3,7 +3,7 @@ using ProductCatalogService.Models;
 
 namespace ProductCatalog.Data
 {
-    public class ProductCatalogDbContext: DbContext
+    public class ProductCatalogDbContext : DbContext
     {
         public ProductCatalogDbContext(DbContextOptions<ProductCatalogDbContext> options) : base(options)
         {

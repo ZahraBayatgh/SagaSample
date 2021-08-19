@@ -1,5 +1,4 @@
-﻿using InventoryService.Dtos;
-using InventoryService.Services;
+﻿using InventoryService.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 

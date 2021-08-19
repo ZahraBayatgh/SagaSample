@@ -41,7 +41,7 @@ namespace SagaPattern.UnitTests.SaleTests
         public async Task DeleteSalesIntegrationEvent_When_Product_Name_Is_Null_throw_ArgumentNullException()
         {
             // Arrange
-            DeleteSalesIntegrationEvent deleteSalesIntegrationEvent = new DeleteSalesIntegrationEvent(null,correlationId);
+            DeleteSalesIntegrationEvent deleteSalesIntegrationEvent = new DeleteSalesIntegrationEvent(null, correlationId);
 
             //Act - Assert
             await Assert.ThrowsAsync<ArgumentNullException>((() => deleteSalesIntegrationEventHandler.Handle(deleteSalesIntegrationEvent)));
@@ -51,7 +51,7 @@ namespace SagaPattern.UnitTests.SaleTests
         public async Task DeleteSalesIntegrationEvent_When_Product_Name_Is_Empty_throw_ArgumentNullException()
         {
             // Arrange
-            DeleteSalesIntegrationEvent deleteSalesIntegrationEvent = new DeleteSalesIntegrationEvent("",correlationId);
+            DeleteSalesIntegrationEvent deleteSalesIntegrationEvent = new DeleteSalesIntegrationEvent("", correlationId);
 
             //Act - Assert
             await Assert.ThrowsAsync<ArgumentNullException>((() => deleteSalesIntegrationEventHandler.Handle(deleteSalesIntegrationEvent)));
@@ -61,7 +61,7 @@ namespace SagaPattern.UnitTests.SaleTests
         public async Task DeleteSalesIntegrationEvent_When_Everything_Is_OK_Create_Product()
         {
             // Arrange
-            DeleteSalesIntegrationEvent deleteSalesIntegrationEvent = new DeleteSalesIntegrationEvent("Mouse",correlationId);
+            DeleteSalesIntegrationEvent deleteSalesIntegrationEvent = new DeleteSalesIntegrationEvent("Mouse", correlationId);
 
             //Act 
             await deleteSalesIntegrationEventHandler.Handle(deleteSalesIntegrationEvent);

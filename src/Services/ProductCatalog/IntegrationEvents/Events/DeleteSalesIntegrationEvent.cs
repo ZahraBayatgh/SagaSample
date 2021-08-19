@@ -2,7 +2,7 @@
 
 namespace ProductCatalogService.IntegrationEvents.Events
 {
-    public class DeleteInventoryIntegrationEvent: IntegrationEvent
+    public class DeleteInventoryIntegrationEvent : IntegrationEvent
     {
         public DeleteInventoryIntegrationEvent(string productName, string correlationId) : base(correlationId)
         {

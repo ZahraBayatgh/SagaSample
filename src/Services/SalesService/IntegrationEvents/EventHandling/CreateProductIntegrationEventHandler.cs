@@ -37,7 +37,7 @@ namespace SalesService.IntegrationEvents.EventHandling
                 };
                 var createProductResponce = await _productService.CreateProductAsync(createProductRequestDto);
 
-                // Publish ResultSalesIntegrationEvent
+                // Publish SalesResultIntegrationEvent
                 bool createProductStatus = createProductResponce.IsSuccess ? true : false;
                 await PublishResult(@event, createProductStatus);
             }
@@ -50,7 +50,7 @@ namespace SalesService.IntegrationEvents.EventHandling
             {
                 _logger.LogInformation($"Product {@event.ProductName} wan not created. Exception detail:{ex.Message}");
 
-                // Publish ResultSalesIntegrationEvent
+                // Publish SalesResultIntegrationEvent
                 await PublishResult(@event, false);
 
                 throw;
@@ -59,9 +59,9 @@ namespace SalesService.IntegrationEvents.EventHandling
 
         private async Task PublishResult(CreateProductIntegrationEvent @event, bool createProductStatus)
         {
-            // Publish ResultSalesIntegrationEvent
-            ResultSalesIntegrationEvent resultSalesIntegrationEvent = new ResultSalesIntegrationEvent(@event.ProductId, createProductStatus, @event.CorrelationId);
-            await _eventBus.PublishAsync(resultSalesIntegrationEvent);
+            // Publish SalesResultIntegrationEvent
+            SalesResultIntegrationEvent salesResultIntegrationEvent = new SalesResultIntegrationEvent(@event.ProductId, createProductStatus, @event.CorrelationId);
+            await _eventBus.PublishAsync(salesResultIntegrationEvent);
         }
 
         private static void CheckCreateProductIntegrationEventInstance(CreateProductIntegrationEvent @event)
@@ -73,7 +73,7 @@ namespace SalesService.IntegrationEvents.EventHandling
                 throw new ArgumentNullException("CreateProductIntegrationEvent ProductId is invalid.");
 
             if (string.IsNullOrEmpty(@event.ProductName))
-                throw new ArgumentNullException("ResultSalesIntegrationEvent ProductName is null.");
+                throw new ArgumentNullException("SalesResultIntegrationEvent ProductName is null.");
         }
     }
 }

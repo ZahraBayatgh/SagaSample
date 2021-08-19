@@ -2,7 +2,7 @@
 {
     public class UpdateProductStatusRequestDto
     {
-        public UpdateProductStatusRequestDto(string name,int productStatus)
+        public UpdateProductStatusRequestDto(string name, int productStatus)
         {
             Name = name;
             ProductStatus = productStatus;

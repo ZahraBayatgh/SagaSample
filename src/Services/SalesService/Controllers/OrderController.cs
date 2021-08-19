@@ -14,7 +14,7 @@ namespace SalesService.Controllers
         private readonly IOrderOrchestratorService _orderOrchestratorService;
 
         public OrderController(IOrderService orderService,
-            IOrderOrchestratorService orderOrchestratorService                             )
+            IOrderOrchestratorService orderOrchestratorService)
         {
             _orderService = orderService;
             _orderOrchestratorService = orderOrchestratorService;

@@ -84,7 +84,7 @@ namespace InventoryService.IntegrationEvents.EventHandling
                 throw new ArgumentNullException("CreateProductIntegrationEvent is null.");
 
             if (string.IsNullOrEmpty(@event.ProductName))
-                throw new ArgumentNullException("ResultSalesIntegrationEvent ProductName is null.");
+                throw new ArgumentNullException("SalesResultIntegrationEvent ProductName is null.");
         }
     }
 }

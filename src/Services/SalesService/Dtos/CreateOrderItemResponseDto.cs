@@ -3,7 +3,7 @@
     public class CreateOrderItemResponseDto
     {
 
-        public CreateOrderItemResponseDto(int orderItemId,int orderId, string name, int quantity)
+        public CreateOrderItemResponseDto(int orderItemId, int orderId, string name, int quantity)
         {
             OrderItemId = orderItemId;
             OrderId = orderId;

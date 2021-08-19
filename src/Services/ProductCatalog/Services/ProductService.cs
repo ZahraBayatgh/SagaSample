@@ -6,8 +6,6 @@ using ProductCatalog.Dtos;
 using ProductCatalogService.Models;
 using SaleService.Dtos;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ProductCatalogService.Services
@@ -85,7 +83,7 @@ namespace ProductCatalogService.Services
                 return Result.Failure<Product>($"Get {productName} product name failed.");
             }
         }
-       
+
         /// <summary>
         /// This method adds a Product to the table.
         /// If the input createProductDto is not valid or an expiration occurs, a Failure will be returned.

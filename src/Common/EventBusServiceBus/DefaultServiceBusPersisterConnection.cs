@@ -5,10 +5,14 @@ namespace EventBus.ServiceBus
 {
     public class DefaultServiceBusPersisterConnection : IServiceBusPersisterConnection
     {
-        public string SubscriptionClientName { get => subscriptionClientName; set { 
+        public string SubscriptionClientName
+        {
+            get => subscriptionClientName; set
+            {
                 subscriptionClientName = value;
                 _subscriptionClient = new SubscriptionClient(_serviceBusConnectionStringBuilder, subscriptionClientName);
-            } }
+            }
+        }
 
         private readonly ServiceBusConnectionStringBuilder _serviceBusConnectionStringBuilder;
         private SubscriptionClient _subscriptionClient;

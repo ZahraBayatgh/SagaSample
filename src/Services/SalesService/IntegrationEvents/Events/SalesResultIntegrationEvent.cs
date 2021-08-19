@@ -2,9 +2,9 @@
 
 namespace SalesService.IntegrationEvents.Events
 {
-    public class ResultSalesIntegrationEvent : IntegrationEvent
+    public class SalesResultIntegrationEvent : IntegrationEvent
     {
-        public ResultSalesIntegrationEvent(int productId, bool isSuccess, string correlationId) : base(correlationId)
+        public SalesResultIntegrationEvent(int productId, bool isSuccess, string correlationId) : base(correlationId)
         {
             ProductId = productId;
             IsSuccess = isSuccess;

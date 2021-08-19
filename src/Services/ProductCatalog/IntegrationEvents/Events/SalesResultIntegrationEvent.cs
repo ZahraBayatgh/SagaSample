@@ -1,10 +1,10 @@
 ﻿using EventBus.Events;
 
-namespace InventoryService.IntegrationEvents.Events
+namespace ProductCatalogService.IntegrationEvents.Events
 {
-    public class ResultInventoryIntegrationEvent : IntegrationEvent
+    public class SalesResultIntegrationEvent : IntegrationEvent
     {
-        public ResultInventoryIntegrationEvent(int productId, bool isSuccess, string correlationId) : base(correlationId)
+        public SalesResultIntegrationEvent(int productId, bool isSuccess, string correlationId) : base(correlationId)
         {
             ProductId = productId;
             IsSuccess = isSuccess;

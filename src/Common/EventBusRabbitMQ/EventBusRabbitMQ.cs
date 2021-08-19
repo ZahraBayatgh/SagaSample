@@ -65,7 +65,7 @@ namespace EventBus.RabbitMQ
             }
         }
 
-        public async Task PublishAsync(IntegrationEvent @event,string queueName=null)
+        public async Task PublishAsync(IntegrationEvent @event, string queueName = null)
         {
             await Task.Run(() =>
             {
@@ -105,7 +105,7 @@ namespace EventBus.RabbitMQ
                         IBasicProperties properties = channel.CreateBasicProperties();
                         properties.DeliveryMode = 2; // persistent
 
-                    _logger.LogTrace("Publishing event to RabbitMQ: {EventId}", @event.Id);
+                        _logger.LogTrace("Publishing event to RabbitMQ: {EventId}", @event.Id);
 
                         channel.BasicPublish(
                             exchange: BROKER_NAME,
@@ -129,7 +129,7 @@ namespace EventBus.RabbitMQ
             StartBasicConsume();
         }
 
-        public async Task SubscribeAsync<T, TH>(string queueName=null)
+        public async Task SubscribeAsync<T, TH>(string queueName = null)
             where T : IntegrationEvent
             where TH : IIntegrationEventHandler<T>
         {
@@ -138,16 +138,13 @@ namespace EventBus.RabbitMQ
                 _queueName = queueName;
                 _consumerChannel = CreateConsumerChannel();
             }
-            //await Task.Run(() =>
-            //{
             string eventName = _subsManager.GetEventKey<T>();
-                DoInternalSubscription(eventName);
+            DoInternalSubscription(eventName);
 
-                _logger.LogInformation("Subscribing to event {EventName} with {EventHandler}", eventName, typeof(TH).GetGenericTypeName());
+            _logger.LogInformation("Subscribing to event {EventName} with {EventHandler}", eventName, typeof(TH).GetGenericTypeName());
 
-                _subsManager.AddSubscription<T, TH>();
-                StartBasicConsume();
-            //});
+            _subsManager.AddSubscription<T, TH>();
+            StartBasicConsume();
         }
 
         private void DoInternalSubscription(string eventName)

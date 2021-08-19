@@ -39,7 +39,7 @@ namespace ProductCatalog
 
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IProductOrchestratorService, ProductOrchestratorService>();
-            
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -71,8 +71,8 @@ namespace ProductCatalog
         {
             IEventBus eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
 
-            eventBus.SubscribeAsync<ResultInventoryIntegrationEvent, IIntegrationEventHandler<ResultInventoryIntegrationEvent>>();
-            eventBus.SubscribeAsync<ResultSalesIntegrationEvent, IIntegrationEventHandler<ResultSalesIntegrationEvent>>();
+            eventBus.SubscribeAsync<InventoryResultIntegrationEvent, IIntegrationEventHandler<InventoryResultIntegrationEvent>>();
+            eventBus.SubscribeAsync<SalesResultIntegrationEvent, IIntegrationEventHandler<SalesResultIntegrationEvent>>();
         }
         public void ConfigureContainer(ContainerBuilder builder)
         {

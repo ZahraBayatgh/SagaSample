@@ -79,7 +79,7 @@ namespace Service2
             IEventBus eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
             eventBus.SubscribeAsync<CreateProductIntegrationEvent, IIntegrationEventHandler<CreateProductIntegrationEvent>>("test");
             eventBus.SubscribeAsync<DeleteInventoryIntegrationEvent, IIntegrationEventHandler<DeleteInventoryIntegrationEvent>>();
-            
+
             eventBus.SubscribeAsync<UpdateInventoryEvent, IIntegrationEventHandler<UpdateInventoryEvent>>();
 
         }

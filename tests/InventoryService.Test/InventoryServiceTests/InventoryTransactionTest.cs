@@ -35,7 +35,7 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
         public async Task CreateInventoryTransaction_When_ProductId_Is_Zero_Return_Failure()
         {
             //Arrange
-            var inventoryTransactionRequestDto = new InventoryTransactionRequestDto(0, 18,  InventoryType.Out);
+            var inventoryTransactionRequestDto = new InventoryTransactionRequestDto(0, 18, InventoryType.Out);
 
             //Act
             var inventoryTransaction = await inventoryTransactionService.CreateInventoryTransactionAsync(inventoryTransactionRequestDto);
@@ -47,8 +47,8 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
         public async Task CreateInventoryTransaction_When_InventoryTransactionDto_Is_Valid_Return_InventoryTransactionDto()
         {
             //Arrange
-            var inventoryTransactionRequestDto = new InventoryTransactionRequestDto(1, 18,  InventoryType.Out);
-           
+            var inventoryTransactionRequestDto = new InventoryTransactionRequestDto(1, 18, InventoryType.Out);
+
             //Act
             var inventoryTransaction = await inventoryTransactionService.CreateInventoryTransactionAsync(inventoryTransactionRequestDto);
 

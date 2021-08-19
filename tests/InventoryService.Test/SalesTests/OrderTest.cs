@@ -18,7 +18,7 @@ namespace SagaPattern.Tests.Sale
             var customerService = new CustomerService(Context, customerLogger.Object);
 
             var orderLogger = new Mock<ILogger<OrderService>>();
-            orderService = new OrderService(Context, orderLogger.Object,  customerService);
+            orderService = new OrderService(Context, orderLogger.Object, customerService);
         }
 
         #region GetOrderById

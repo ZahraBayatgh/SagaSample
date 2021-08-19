@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ProductCatalogService.Services
 {
-    public class ProductOrchestratorService :  IProductOrchestratorService
+    public class ProductOrchestratorService : IProductOrchestratorService
     {
         private readonly ProductCatalogDbContext _context;
         private readonly IProductService _productService;

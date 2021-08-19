@@ -13,66 +13,66 @@ using Xunit;
 
 namespace SagaPattern.UnitTests.ProductCatalogServiceTests
 {
-    public class ResultSalesIntegrationEventHandlerTest : ProductCatalogMemoryDatabaseConfig
+    public class SalesResultIntegrationEventHandlerTest : ProductCatalogMemoryDatabaseConfig
     {
-        private ResultSalesIntegrationEventHandler resultSalesIntegrationEventHandler;
+        private SalesResultIntegrationEventHandler salesResultIntegrationEventHandler;
         private string correlationId;
 
-        public ResultSalesIntegrationEventHandlerTest()
+        public SalesResultIntegrationEventHandlerTest()
         {
             correlationId = "123";
 
-            var logger = new Mock<ILogger<ResultSalesIntegrationEventHandler>>();
+            var logger = new Mock<ILogger<SalesResultIntegrationEventHandler>>();
 
             var loggerProduct = new Mock<ILogger<ProductService>>();
             var productService = new ProductService(Context, loggerProduct.Object);
 
             var eventBus = new Mock<IEventBus>();
 
-            resultSalesIntegrationEventHandler = new ResultSalesIntegrationEventHandler(logger.Object, productService, eventBus.Object);
+            salesResultIntegrationEventHandler = new SalesResultIntegrationEventHandler(logger.Object, productService, eventBus.Object);
         }
 
 
         [Fact]
-        public async Task ResultSalesIntegrationEventHandler_When_Input_Is_Null_throw_ArgumentNullException()
+        public async Task SalesResultIntegrationEventHandler_When_Input_Is_Null_throw_ArgumentNullException()
         {
             //Act - Assert
-            await Assert.ThrowsAsync<ArgumentNullException>((() => resultSalesIntegrationEventHandler.Handle(null)));
+            await Assert.ThrowsAsync<ArgumentNullException>((() => salesResultIntegrationEventHandler.Handle(null)));
         }
 
         [Fact]
-        public async Task ResultSalesIntegrationEventHandler_When_Product_Id_Is_Zero_throw_ArgumentNullException()
+        public async Task SalesResultIntegrationEventHandler_When_Product_Id_Is_Zero_throw_ArgumentNullException()
         {
             // Arrange
-            ResultSalesIntegrationEvent resultSalesIntegrationEvent = new ResultSalesIntegrationEvent(0, false,correlationId);
+            SalesResultIntegrationEvent salesResultIntegrationEvent = new SalesResultIntegrationEvent(0, false, correlationId);
 
             //Act - Assert
-            await Assert.ThrowsAsync<ArgumentNullException>((() => resultSalesIntegrationEventHandler.Handle(resultSalesIntegrationEvent)));
+            await Assert.ThrowsAsync<ArgumentNullException>((() => salesResultIntegrationEventHandler.Handle(salesResultIntegrationEvent)));
         }
 
         [Fact]
-        public async Task ResultSalesIntegrationEventHandler_When_Product_Is_In_Db_And_Event_Is_Success_And_ProductStatus_In_Db_Is_Not_SalesIsOk_Update_Product_Status()
+        public async Task SalesResultIntegrationEventHandler_When_Product_Is_In_Db_And_Event_Is_Success_And_ProductStatus_In_Db_Is_Not_SalesIsOk_Update_Product_Status()
         {
             // Arrange
-            ResultSalesIntegrationEvent resultSalesIntegrationEvent = new ResultSalesIntegrationEvent(3, true,correlationId);
+            SalesResultIntegrationEvent salesResultIntegrationEvent = new SalesResultIntegrationEvent(3, true, correlationId);
 
             //Act
-           var resultSalesIntegrationEventResponse=  resultSalesIntegrationEventHandler.Handle(resultSalesIntegrationEvent);
-            var product = await Context.Products.FirstOrDefaultAsync(x => x.Id == resultSalesIntegrationEvent.ProductId);
+            var salesResultIntegrationEventResponse = salesResultIntegrationEventHandler.Handle(salesResultIntegrationEvent);
+            var product = await Context.Products.FirstOrDefaultAsync(x => x.Id == salesResultIntegrationEvent.ProductId);
 
             // Assert
             Assert.Equal(ProductStatus.Completed, product.ProductStatus);
         }
 
         [Fact]
-        public async Task ResultSalesIntegrationEventHandler_When_Product_Is_In_Db_And_Event_Is_Failure_And_ProductStatus_In_Db_Is_InventoryIsOk_Delete_Product()
+        public async Task SalesResultIntegrationEventHandler_When_Product_Is_In_Db_And_Event_Is_Failure_And_ProductStatus_In_Db_Is_InventoryIsOk_Delete_Product()
         {
             // Arrange
-            ResultSalesIntegrationEvent resultSalesIntegrationEvent = new ResultSalesIntegrationEvent(6, false,correlationId);
+            SalesResultIntegrationEvent salesResultIntegrationEvent = new SalesResultIntegrationEvent(6, false, correlationId);
 
             //Act
-            var resultSalesIntegrationEventResponse = resultSalesIntegrationEventHandler.Handle(resultSalesIntegrationEvent);
-            var product = await Context.Products.FirstOrDefaultAsync(x => x.Id == resultSalesIntegrationEvent.ProductId);
+            var salesResultIntegrationEventResponse = salesResultIntegrationEventHandler.Handle(salesResultIntegrationEvent);
+            var product = await Context.Products.FirstOrDefaultAsync(x => x.Id == salesResultIntegrationEvent.ProductId);
 
             // Assert
             Assert.Null(product);

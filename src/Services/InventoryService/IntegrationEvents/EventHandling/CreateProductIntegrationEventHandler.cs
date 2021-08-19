@@ -51,7 +51,7 @@ namespace InventoryService.IntegrationEvents.EventHandling
                     throw new Exception("CreateProductIntegrationEvent is failure.");
 
                 // Initial InventoryTransactionRequestDto
-                var InventoryTransactionDto = new InventoryTransactionRequestDto(createProductResponce.Value.ProductId, @event.InitialOnHand,Models.InventoryType.In);
+                var InventoryTransactionDto = new InventoryTransactionRequestDto(createProductResponce.Value.ProductId, @event.InitialOnHand, Models.InventoryType.In);
 
                 // Add InventoryTransaction
                 var inventoryTransactionResponse = await _inventoryTransactionService.CreateInventoryTransactionAsync(InventoryTransactionDto);
@@ -63,15 +63,15 @@ namespace InventoryService.IntegrationEvents.EventHandling
                 {
                     transaction.Commit();
 
-                     createProductStatus = true;
+                    createProductStatus = true;
                 }
                 else
                 {
                     transaction.Rollback();
                 }
 
-                // Publish ResultSalesIntegrationEvent
-               await PublishResult(@event, createProductStatus);
+                // Publish SalesResultIntegrationEvent
+                await PublishResult(@event, createProductStatus);
 
             }
             catch (ArgumentNullException ex)
@@ -83,8 +83,8 @@ namespace InventoryService.IntegrationEvents.EventHandling
             {
                 _logger.LogInformation($"Product {@event.ProductName} wan not created. Exception detail:{ex.Message}");
 
-                // Publish ResultSalesIntegrationEvent
-               await PublishResult(@event, false);
+                // Publish SalesResultIntegrationEvent
+                await PublishResult(@event, false);
 
                 throw;
             }
@@ -92,9 +92,9 @@ namespace InventoryService.IntegrationEvents.EventHandling
 
         private async Task PublishResult(CreateProductIntegrationEvent @event, bool createProductStatus)
         {
-            // Publish ResultSalesIntegrationEvent
-            ResultInventoryIntegrationEvent resultInventoryIntegrationEvent = new ResultInventoryIntegrationEvent(@event.ProductId, createProductStatus, @event.CorrelationId);
-          await  _eventBus.PublishAsync(resultInventoryIntegrationEvent);
+            // Publish SalesResultIntegrationEvent
+            InventoryResultIntegrationEvent inventoryResultIntegrationEvent = new InventoryResultIntegrationEvent(@event.ProductId, createProductStatus, @event.CorrelationId);
+            await _eventBus.PublishAsync(inventoryResultIntegrationEvent);
         }
 
         private static void CheckCreateProductIntegrationEventInstance(CreateProductIntegrationEvent @event)
@@ -106,7 +106,7 @@ namespace InventoryService.IntegrationEvents.EventHandling
                 throw new ArgumentNullException("CreateProductIntegrationEvent ProductId is invalid.");
 
             if (string.IsNullOrEmpty(@event.ProductName))
-                throw new ArgumentNullException("ResultSalesIntegrationEvent ProductName is null.");
+                throw new ArgumentNullException("SalesResultIntegrationEvent ProductName is null.");
         }
     }
 }

@@ -32,7 +32,7 @@ namespace SagaPattern.Tests.Sale
             //Assert
             Assert.True(product.IsFailure);
         }
-       
+
         [Fact]
         public async Task GetProductById_When_Product_Is_Not_Found_Return_Failure()
         {

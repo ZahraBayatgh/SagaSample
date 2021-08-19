@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace ProductCatalogService.IntegrationEvents.EventHandling
 {
-    public class ResultSalesIntegrationEventHandler : IIntegrationEventHandler<ResultSalesIntegrationEvent>
+    public class SalesResultIntegrationEventHandler : IIntegrationEventHandler<SalesResultIntegrationEvent>
     {
-        private readonly ILogger<ResultSalesIntegrationEventHandler> _logger;
+        private readonly ILogger<SalesResultIntegrationEventHandler> _logger;
         private readonly IProductService _productService;
         private readonly IEventBus _eventBus;
 
-        public ResultSalesIntegrationEventHandler(ILogger<ResultSalesIntegrationEventHandler> logger,
+        public SalesResultIntegrationEventHandler(ILogger<SalesResultIntegrationEventHandler> logger,
             IProductService productService,
             IEventBus eventBus)
         {
@@ -24,12 +24,12 @@ namespace ProductCatalogService.IntegrationEvents.EventHandling
             _eventBus = eventBus;
         }
 
-        public async Task Handle(ResultSalesIntegrationEvent @event)
+        public async Task Handle(SalesResultIntegrationEvent @event)
         {
             try
             {
-                // Check ResultSalesIntegrationEvent
-                CheckResultSalesIntegrationEventInstance(@event);
+                // Check SalesResultIntegrationEvent
+                CheckSalesResultIntegrationEventInstance(@event);
 
                 // Get and Check product in db
                 var getProduct = await _productService.GetProductByIdAsync(@event.ProductId);
@@ -37,7 +37,7 @@ namespace ProductCatalogService.IntegrationEvents.EventHandling
                 {
                     // Publish DeleteInventoryIntegrationEvent
                     DeleteSalesIntegrationEvent deleteInventoryIntegrationEvent = new DeleteSalesIntegrationEvent(getProduct.Value.Name, @event.CorrelationId);
-                   await _eventBus.PublishAsync(deleteInventoryIntegrationEvent);
+                    await _eventBus.PublishAsync(deleteInventoryIntegrationEvent);
 
                 }
                 else if (getProduct.IsSuccess && @event.IsSuccess && (int)getProduct.Value.ProductStatus != (int)ProductStatus.SalesIsOk)
@@ -51,7 +51,7 @@ namespace ProductCatalogService.IntegrationEvents.EventHandling
                 {
                     // Publish DeleteInventoryIntegrationEvent
                     DeleteInventoryIntegrationEvent deleteInventoryIntegrationEvent = new DeleteInventoryIntegrationEvent(getProduct.Value.Name, @event.CorrelationId);
-                  await  _eventBus.PublishAsync(deleteInventoryIntegrationEvent);
+                    await _eventBus.PublishAsync(deleteInventoryIntegrationEvent);
 
                     // Delete product
                     await _productService.DeleteProductAsync(getProduct.Value.Id);
@@ -59,23 +59,23 @@ namespace ProductCatalogService.IntegrationEvents.EventHandling
             }
             catch (ArgumentNullException ex)
             {
-                _logger.LogInformation($"ResultSalesIntegrationEvent faild. {ex.Message}");
+                _logger.LogInformation($"SalesResultIntegrationEvent faild. {ex.Message}");
                 throw;
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"ResultSalesIntegrationEvent with {@event.Id} product id failed. Exception detail:{ex.Message}");
+                _logger.LogInformation($"SalesResultIntegrationEvent with {@event.Id} product id failed. Exception detail:{ex.Message}");
                 throw;
             }
         }
 
-        private static void CheckResultSalesIntegrationEventInstance(ResultSalesIntegrationEvent @event)
+        private static void CheckSalesResultIntegrationEventInstance(SalesResultIntegrationEvent @event)
         {
             if (@event == null)
-                throw new ArgumentNullException("ResultSalesIntegrationEvent is null.");
+                throw new ArgumentNullException("SalesResultIntegrationEvent is null.");
 
             if (@event.ProductId <= 0)
-                throw new ArgumentNullException("ResultSalesIntegrationEvent ProductId is invalid.");
+                throw new ArgumentNullException("SalesResultIntegrationEvent ProductId is invalid.");
         }
     }
 }

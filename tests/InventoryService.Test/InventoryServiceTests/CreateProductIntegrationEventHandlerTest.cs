@@ -26,11 +26,11 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
             var productService = new ProductService(Context, loggerProduct.Object);
 
             var loggerInventoryTransaction = new Mock<ILogger<InventoryTransactionService>>();
-           var inventoryTransactionService = new InventoryTransactionService(Context, loggerInventoryTransaction.Object);
+            var inventoryTransactionService = new InventoryTransactionService(Context, loggerInventoryTransaction.Object);
 
             var eventBus = new Mock<IEventBus>();
 
-            createProductIntegrationEventHandler = new CreateProductIntegrationEventHandler(logger.Object,Context, productService, inventoryTransactionService, eventBus.Object);
+            createProductIntegrationEventHandler = new CreateProductIntegrationEventHandler(logger.Object, Context, productService, inventoryTransactionService, eventBus.Object);
         }
 
 
@@ -45,7 +45,7 @@ namespace SagaPattern.UnitTests.InventoryServiceTests
         public async Task CreateProductIntegrationEvent_When_Product_Id_Is_Zero_throw_ArgumentNullException()
         {
             // Arrange
-           CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(0, "Flash", 10, correlationId);
+            CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(0, "Flash", 10, correlationId);
 
             //Act - Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() => createProductIntegrationEventHandler.Handle(createProductIntegrationEvent));

@@ -19,6 +19,6 @@ namespace EventBus.Abstractions
         Task Unsubscribe<T, TH>()
             where TH : IIntegrationEventHandler<T>
             where T : IntegrationEvent;
-        
+
     }
 }

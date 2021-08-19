@@ -2,9 +2,9 @@
 
 namespace ProductCatalogService.IntegrationEvents.Events
 {
-    public class ResultInventoryIntegrationEvent : IntegrationEvent
+    public class InventoryResultIntegrationEvent : IntegrationEvent
     {
-        public ResultInventoryIntegrationEvent(int productId, bool isSuccess, string correlationId) : base(correlationId)
+        public InventoryResultIntegrationEvent(int productId, bool isSuccess, string correlationId) : base(correlationId)
         {
             ProductId = productId;
             IsSuccess = isSuccess;

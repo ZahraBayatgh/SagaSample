@@ -1,7 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using InventoryService.Dtos;
 using InventoryService.Models;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace InventoryService.Services
