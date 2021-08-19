@@ -38,6 +38,7 @@ namespace ProductCatalog
             services.AddCustomIntegrations(Configuration);
 
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IProductorchestrator, Productorchestrator>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

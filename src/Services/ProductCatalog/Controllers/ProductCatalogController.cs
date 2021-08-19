@@ -1,7 +1,5 @@
-﻿using EventBus.Abstractions;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ProductCatalog.Dtos;
-using ProductCatalogService.IntegrationEvents.Events;
 using ProductCatalogService.Services;
 using System.Threading.Tasks;
 
@@ -12,13 +10,13 @@ namespace ProductCatalog.Controllers
     public class ProductCatalogController : ControllerBase
     {
         private readonly IProductService _productService;
-        private readonly IEventBus _eventBus;
+        private readonly IProductorchestrator _productorchestrator;
 
         public ProductCatalogController(IProductService productService,
-                                        IEventBus eventBus)
+                                        IProductorchestrator productorchestrator)
         {
             _productService = productService;
-            _eventBus = eventBus;
+            _productorchestrator = productorchestrator;
         }
 
         [HttpGet("{id}")]
@@ -38,15 +36,11 @@ namespace ProductCatalog.Controllers
         public async Task<IActionResult> CreateProductAsync(CreateProductRequestDto createProductRequestDto)
         {
             // Create product and inventory transaction
-            var createProductResponse = await _productService.CreateProductAsync(createProductRequestDto);
+            var createProductResponse = await _productorchestrator.CreateProductAndPublishEvent(createProductRequestDto);
 
             if (createProductResponse.IsSuccess)
             {
-                // Publish CreateProductIntegrationEvent
-                CreateProductIntegrationEvent createProductIntegrationEvent = new CreateProductIntegrationEvent(createProductResponse.Value.ProductId,createProductRequestDto.Name, createProductRequestDto.InitialHand, HttpContext.TraceIdentifier);
-               await _eventBus.PublishAsync(createProductIntegrationEvent,"test");
-
-                return CreatedAtAction(nameof(GetProductByIdAsync), new { id = createProductResponse.Value.ProductId }, null);
+                return CreatedAtAction(nameof(GetProductByIdAsync), new { id = createProductResponse.Value }, null);
             }
 
             return BadRequest(createProductResponse.Error);
